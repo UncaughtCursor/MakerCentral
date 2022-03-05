@@ -2,7 +2,7 @@
 import React, {
 	useContext, useEffect, useRef, useState,
 } from 'react';
-import DropupArrow from 'material-ui-icons/ArrowDropUp';
+import DropupArrow from '@mui/icons-material/ArrowDropUp';
 import { EntityData, EntityType } from '@data/MakerConstants';
 import SelectButton from '@components/pages/controls/SelectButton';
 import { previewInstrument } from '@scripts/builder/playback/MusicPlayer';

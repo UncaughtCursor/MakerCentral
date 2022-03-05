@@ -7,7 +7,7 @@ import {
 	signOut, signInWithPopup, GoogleAuthProvider,
 } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-import { getAnalytics } from 'firebase/analytics';
+// import { getAnalytics } from 'firebase/analytics';
 
 import { initUser } from './UserDataScripts';
 
@@ -51,7 +51,7 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
-export const analytics = getAnalytics(app);
+// export const analytics = getAnalytics(app);
 
 // FIXME: COMMENT OUT IN PROD
 connectFirestoreEmulator(db, 'localhost', 8080);

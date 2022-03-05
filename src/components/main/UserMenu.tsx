@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import OutsideClickHandler from 'react-outside-click-handler';
-import AccountCircleIcon from 'material-ui-icons/AccountCircle';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
 	onAuthStateChanged, User,
 } from 'firebase/auth';

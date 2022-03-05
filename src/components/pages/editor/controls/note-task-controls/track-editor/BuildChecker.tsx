@@ -1,6 +1,6 @@
 import React from 'react';
-import CheckCircleOutlineIcon from 'material-ui-icons/CheckCircleOutline';
-import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import { LevelBuildCheck, LevelBuildCheckResult } from '@scripts/builder/optimization/LevelBuildChecks';
 
 // TODO: Execute results in editor and feed results here

@@ -16,7 +16,7 @@ function Header() {
 			<div className="header">
 				<Link href="/">
 					<div className="titleContainer">
-						<Image src="/logo.png" alt="Music Level Studio" />
+						<Image src="/logo.png" alt="Music Level Studio" width={45} height={45} />
 						<h3 style={{ textDecoration: 'none' }}>Music Level Studio</h3>
 						<p style={{
 							margin: 0,
