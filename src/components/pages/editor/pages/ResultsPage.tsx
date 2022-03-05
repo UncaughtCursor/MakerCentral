@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import '../../Page.css';
 import LevelDisplay from '../controls/output/LevelDisplay';
 import EditorContext from '../EditorContext';
 

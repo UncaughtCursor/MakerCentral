@@ -2,7 +2,6 @@ import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import { promptGoogleLogin } from '@scripts/site/FirebaseUtil';
 import React, { useState } from 'react';
-import './LoginPrompt.css';
 
 /**
  * Prompts the user to log in or create a new account.

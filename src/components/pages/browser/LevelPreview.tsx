@@ -3,9 +3,8 @@
 import { UserLevel } from '@scripts/browser/BrowserUtil';
 import React from 'react';
 import TimeAgo from 'javascript-time-ago';
-import LikeIcon from '@material-ui/icons/Favorite';
-import CommentIcon from '@material-ui/icons/Comment';
-import './LevelPreview.css';
+import LikeIcon from 'material-ui-icons/Favorite';
+import CommentIcon from 'material-ui-icons/Comment';
 import { useHistory } from 'react-router-dom';
 import TagDisplay from './TagDisplay';
 

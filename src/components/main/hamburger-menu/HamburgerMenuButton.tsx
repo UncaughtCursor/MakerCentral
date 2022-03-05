@@ -1,7 +1,6 @@
 import React from 'react';
-import MenuIcon from '@material-ui/icons/Menu';
-import CloseIcon from '@material-ui/icons/Close';
-import './HamburgerMenu.css';
+import MenuIcon from 'material-ui-icons/Menu';
+import CloseIcon from 'material-ui-icons/Close';
 
 /**
  * The button that opens and closes the hamburger menu.

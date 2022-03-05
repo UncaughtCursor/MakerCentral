@@ -1,5 +1,4 @@
 import React, { ForwardedRef, ReactNode } from 'react';
-import './Piano.css';
 
 interface PianoProps {
 	noteHeightPx: number,

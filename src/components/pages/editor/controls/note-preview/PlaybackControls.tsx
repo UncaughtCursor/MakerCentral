@@ -1,7 +1,6 @@
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import React, { useContext, useState } from 'react';
 import EditorContext from '../../EditorContext';
-import './PlaybackControls.css';
 
 interface PlaybackControlsProps {
 	isPlaying: boolean,

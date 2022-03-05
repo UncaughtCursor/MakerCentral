@@ -6,7 +6,6 @@ import ProjectTrack from '@scripts/builder/project/ProjectTrack';
 import React, { useContext, useState } from 'react';
 import ContinueButton from '../controls/ContinueButton';
 import EditorContext from '../EditorContext';
-import './ProjectConfigPage.css';
 
 interface ProjectConfigPageState {
 	showContinue: boolean;

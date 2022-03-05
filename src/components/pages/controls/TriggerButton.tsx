@@ -1,5 +1,4 @@
 import React from 'react';
-import '../Page.css';
 
 export type TriggerButtonType = 'normal' | 'blue' | 'flush' | 'dark';
 

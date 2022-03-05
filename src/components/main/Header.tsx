@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import './Header.css';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
+import Image from 'next/image';
 import Navbar from './Nav';
 import UserMenu from './UserMenu';
-import Logo from '../../logo-test.png';
 import HamburgerMenuButton from './hamburger-menu/HamburgerMenuButton';
 import HamburgerMenu from './hamburger-menu/HamburgerMenu';
 
@@ -15,15 +14,16 @@ function Header() {
 	return (
 		<>
 			<div className="header">
-				<Link to="/" style={{ textDecoration: 'none' }}>
+				<Link href="/">
 					<div className="titleContainer">
-						<img src={Logo} alt="Music Level Studio" />
-						<h3>Music Level Studio</h3>
+						<Image src="/logo.png" alt="Music Level Studio" />
+						<h3 style={{ textDecoration: 'none' }}>Music Level Studio</h3>
 						<p style={{
 							margin: 0,
 							marginLeft: '10px',
 							fontSize: '12px',
 							fontWeight: 'bold',
+							textDecoration: 'none',
 						}}
 						>EARLY ACCESS
 						</p>

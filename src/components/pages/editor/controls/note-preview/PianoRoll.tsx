@@ -4,7 +4,6 @@ import { ProjectNote } from '@scripts/builder/project/Project';
 import React from 'react';
 import { NoteBounds } from '../note-task-controls/SongBoundaryChooser';
 import Piano from './Piano';
-import './PianoRoll.css';
 import PianoRollNotes from './PianoRollNotes';
 
 // FIXME: Grid offset and scale css
@@ -57,8 +56,18 @@ function PianoRoll(props: {
 
 	const heightPx = Math.max(totalNotes * props.gridTileLength!, vh(60));
 
-	const noteSurface = createNoteSurface(props.quartersPerMeasure!,
-		props.children, () => {}, props.onClick!, props.onHover!, props.onMouseOut!);
+	const noteSurface = createNoteSurface(
+props.quartersPerMeasure!,
+props.children,
+
+() => {},
+
+props.onClick!,
+
+props.onHover!,
+
+props.onMouseOut!,
+	);
 
 	return (
 		<div

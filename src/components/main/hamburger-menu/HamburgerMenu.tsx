@@ -4,7 +4,7 @@ import {
 } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import { Navlink } from '../Nav';
 import { UserMenuItem } from '../UserMenu';
 
@@ -22,7 +22,7 @@ function HamburgerMenu(props: {
 }) {
 	const secondClassStr = props.isOpen ? '' : ' closed';
 	const [user, setUser] = useState(getUser());
-	const history = useHistory();
+	const router = useRouter();
 
 	onAuthStateChanged(auth, (authUser) => {
 		setUser(authUser);
@@ -50,7 +50,7 @@ function HamburgerMenu(props: {
 						onClick={() => {
 							logout();
 							requestMenuClose();
-							history.push('/');
+							router.push('/');
 						}}
 					/>
 				</div>

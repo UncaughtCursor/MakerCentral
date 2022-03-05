@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import SelectButton from './SelectButton';
-import '../Page.css';
 
 export interface ButtonSelectEntry {
 	name: string;

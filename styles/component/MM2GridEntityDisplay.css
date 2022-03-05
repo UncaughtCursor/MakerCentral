@@ -1,0 +1,48 @@
+.game-entity-container {
+	position: relative;
+}
+
+.game-entity-icon {
+	position: absolute;
+	border-radius: 50%;
+	border: 1px solid black;
+	pointer-events: none;
+}
+
+.game-entity-icon > p {
+	color: white;
+	-webkit-text-stroke: 0.5px black;
+	font-weight: bold;
+	user-select: none;
+	text-align: center;
+	margin: 0;
+}
+
+.game-entity-icon.parachuting {
+	animation: hover 3s infinite;
+	animation-timing-function: ease-in-out;
+}
+
+.game-entity-icon.parachuting > p {
+	color: skyblue;
+}
+
+@keyframes hover {
+	0%, 100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-3px);
+	}
+}
+
+@keyframes rock-back-and-forth {
+	0%, 100% {
+		transform: translateX(var(--game-entity-text-x))
+		translateY(var(--game-entity-text-y)) rotate(-30deg);
+	}
+	50% {
+		transform: translateX(var(--game-entity-text-x))
+		translateY(var(--game-entity-text-y)) rotate(30deg);
+	}
+}

@@ -8,8 +8,6 @@ import * as Images from '@scripts/builder/graphics/Images';
 import EditorLink from './EditorLink';
 import PageRenderer from './PageRenderer';
 import ProjectManagerTab from './ProjectManagerTab';
-import './EditorView.css';
-import './EditorLink.css';
 import EditorContext from './EditorContext';
 import EditorMenu from './controls/EditorMenu';
 import Spinner from '../controls/Spinner';

@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react';
-import './MIDIUploader.css';
 import Project from '@scripts/builder/project/Project';
 import loadUserMidi from '@scripts/builder/project/MidiLoader';
 import Files from 'react-files';

@@ -13,7 +13,6 @@ import MusicPreviewer from '../../note-preview/MusicPreviewer';
 import { PianoRollNoteGroup } from '../../note-preview/PianoRoll';
 import { determineNoteBounds } from '../SongBoundaryChooser';
 import { getEndBeat } from '../TrackChooser';
-import './TrackEditor.css';
 import TrackEditorToolbar, { EditorToolbarButtonName, EditorToolName } from './TrackEditorToolbar';
 import ContinueButton from '../../ContinueButton';
 import TrackSettingsEditor from '../../TrackSettingsEditor';

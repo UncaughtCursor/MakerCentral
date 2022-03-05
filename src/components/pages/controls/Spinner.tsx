@@ -1,6 +1,4 @@
 import React from 'react';
-import './Spinner.css';
-
 /**
  * An element that displays a loading animation.
  * @param props The props:

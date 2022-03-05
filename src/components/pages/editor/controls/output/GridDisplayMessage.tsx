@@ -1,6 +1,5 @@
 import { Coordinates2d } from '@scripts/builder/util/Coordinates2d';
 import React, { useLayoutEffect, useRef } from 'react';
-import './GridDisplayMessage.css';
 
 export interface GridDisplayMessageData {
 	text: string,

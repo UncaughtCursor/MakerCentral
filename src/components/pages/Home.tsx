@@ -1,6 +1,5 @@
 import React from 'react';
 import ActionButton from './controls/ActionButton';
-import './Page.css';
 
 /**
  * The landing page of the site.

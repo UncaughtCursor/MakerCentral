@@ -2,8 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
-import { Link, useRouteMatch } from 'react-router-dom';
-import './Nav.css';
+import Link from 'next/link';
 
 /**
  * The navigation menu in the site header.
@@ -24,18 +23,22 @@ function Navbar() {
  * A link in a navbar.
  * @param props.text The text to display.
  * @param props.to The destination path when clicked.
- * @param props.onClick (Optional) The function to execite when clicked.
+ * @param props.onClick (Optional) The function to execute when clicked.
  */
 function Navlink(props: { to?: string | null; text: string; onClick?: () => void }) {
 	// Allow sub-pages to light up the corresponding link unless it's the home page.
-	const isMatch = props.to === '/' ? useRouteMatch({ path: props.to!, exact: true }) : useRouteMatch({ path: props.to!, exact: false });
+	// const isMatch = props.to === '/' ? useRouteMatch({ path: props.to!, exact: true }) : useRouteMatch({ path: props.to!, exact: false });
+	// FIXME: No navbar light-up
+	const isMatch = false;
 	if (props.to! !== null) {
 		return (
-			<Link
-				className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
-				to={props.to!}
-				onClick={props.onClick}
-			>{props.text}
+			<Link href={props.to!}>
+				<a
+					className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
+					onClick={props.onClick}
+				>
+					{props.text}
+				</a>
 			</Link>
 		);
 	}

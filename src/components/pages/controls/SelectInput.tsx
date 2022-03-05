@@ -1,5 +1,4 @@
 import React, { SyntheticEvent } from 'react';
-import '../Page.css';
 
 /**
  * A UI element that allows the user to choose from a set of options.

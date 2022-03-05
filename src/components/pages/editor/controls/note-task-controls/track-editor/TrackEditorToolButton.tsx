@@ -1,5 +1,4 @@
 import React from 'react';
-import './TrackEditor.css';
 
 type ButtonType = 'click' | 'select';
 

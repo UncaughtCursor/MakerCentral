@@ -1,7 +1,6 @@
 import React from 'react';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-import './BuildChecker.css';
+import CheckCircleOutlineIcon from 'material-ui-icons/CheckCircleOutline';
+import AddCircleOutlineIcon from 'material-ui-icons/AddCircleOutline';
 import { LevelBuildCheck, LevelBuildCheckResult } from '@scripts/builder/optimization/LevelBuildChecks';
 
 // TODO: Execute results in editor and feed results here
@@ -44,8 +43,12 @@ function BuildChecker(props: {
 		for (let i = 0; i < props.checks.length; i++) {
 			const thisCheck = props.checks[i];
 			const thisResult = props.results[i];
-			elements.push(getCheckResultElement(thisCheck.label,
-				thisResult.passed, thisResult.note));
+			elements.push(getCheckResultElement(
+				thisCheck.label,
+				thisResult.passed,
+
+				thisResult.note,
+			));
 		}
 		return elements;
 	}

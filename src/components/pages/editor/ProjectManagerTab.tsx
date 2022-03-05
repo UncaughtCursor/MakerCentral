@@ -6,7 +6,6 @@ import useInterval from 'use-interval';
 import { onAuthStateChanged } from 'firebase/auth';
 import TriggerButton from '../controls/TriggerButton';
 import TextField from '../controls/TextField';
-import '../Page.css';
 import EditorContext from './EditorContext';
 
 const timeAgo = new TimeAgo('en-US');

@@ -1,6 +1,5 @@
 import React from 'react';
 import NumericInput from 'react-numeric-input';
-import '../Page.css';
 
 /**
  * A numerical input.

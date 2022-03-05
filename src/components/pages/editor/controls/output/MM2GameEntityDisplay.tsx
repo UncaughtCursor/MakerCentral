@@ -3,7 +3,6 @@ import GridEntityManager from '@scripts/builder/graphics/GridEntityManager';
 import { MM2GameEntity } from '@scripts/builder/optimization/MM2GameEntity';
 import { levelHeight } from '@scripts/builder/optimization/traditional/util';
 import React, { ReactElement } from 'react';
-import './MM2GridEntityDisplay.css';
 
 /**
  * Displays entities on a grid using DOM elements.

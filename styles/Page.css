@@ -1,0 +1,208 @@
+p, h1, h2, h3, h4, h5, h6 {
+	color: var(--text-color);
+}
+
+a {
+	color: var(--link);
+}
+
+label {
+	color: var(--text-color);
+	font-size: 14px;
+}
+
+.page-renderer {
+	text-align: center;
+	width: 80%;
+	margin: 0 auto;
+	margin-top: 50px;
+}
+
+.explanatory-text {
+	text-align: left;
+	margin: 25px 0;
+	line-height: 1.8;
+}
+
+.imperative-text {
+	font-weight: bold;
+}
+
+.text-field-container {
+	display: flex;
+	flex-direction: column;
+}
+
+.text-field-container input {
+	display: block;
+	background-color: var(--bg-darker);
+	border: 2px solid var(--bg-norm);
+	border-radius: 2px;
+	color: var(--text-color);
+	padding: 4px;
+}
+
+.text-field-container label {
+	color: var(--text-color);
+	display: block;
+	text-align: left;
+	font-size: 14px;
+}
+
+.project-manager-tab-container {
+	display: flex;
+	flex-direction: column;
+	margin: 20px 30px;
+}
+
+.project-manager-tab-container > * {
+	margin: 8px 0px;
+}
+
+.action-button {
+	background-color: var(--hl-med);
+	border: none;
+	color: var(--text-color);
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.action-button:hover {
+	background-color: var(--hl-dark);
+}
+
+.blue-trigger-button {
+	background-color: var(--hl-med);
+	border: 1px solid var(--hl-dark);
+	color: var(--text-color);
+	padding: 8px 20px;
+	text-align: center;
+	font-size: 15px;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 0px 3px 0px var(--hl-dark);
+	margin: 0 1px;
+}
+
+.normal-trigger-button {
+	background-color: var(--bg-dark);
+	border: 1px solid var(--bg-darker);
+	color: var(--text-color);
+	padding: 8px 20px;
+	text-align: center;
+	font-size: 15px;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 0px 3px 0px var(--bg-darker);
+	margin: 0 1px;
+}
+
+.blue-trigger-button:hover {
+	background-color: var(--hl-med);
+}
+
+.normal-trigger-button:hover {
+	background-color: var(--bg-norm);
+}
+
+.flush-trigger-button {
+	background-color: var(--bg-dark);
+	border: none;
+	margin: 1px;
+	color: var(--text-color);
+	padding: 8px 16px;
+	text-align: center;
+	font-size: 15px;
+	font-weight: bold;
+	text-decoration: none;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.flush-trigger-button:hover {
+	background-color: var(--bg-norm);
+}
+
+.dark-trigger-button {
+	background-color: var(--bg-darker);
+	border: 1px solid var(--bg-dark);
+	color: var(--text-color);
+	padding: 8px 20px;
+	text-align: center;
+	font-size: 15px;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 10px;
+	cursor: pointer;
+	box-shadow: 0px 3px 0px var(--bg-darker);
+	margin: 0 1px;
+}
+
+.dark-trigger-button:hover {
+	background-color: var(--bg-norm);
+}
+
+.button-select-container {
+	display: flex;
+	gap: 40px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+.select-button {
+	background-color: var(--bg-dark);
+	border: 1px solid var(--bg-norm);
+	color: var(--text-color);
+	min-width: 100px;
+	min-height: 100px;
+	text-align: center;
+	font-size: 15px;
+	text-decoration: none;
+	display: inline-block;
+	border-radius: 0px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.select-button:hover {
+	background-color: var(--bg-darker);
+}
+
+.select-button.selected {
+	background-color: var(--hl-med);
+	border: 1px solid var(--hl-lite);
+	cursor: auto;
+}
+
+.caption-text {
+	font-size: small;
+	user-select: none;
+}
+
+.number-input-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.number-input-container > p {
+	font-size: small;
+	margin-right: 8px;
+}
+
+.select-input {
+	background-color: var(--bg-dark);
+	color: var(--text-color);
+	border: 2px solid var(--bg-darker);
+	border-radius: 4px;
+	padding: 5px 10px;
+}

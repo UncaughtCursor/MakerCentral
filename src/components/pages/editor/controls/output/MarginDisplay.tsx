@@ -1,6 +1,4 @@
 import React from 'react';
-import './MarginDisplay.css';
-
 /**
  * An overlay for the beginning section of a level that shouldn't have music in it.
  * @param props The props:

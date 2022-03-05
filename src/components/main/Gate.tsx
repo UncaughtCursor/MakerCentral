@@ -2,7 +2,6 @@ import RewardRedeemer from '@components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '@components/pages/controls/settings/SettingsGroup';
 import { auth, getUser, logout } from '@scripts/site/FirebaseUtil';
 import { hasEarlyAccess, refreshUserData } from '@scripts/site/UserDataScripts';
-import './Gate.css';
 import React, { useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import TriggerButton from '@components/pages/controls/TriggerButton';

@@ -3,10 +3,9 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 /* eslint-disable react/no-unused-prop-types */
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './UserMenu.css';
+import Link from 'next/link';
 import OutsideClickHandler from 'react-outside-click-handler';
-import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AccountCircleIcon from 'material-ui-icons/AccountCircle';
 import {
 	onAuthStateChanged, User,
 } from 'firebase/auth';
@@ -105,11 +104,13 @@ function UserMenuItem(props: {
 }) {
 	if (props.to !== null) {
 		return (
-			<Link
-				className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
-				to={props.to!}
-				onClick={props.do!}
-			>{props.text}
+			<Link href={props.to!}>
+				<a
+					className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
+					onClick={props.do!}
+					role="button"
+				>{props.text}
+				</a>
 			</Link>
 		);
 	}

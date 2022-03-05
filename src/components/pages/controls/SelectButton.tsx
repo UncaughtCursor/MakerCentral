@@ -1,6 +1,5 @@
 /* eslint-disable jsx-a11y/mouse-events-have-key-events */
 import React, { useEffect, useRef } from 'react';
-import '../Page.css';
 
 export type SelectButtonType = '' | 'selected';
 

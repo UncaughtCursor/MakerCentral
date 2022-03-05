@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './TileLengthChooser.css';
 import NumericInput from 'react-numeric-input';
 
 // TODO: Output events, states for min and max of tiles box and values of both boxes

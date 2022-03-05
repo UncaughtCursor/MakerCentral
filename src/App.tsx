@@ -1,9 +1,4 @@
 import React from 'react';
-import {
-	BrowserRouter as Router,
-	Switch,
-	Route,
-} from 'react-router-dom';
 
 import ProjectsPage from '@components/pages/ProjectsPage';
 
@@ -20,8 +15,6 @@ import Home from './components/pages/Home';
 import About from './components/pages/About';
 import Builder from './components/pages/Builder';
 import Editor from './components/pages/editor/Editor';
-
-import './App.css';
 
 /**
  * The main app component.

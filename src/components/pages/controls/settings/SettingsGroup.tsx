@@ -1,5 +1,4 @@
 import React from 'react';
-import './SettingsGroup.css';
 
 /**
  * A group of settings with a topic name. Holds the setting controls as children.

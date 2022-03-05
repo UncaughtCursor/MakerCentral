@@ -6,7 +6,6 @@ import { EntityData } from '@data/MakerConstants';
 import PianoRoll, { PianoRollNoteGroup } from './PianoRoll';
 import PlaybackControls from './PlaybackControls';
 import EditorContext from '../../EditorContext';
-import './MusicPreviewer.css';
 import PianoRollLine from './PianoRollLine';
 import PianoRollLineHz from './PianoRollLineHz';
 import { NoteBounds } from '../note-task-controls/SongBoundaryChooser';

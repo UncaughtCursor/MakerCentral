@@ -2,7 +2,6 @@ import { TrackOptimizationResult } from '@scripts/builder/optimization/looping/D
 import { TraditionalOptimizationResult } from '@scripts/builder/optimization/traditional/AlphaOptimizer';
 import React, { useContext, useState } from 'react';
 import * as Images from '@scripts/builder/graphics/Images';
-import './LevelDisplay.css';
 import { GridDisplayObject } from '@scripts/builder/graphics/GridDisplayUtil';
 import TrackDisplayManager from '@scripts/builder/graphics/TrackDisplayManager';
 import TraditionalDisplayManager from '@scripts/builder/graphics/TraditionalDisplayManager';

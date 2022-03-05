@@ -1,0 +1,13 @@
+.gate-background {
+	background-color: var(--bg-norm);
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+	height: 100%;
+	width: 100%;
+	align-items: center;
+}
+
+.gate-background > div {
+	margin: 100px;
+}

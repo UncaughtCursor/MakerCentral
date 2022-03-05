@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import './Page.css';
 import { useHistory } from 'react-router-dom';
 import EditorContext from './editor/EditorContext';
 import TriggerButton from './controls/TriggerButton';

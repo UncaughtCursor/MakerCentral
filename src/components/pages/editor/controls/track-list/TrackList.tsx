@@ -1,5 +1,4 @@
 import React from 'react';
-import './TrackList.css';
 import TrackListEntry from './TrackListEntry';
 
 /**

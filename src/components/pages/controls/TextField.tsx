@@ -1,5 +1,4 @@
 import React from 'react';
-import '../Page.css';
 
 /**
  * A text field input.

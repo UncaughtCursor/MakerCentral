@@ -1,4 +1,3 @@
-import './ProjectList.css';
 import { db, getUser } from '@scripts/site/FirebaseUtil';
 import {
 	collection, DocumentData, getDocs, limit, orderBy, query,
@@ -30,8 +29,11 @@ function ProjectList(props: {
 		const projectQuery = async function projectQuery() {
 			const projectsRef = collection(db, `users/${getUser()!.uid}/projects`);
 
-			const q = query(projectsRef, orderBy('savedAt', 'desc'),
-				limit(props.limit! === null ? Infinity : props.limit!));
+			const q = query(
+				projectsRef,
+				orderBy('savedAt', 'desc'),
+				limit(props.limit! === null ? Infinity : props.limit!),
+			);
 			const querySnapshot = await getDocs(q);
 
 			const docs: DocumentData[] = [];

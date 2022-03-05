@@ -1,0 +1,9 @@
+.editor-link {
+	background: none;
+	color: var(--link);
+	border: none;
+	text-align: center;
+	display: inline-block;
+	text-decoration: underline;
+	cursor: pointer;
+}

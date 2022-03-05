@@ -1,5 +1,4 @@
 import React from 'react';
-import '../Page.css';
 import MusicSelectPage from './pages/MusicSelectPage';
 import ResultsPage from './pages/ResultsPage';
 import TrackSelectPage from './pages/TrackSelectPage';

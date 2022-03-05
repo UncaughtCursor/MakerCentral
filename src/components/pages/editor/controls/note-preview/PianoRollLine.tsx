@@ -1,5 +1,4 @@
 import React from 'react';
-import './PianoRollLine.css';
 
 /**
  * A vertical line that can be displayed in the piano roll.

@@ -1,6 +1,5 @@
 import { UserLevelTag } from '@scripts/browser/BrowserUtil';
 import React from 'react';
-import './TagDisplay.css';
 
 /**
  * A component that displays the tags of a level.

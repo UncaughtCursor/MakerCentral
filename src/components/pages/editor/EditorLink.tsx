@@ -1,5 +1,4 @@
 import React from 'react';
-import './EditorLink.css';
 
 /**
  * A link that leads to a different editor page.

@@ -1,5 +1,4 @@
 import React from 'react';
-import './TrackList.css';
 
 /**
  * An entry in a track list.

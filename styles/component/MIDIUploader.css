@@ -1,0 +1,13 @@
+.files-dropzone {
+	background-color: var(--bg-darker);
+	color: var(--text-color);
+	padding: 30px 20px;
+	display: inline-block;
+	border-radius: 10px;
+	border: 2px dashed var(--bg-lite);
+	cursor: pointer;
+}
+
+.files-dropzone-text {
+	font-size: 14px;
+}

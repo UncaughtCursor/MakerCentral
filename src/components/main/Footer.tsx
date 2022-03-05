@@ -1,5 +1,4 @@
 import React from 'react';
-import './Footer.css';
 
 /**
  * The footer of the webpage.

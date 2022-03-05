@@ -3,7 +3,6 @@ import TimeAgo from 'javascript-time-ago';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Spinner from '../controls/Spinner';
-import './LevelPage.css';
 import TagDisplay from './TagDisplay';
 
 const timeAgo = new TimeAgo('en-us');

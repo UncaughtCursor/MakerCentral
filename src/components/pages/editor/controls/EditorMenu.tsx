@@ -1,6 +1,4 @@
 import React, { useState } from 'react';
-import './EditorMenu.css';
-
 /**
  * A menu that, when clicked, displays its contents and closes when clicked again.
  */

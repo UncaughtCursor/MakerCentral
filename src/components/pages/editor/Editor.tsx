@@ -1,6 +1,5 @@
 import React from 'react';
 import EditorContext, { defaultState } from './EditorContext';
-import '../Page.css';
 import EditorView from './EditorView';
 
 /**
