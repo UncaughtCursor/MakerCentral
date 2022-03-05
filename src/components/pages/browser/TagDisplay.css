@@ -1,0 +1,12 @@
+.user-level-tag {
+	color: var(--text-color);
+	padding: 3px 8px;
+	background-color: var(--bg-norm);
+	border-radius: 20px;
+}
+
+.user-level-tag-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}

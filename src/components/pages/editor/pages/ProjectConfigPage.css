@@ -1,0 +1,11 @@
+.vertical-control-list > * {
+	margin: 50px 0px;
+}
+
+.vertical-control-list:first-child {
+	margin: 0px 0px;
+}
+
+.vertical-control-list:last-child {
+	margin: 0px 0px;
+}

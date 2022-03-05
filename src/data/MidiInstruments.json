@@ -1,0 +1,514 @@
+[
+	{
+	  "name": "Acoustic Grand Piano",
+	  "mm2Instrument": "Goomba"
+	},
+	{
+	  "name": "Bright Acoustic Piano",
+	  "mm2Instrument": "Goomba"
+	},
+	{
+	  "name": "Electric Grand Piano",
+	  "mm2Instrument": "Goomba"
+	},
+	{
+	  "name": "Honky-tonk Piano",
+	  "mm2Instrument": "Goombrat"
+	},
+	{
+	  "name": "Electric Piano A",
+	  "mm2Instrument": "Muncher"
+	},
+	{
+	  "name": "Electric Piano B",
+	  "mm2Instrument": "Unchained Chomp"
+	},
+	{
+	  "name": "Harpsichord",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Clavinet",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Celesta",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Glockenspiel",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Music Box",
+	  "mm2Instrument": "Super Star"
+	},
+	{
+	  "name": "Vibraphone",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Marimba",
+	  "mm2Instrument": "Koopa (Green)"
+	},
+	{
+	  "name": "Xylophone",
+	  "mm2Instrument": "Koopa (Green)"
+	},
+	{
+	  "name": "Tubular Bells",
+	  "mm2Instrument": "Wiggler"
+	},
+	{
+	  "name": "Dulcimer",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Drawbar Organ",
+	  "mm2Instrument": "Superball Flower"
+	},
+	{
+	  "name": "Percussive Organ",
+	  "mm2Instrument": "1-Up"
+	},
+	{
+	  "name": "Rock Organ",
+	  "mm2Instrument": "1-Up"
+	},
+	{
+	  "name": "Church Organ",
+	  "mm2Instrument": "Superball Flower"
+	},
+	{
+	  "name": "Reed Organ",
+	  "mm2Instrument": "Superball Flower"
+	},
+	{
+	  "name": "Accordion",
+	  "mm2Instrument": "Goomba (Stiletto)"
+	},
+	{
+	  "name": "Harmonica",
+	  "mm2Instrument": "Goomba (Stiletto)"
+	},
+	{
+	  "name": "Tango Accordion",
+	  "mm2Instrument": "Goomba (Stiletto)"
+	},
+	{
+	  "name": "Acoustic Guitar (nylon)",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Acoustic Guitar (steel)",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Electric Guitar (jazz)",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Electric Guitar (clean)",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Electric Guitar (muted)",
+	  "mm2Instrument": "Pokey"
+	},
+	{
+	  "name": "Overdriven Guitar",
+	  "mm2Instrument": "Hammer Bro"
+	},
+	{
+	  "name": "Distortion Guitar",
+	  "mm2Instrument": "Hammer Bro"
+	},
+	{
+	  "name": "Guitar Harmonics",
+	  "mm2Instrument": "Hammer Bro"
+	},
+	{
+	  "name": "Acoustic Bass",
+	  "mm2Instrument": "Spike"
+	},
+	{
+	  "name": "Electric Bass (finger)",
+	  "mm2Instrument": "Spike"
+	},
+	{
+	  "name": "Electric Bass (pick)",
+	  "mm2Instrument": "Spike"
+	},
+	{
+	  "name": "Fretless Bass",
+	  "mm2Instrument": "Spike"
+	},
+	{
+	  "name": "Slap Bass A",
+	  "mm2Instrument": "Sledge Bro"
+	},
+	{
+	  "name": "Slap Bass B",
+	  "mm2Instrument": "Sledge Bro"
+	},
+	{
+	  "name": "Synth Bass A",
+	  "mm2Instrument": "Mechakoopa (Blue)"
+	},
+	{
+	  "name": "Synth Bass B",
+	  "mm2Instrument": "Rotten Mushroom"
+	},
+	{
+	  "name": "Violin",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Viola",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Cello",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Contrabass",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Tremolo Strings",
+	  "mm2Instrument": "Piranha Plant"
+	},
+	{
+	  "name": "Pizzicato Strings",
+	  "mm2Instrument": "Piranha Plant"
+	},
+	{
+	  "name": "Orchestral Harp",
+	  "mm2Instrument": "Piranha Plant"
+	},
+	{
+	  "name": "Timpani",
+	  "mm2Instrument": "Bill Blaster"
+	},
+	{
+	  "name": "String Ensemble A",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "String Ensemble B",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Synth Strings A",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Synth Strings B",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Choir Aahs",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Voice Oohs",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Synth Choir",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Orchestra Hit",
+	  "mm2Instrument": "Bob-Omb"
+	},
+	{
+	  "name": "Trumpet",
+	  "mm2Instrument": "Spiny Shellmet"
+	},
+	{
+	  "name": "Trombone",
+	  "mm2Instrument": "Spiny Shellmet"
+	},
+	{
+	  "name": "Tuba",
+	  "mm2Instrument": "Spiny Shellmet"
+	},
+	{
+	  "name": "Muted Trumpet",
+	  "mm2Instrument": "Spiny Shellmet"
+	},
+	{
+	  "name": "French Horn",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Brass Section",
+	  "mm2Instrument": "Spiny Shellmet"
+	},
+	{
+	  "name": "Synth Brass A",
+	  "mm2Instrument": "1-Up"
+	},
+	{
+	  "name": "Synth Brass B",
+	  "mm2Instrument": "1-Up"
+	},
+	{
+	  "name": "Soprano Sax",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Alto Sax",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Tenor Sax",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Baritone Sax",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Oboe",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "English Horn",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Bassoon",
+	  "mm2Instrument": "Spike Top"
+	},
+	{
+	  "name": "Clarinet",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Piccolo",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Flute",
+	  "mm2Instrument": "Dry Bones Shell"
+	},
+	{
+	  "name": "Recorder",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Pan Flute",
+	  "mm2Instrument": "Dry Bones Shell"
+	},
+	{
+	  "name": "Blown bottle",
+	  "mm2Instrument": "Dry Bones Shell"
+	},
+	{
+	  "name": "Shakuhachi",
+	  "mm2Instrument": "Goombrat"
+	},
+	{
+	  "name": "Whistle",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Ocarina",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Lead A (square)",
+	  "mm2Instrument": "Super Mushroom"
+	},
+	{
+	  "name": "Lead B (sawtooth)",
+	  "mm2Instrument": "Super Mushroom"
+	},
+	{
+	  "name": "Lead C (calliope)",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Lead D (chiff)",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Lead E (charang)",
+	  "mm2Instrument": "Hammer Bro"
+	},
+	{
+	  "name": "Lead F (voice)",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Lead G (fifths)",
+	  "mm2Instrument": "Mechakoopa (Blue)"
+	},
+	{
+	  "name": "Lead H (bass + lead)",
+	  "mm2Instrument": "1-Up"
+	},
+	{
+	  "name": "Pad A (new age)",
+	  "mm2Instrument": "Super Star"
+	},
+	{
+	  "name": "Pad B (warm)",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Pad C (polysynth)",
+	  "mm2Instrument": "Piranha Plant"
+	},
+	{
+	  "name": "Pad D (choir)",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Pad E (bowed)",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "Pad F (metallic)",
+	  "mm2Instrument": "Goomba"
+	},
+	{
+	  "name": "Pad G (halo)",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "Pad H (sweep)",
+	  "mm2Instrument": "Fire Flower"
+	},
+	{
+	  "name": "FX A (rain)",
+	  "mm2Instrument": "Koopa (Green)"
+	},
+	{
+	  "name": "FX B (soundtrack)",
+	  "mm2Instrument": "Mechakoopa"
+	},
+	{
+	  "name": "FX C (crystal)",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "FX D (atmosphere)",
+	  "mm2Instrument": "Muncher"
+	},
+	{
+	  "name": "FX E (brightness)",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "FX F (goblins)",
+	  "mm2Instrument": "Goombrat"
+	},
+	{
+	  "name": "FX G (echoes)",
+	  "mm2Instrument": "Magikoopa"
+	},
+	{
+	  "name": "FX H (sci-fi)",
+	  "mm2Instrument": "Piranha Plant (Fire)"
+	},
+	{
+	  "name": "Sitar",
+	  "mm2Instrument": "Monty Mole"
+	},
+	{
+	  "name": "Banjo",
+	  "mm2Instrument": "Monty Mole"
+	},
+	{
+	  "name": "Shamisen",
+	  "mm2Instrument": "Giant Mushroom"
+	},
+	{
+	  "name": "Koto",
+	  "mm2Instrument": "Giant Mushroom"
+	},
+	{
+	  "name": "Kalimba",
+	  "mm2Instrument": "Koopa (Green)"
+	},
+	{
+	  "name": "Bagpipe",
+	  "mm2Instrument": "Master Sword"
+	},
+	{
+	  "name": "Fiddle",
+	  "mm2Instrument": "Monty Mole"
+	},
+	{
+	  "name": "Shanai",
+	  "mm2Instrument": "Master Sword"
+	},
+	{
+	  "name": "Tinkle Bell",
+	  "mm2Instrument": "Super Star"
+	},
+	{
+	  "name": "Agogo",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Steel Drums",
+	  "mm2Instrument": "Super Acorn"
+	},
+	{
+	  "name": "Woodblock",
+	  "mm2Instrument": "P-Switch"
+	},
+	{
+	  "name": "Taiko Drum",
+	  "mm2Instrument": "P-Switch"
+	},
+	{
+	  "name": "Melodic Tom",
+	  "mm2Instrument": "P-Switch"
+	},
+	{
+	  "name": "Synth Drum",
+	  "mm2Instrument": "P-Switch"
+	},
+	{
+	  "name": "Reverse Cymbal",
+	  "mm2Instrument": "Trampoline"
+	},
+	{
+	  "name": "Guitar Fret Noise",
+	  "mm2Instrument": "Goomba"
+	},
+	{
+	  "name": "Breath Noise",
+	  "mm2Instrument": "Trampoline"
+	},
+	{
+	  "name": "Seashore",
+	  "mm2Instrument": "Trampoline"
+	},
+	{
+	  "name": "Bird Tweet",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Telephone Ring",
+	  "mm2Instrument": "Koopa (Red)"
+	},
+	{
+	  "name": "Helicopter",
+	  "mm2Instrument": "Monty Mole"
+	},
+	{
+	  "name": "Applause",
+	  "mm2Instrument": "Bob-Omb"
+	},
+	{
+	  "name": "Gunshot",
+	  "mm2Instrument": "Cannon"
+	}
+  ]

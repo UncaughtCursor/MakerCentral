@@ -1,0 +1,47 @@
+.grid-display-message-tile {
+	position: absolute;
+	width: 16px;
+	height: 16px;
+	background-color: black;
+	opacity: 0.2;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.grid-display-message-box {
+	position: absolute;
+	transform: translateX(calc(-50% + 8px)) translateY(calc(-100% - 8px));
+	background-color: var(--bg-norm);
+	border-radius: 10px;
+	border: 2px solid var(--bg-dark);
+	pointer-events: none;
+	padding: 10px;
+	width: 200px;
+	z-index: 1;
+}
+
+.grid-display-message-box > p {
+	margin: 0;
+	font-size: small;
+}
+
+.grid-display-message-box-stem {
+	content: " ";
+	position: absolute;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: var(--bg-dark) transparent transparent transparent;
+	pointer-events: none;
+}
+
+.grid-display-message-box.flipped {
+	transform: translateX(calc(-50% + 8px)) translateY(24px);
+}
+
+.grid-display-message-box-stem.flipped {
+	margin-left: -5px;
+	border-width: 5px;
+	border-color: transparent transparent var(--bg-dark) transparent;
+	transform: translateY(6px);
+}

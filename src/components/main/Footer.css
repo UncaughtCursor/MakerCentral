@@ -1,0 +1,16 @@
+.footer {
+	background-color: var(--bg-dark);
+	height: 55px;
+	line-height: 55px;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	box-shadow: 2px 1px 5px black;
+	overflow: hidden;
+	margin-top: 20px;
+}
+
+.footer p {
+	margin: auto;
+	font-size: 14px;
+}

@@ -1,0 +1,26 @@
+.playback-container {
+	display: flex;
+	margin-right: 5px;
+}
+
+.playback-container > * {
+	margin: 0 10px;
+}
+
+.playback-container > *:first-child {
+	margin-left: 1px;
+	margin-top: 1px;
+	margin-bottom: 1px;
+}
+
+.solo-toggle {
+	margin: auto 3px;
+}
+
+.solo-toggle-label {
+	margin: auto 0;
+}
+
+.solo-toggle-container {
+	display: contents;
+}

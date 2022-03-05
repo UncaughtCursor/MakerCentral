@@ -1,0 +1,13 @@
+.margin-overlay {
+	position: absolute;
+	background-color: rgb(0, 0, 0, 0.1);
+	pointer-events: none;
+}
+
+.margin-overlay > p {
+	user-select: none;
+	font-size: 18px;
+	font-weight: bold;
+	color: lightgray;
+	text-shadow: 2px 2px 3px black;
+}

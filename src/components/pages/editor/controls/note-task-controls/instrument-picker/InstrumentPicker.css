@@ -1,0 +1,101 @@
+:root {
+	--ins-btn-width: 85px;
+	--ins-btn-anim-time: 0.1s;
+	--ins-btn-anim-scale: 1.1;
+	--ins-btn-anim-brightness: 130%;
+	--ins-btn-gap: calc(var(--ins-btn-width) * var(--ins-btn-anim-scale) - var(--ins-btn-width));
+	--ins-btn-efwidth: calc(var(--ins-btn-width) + var(--ins-btn-gap));
+}
+
+.instrument-picker-label {
+	color: var(--text-color);
+	display: block;
+	text-align: left;
+	font-size: 14px;
+	margin: 0;
+}
+
+.instrument-picker-container {
+	display: flex;
+	border: 2px solid var(--bg-norm);
+	border-radius: 8px;
+	background-color: var(--bg-darker);
+	width: 275px;
+}
+
+.instrument-picker-container-entity-text {
+	font-size: 13px;
+	margin: 4px;
+	text-align: left;
+	line-height: 13px;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+.instrument-picker-container-instrument-text {
+	color: var(--bg-lite);
+	margin: 4px;
+	text-align: center;
+	font-size: 11px;
+	user-select: none;
+}
+
+.instrument-picker-container:hover {
+	background-color: var(--bg-dark);
+	cursor: pointer;
+}
+
+.instrument-picker-container-arrow-container {
+	display: flex;
+	justify-content: flex-end;
+	flex-grow: 2;
+	align-items: flex-end;
+}
+
+.instrument-picker-container-arrow-container > svg {
+	transition: transform 0.4s;
+}
+
+.instrument-picker-dropup {
+	position: absolute;
+	left: 50%;
+	background-color: var(--bg-darker);
+	border-radius: 10px;
+	padding: 8px;
+	transform: translateY(calc(-100% - 32px)) translateX(-50%);
+	z-index: 3;
+	box-shadow: 2px 2px 5px black;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	width: 90vw;
+	max-width: calc(var(--ins-btn-efwidth) * 9 + 10px);
+	gap: var(--ins-btn-gap);
+	max-height: 75vh;
+	overflow-y: auto;
+}
+
+.instrument-picker-dropup > .select-button {
+	min-width: var(--ins-btn-width);
+	min-height: var(--ins-btn-width);
+	width: var(--ins-btn-width);
+	height: var(--ins-btn-width);
+	padding: 5px;
+	font-size: 12px;
+	animation: btn-flash var(--ins-btn-anim-time) linear;
+}
+
+@keyframes btn-flash {
+	0% {
+		transform: scale(1.0);
+		filter: brightness(100%);
+	}
+	50% {
+		transform: scale(var(--ins-btn-anim-scale));
+		filter: brightness(var(--ins-btn-anim-brightness));
+	}
+	100% {
+		transform: scale(1.0);
+		filter: brightness(100%);
+	}
+}

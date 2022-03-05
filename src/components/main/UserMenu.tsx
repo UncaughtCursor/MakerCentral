@@ -1,0 +1,135 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable react/no-unused-prop-types */
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './UserMenu.css';
+import OutsideClickHandler from 'react-outside-click-handler';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import {
+	onAuthStateChanged, User,
+} from 'firebase/auth';
+import { auth, logout, promptGoogleLogin } from '@scripts/site/FirebaseUtil';
+import TriggerButton from '@components/pages/controls/TriggerButton';
+
+/**
+ * The user menu that displays on the site header.
+ */
+function UserMenu() {
+	const [isOpen, setIsOpen] = useState(false);
+	const [user, setUser] = useState(null as User | null);
+	const signedIn = user !== null;
+
+	onAuthStateChanged(auth, (authUser) => {
+		setUser(authUser);
+	});
+
+	const pfp = (user?.photoURL !== null
+		&& user?.photoURL !== '' && user?.photoURL !== undefined) ? (
+			<img
+				src={user!.photoURL!}
+				alt={user!.displayName!}
+				height="40px"
+				className="user-icon"
+				style={{
+					border: '1px solid var(--bg-lite)',
+				}}
+			/>
+		) : null;
+
+	return (
+		<div className="usermenu-container">
+			<div className="login-container" style={{ display: !signedIn ? 'flex' : 'none' }}>
+				<TriggerButton text="Log In" type="blue" onClick={() => { promptGoogleLogin(); }} />
+			</div>
+			<div style={{ display: signedIn ? 'flex' : 'none' }}>
+				<OutsideClickHandler onOutsideClick={() => { setIsOpen(false); }}>
+					<button
+						type="button"
+						className="usermenu"
+						onClick={() => { setIsOpen(!isOpen); }}
+						onKeyDown={() => { setIsOpen(!isOpen); }}
+					>
+						<AccountCircleIcon
+							className="user-icon"
+							fontSize="large"
+							style={{
+								color: 'var(--text-color)',
+								display: pfp === null ? '' : 'none',
+							}}
+						/>
+						{pfp}
+					</button>
+
+					<UserMenuDropdown isVisible={isOpen}>
+						<p
+							style={{ color: 'gray', fontSize: '12px', margin: '4px' }}
+						>{!signedIn ? 'Logged out' : `Logged in as ${user!.displayName}`}
+						</p>
+						<UserMenuItem text="Your Projects" to="/projects" />
+						<UserMenuItem text="Settings" to="/settings" />
+						<hr />
+						<UserMenuItem text="Log Out" to="/" do={logout} />
+					</UserMenuDropdown>
+				</OutsideClickHandler>
+			</div>
+		</div>
+	);
+}
+
+/**
+ * The dropdown menu for user actions.
+ * @param props.isVisible Whether or not the menu is visible.
+ */
+function UserMenuDropdown(props: {isVisible: boolean, children: React.ReactNode}) {
+	return (
+		<div className={`usermenudropdown ${!props.isVisible ? 'hidden' : ''}`}>
+			{props.children}
+		</div>
+	);
+}
+
+/**
+ * A dropdown menu item for user actions.
+ * @param props.text The text to display.
+ * @param props.to (Optional) The destination path when clicked.
+ * @param props.do (Optional) A function to execute when clicked.
+ * @param props.isVisible Whether or not the item is visible.
+ */
+function UserMenuItem(props: {
+	text: string,
+	to?: string | null,
+	do?: () => void,
+	isVisible?: boolean
+}) {
+	if (props.to !== null) {
+		return (
+			<Link
+				className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
+				to={props.to!}
+				onClick={props.do!}
+			>{props.text}
+			</Link>
+		);
+	}
+
+	return (
+		<a
+			className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
+			role="button"
+			onClick={props.do!}
+		>{props.text}
+		</a>
+	);
+}
+
+UserMenuItem.defaultProps = {
+	isVisible: true,
+	to: null,
+	do: () => {},
+};
+
+export default UserMenu;
+export { UserMenuDropdown };
+export { UserMenuItem };

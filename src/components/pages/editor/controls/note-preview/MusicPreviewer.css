@@ -1,0 +1,11 @@
+.music-previewer-container {
+	width: 100%;
+	background-color: var(--bg-darker);
+	border-radius: 2px;
+	margin: 0 auto;
+}
+
+.music-previewer-toolbar {
+	display: flex;
+	flex-wrap: wrap;
+}

@@ -1,0 +1,41 @@
+.check-result-container {
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+	background-color: var(--bg-dark);
+	padding: 20px;
+	border-radius: 8px;
+}
+
+.check-result {
+	display: flex;
+}
+
+.check-result-wrapper {
+	display: flex;
+	flex-direction: column;
+}
+
+.check-result-wrapper > p {
+	margin: 0;
+	margin-left: 5px;
+	text-align: left;
+}
+
+.check-result-wrapper.pass > p {
+	color: limegreen;
+}
+
+.check-result-wrapper.fail > p {
+	color: salmon;
+}
+
+@keyframes pop {
+	0%, 100% {
+		transform: scale(1);
+	}
+	50% {
+		transform: scale(1.2);
+	}
+
+}

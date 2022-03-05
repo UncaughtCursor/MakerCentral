@@ -1,0 +1,48 @@
+.editor-display {
+	display: flex;
+	align-items: stretch;
+	flex-direction: column;
+	min-height: calc(100vh - 2 * var(--header-height));
+	justify-content: top;
+}
+
+.editor-sidebar {
+	width: 240px;
+	background-color: var(--bg-dark);
+}
+
+.editor-nav {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 10px;
+	justify-content: center;
+	background-color: var(--bg-dark);
+	margin: 10px auto;
+	width: max-content;
+	border-radius: 12px;
+}
+
+.editor-nav-link-container {
+	display: flex;
+	color: var(--inactive-white);
+}
+
+.editor-nav-link {
+	background-color: transparent;
+	border: none;
+	color: var(--inactive-white);
+	text-align: center;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+	margin: 0 5px;
+	padding: 5px 0px;
+}
+
+.editor-nav-active {
+	color: var(--text-color);
+}
+
+.editor-nav-link:hover {
+	color: var(--text-color);
+}
