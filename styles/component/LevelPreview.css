@@ -8,7 +8,6 @@
 	border-radius: 10px;
 	transition: transform 0.2s;
 	cursor: pointer;
-	height: 200px;
 }
 
 .user-level-preview:hover {
@@ -21,7 +20,8 @@
 
 .user-level-preview-img-container > img {
 	aspect-ratio: 16 / 9;
-	height: 100%;
+	max-width: 340px;
+	width: 80vw;
 }
 
 .user-level-preview-details {
@@ -46,4 +46,14 @@
 .view-like-count > p {
 	margin: 0;
 	user-select: none;
+}
+
+@media (max-width: 850px) {
+	.user-level-preview {
+		max-width: 360px;
+	}
+
+	.user-level-preview-details > p, .user-level-preview-details > h3 {
+		text-align: center;
+	}
 }

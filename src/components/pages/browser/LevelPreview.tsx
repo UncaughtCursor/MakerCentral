@@ -6,6 +6,7 @@ import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useRouter } from 'next/router';
+import { useMediaQuery } from 'react-responsive';
 import TagDisplay from './TagDisplay';
 
 const timeAgo = new TimeAgo('en-us');
@@ -22,13 +23,34 @@ function LevelPreview(props: {
 	props.level.uploadTime = props.level.uploadTime as number;
 	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
 	const history = useRouter();
-	return (
-		<div
-			className="user-level-preview"
-			onClick={() => {
-				history.push(`/levels/view/${props.level.id}`);
+	const isMobileMode = useMediaQuery({ query: '(max-width: 850px)' });
+
+	const previewContainerContents = isMobileMode ? (
+		<div className="user-level-preview-details">
+			<h3>{props.level.name}</h3>
+			<div className="user-level-preview-img-container">
+				<img alt={props.level.name} src={props.level.thumbnailUrl} />
+			</div>
+			<div style={{
+				display: 'flex',
+				gap: '20px',
+				justifyContent: 'center',
+				margin: '-20px 0 -15px 0',
 			}}
-		>
+			>
+				<p>{props.level.makerName} • {timeAgoStr}</p>
+				<div className="view-like-count">
+					<LikeIcon style={{ color: 'var(--text-color)' }} />
+					<p>{props.level.numLikes}</p>
+					<CommentIcon style={{ color: 'var(--text-color)' }} />
+					<p>{props.level.numComments}</p>
+				</div>
+			</div>
+			<TagDisplay tags={props.level.tags} />
+			<p>{props.level.shortDescription}</p>
+		</div>
+	) : (
+		<>
 			<div className="user-level-preview-img-container">
 				<img alt={props.level.name} src={props.level.thumbnailUrl} />
 			</div>
@@ -44,6 +66,16 @@ function LevelPreview(props: {
 				<TagDisplay tags={props.level.tags} />
 				<p>{props.level.shortDescription}</p>
 			</div>
+		</>
+	);
+
+	return (
+		<div
+			className="user-level-preview"
+			onClick={() => {
+				history.push(`/levels/view/${props.level.id}`);
+			}}
+		>{previewContainerContents}
 		</div>
 	);
 }
