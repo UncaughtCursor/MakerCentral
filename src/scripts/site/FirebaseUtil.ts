@@ -54,9 +54,13 @@ export const functions = getFunctions(app);
 // export const analytics = getAnalytics(app);
 
 // FIXME: COMMENT OUT IN PROD
-connectFirestoreEmulator(db, 'localhost', 8080);
-connectAuthEmulator(auth, 'http://localhost:9099');
-connectFunctionsEmulator(functions, 'localhost', 5001);
+try {
+	connectFirestoreEmulator(db, 'localhost', 8080);
+	connectAuthEmulator(auth, 'http://localhost:9099');
+	connectFunctionsEmulator(functions, 'localhost', 5001);
+} catch (e) {
+	console.log(e);
+}
 
 let user: User | null = null;
 onAuthStateChanged(auth, (authUser) => {
