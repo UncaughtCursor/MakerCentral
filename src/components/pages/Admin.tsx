@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import SettingsGroup from './controls/settings/SettingsGroup';
 import TextField from './controls/TextField';
 import TriggerButton from './controls/TriggerButton';
@@ -13,7 +13,7 @@ function Admin() {
 	const [uid, setUid] = useState('');
 
 	const ctx = useContext(EditorContext);
-	const history = useHistory();
+	const history = useRouter();
 	return (
 		<div style={{
 			display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
@@ -48,8 +48,11 @@ function Admin() {
 	 * Launches the track editor.
 	 * @param projectId The ID of the project to open or null to start a new one.
 	 */
-	function launchAdminEditor(projectId: string | null, viewUid: string | null,
-		projectName: string = 'Untitled Project') {
+	function launchAdminEditor(
+		projectId: string | null,
+		viewUid: string | null,
+		projectName: string = 'Untitled Project',
+	) {
 		ctx.projectId = projectId;
 		ctx.projectName = projectName;
 		ctx.isInitialized = false;

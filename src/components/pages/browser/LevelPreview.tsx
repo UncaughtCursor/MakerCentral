@@ -6,10 +6,8 @@ import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useRouter } from 'next/router';
-import en from 'javascript-time-ago/locale/en.json';
 import TagDisplay from './TagDisplay';
 
-TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-us');
 
 /**

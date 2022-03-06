@@ -102,14 +102,14 @@ function MusicPreviewer(props: MusicPreviewerProps) {
 	 * @param doTranspose Whether or not to transpose the instruments to correct for their octave.
 	 */
 	function beginPlayback(doTranspose: boolean) {
-		ctx.noteSchedule.clear();
-		ctx.noteSchedule.setEndTicks((props.endBeat - props.startBeat!) * defaultPlaybackPPQ);
-		ctx.noteSchedule.setOnDone(() => {
+		ctx.noteSchedule!.clear();
+		ctx.noteSchedule!.setEndTicks((props.endBeat - props.startBeat!) * defaultPlaybackPPQ);
+		ctx.noteSchedule!.setOnDone(() => {
 			AnimationController.stopAnimation();
 			resetPlaybackState();
 		});
 		const tempo = ctx.project.buildInstances[0].bpm;
-		ctx.noteSchedule.setTempo(tempo);
+		ctx.noteSchedule!.setTempo(tempo);
 
 		// Compute line step size for the playback line
 		const scrollPxPerFrame = (tempo * props.gridTileLength! * props.gridTilesPerBeat!) / 3600;
@@ -127,11 +127,11 @@ function MusicPreviewer(props: MusicPreviewerProps) {
 
 				const instrument = props.noteGroups[i].instrument;
 				const pitch = doTranspose ? note.pitch - (12 * EntityData[instrument].octave) : note.pitch;
-				ctx.noteSchedule.addNote(pitch, relativeBeat * defaultPlaybackPPQ, instrument);
+				ctx.noteSchedule!.addNote(pitch, relativeBeat * defaultPlaybackPPQ, instrument);
 			}
 		}
-		ctx.noteSchedule.stop();
-		ctx.noteSchedule.play();
+		ctx.noteSchedule!.stop();
+		ctx.noteSchedule!.play();
 
 		AnimationController.startAnimation((frame: number) => {
 			// Don't move the line until the load delay is reached.
@@ -150,7 +150,7 @@ function MusicPreviewer(props: MusicPreviewerProps) {
 	 * Stops playback of the displayed notes.
 	 */
 	function stopPlayback() {
-		ctx.noteSchedule.stop();
+		ctx.noteSchedule!.stop();
 		AnimationController.stopAnimation();
 		resetPlaybackState();
 	}

@@ -110,7 +110,7 @@ function EditorView() {
 
 		// Set context functions
 		ctx.func.setPage = (num: number) => {
-			ctx.noteSchedule.stop();
+			ctx.noteSchedule!.stop();
 			ctx.currentPage = num;
 			setPageLimit(getFinalAvailablePageNum());
 			setPageNum(num);

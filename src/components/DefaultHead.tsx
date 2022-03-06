@@ -13,15 +13,15 @@ function PageHead(props: {
 		<Head>
 			<base href="/" />
 			<meta charSet="utf-8" />
-			<link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+			<link rel="icon" href="favicon.ico" />
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=12.0, user-scalable=yes" />
 			<meta name="theme-color" content="#191d25" />
 			<meta
 				name="description"
 				content={props.description!}
 			/>
-			<link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-			<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+			<link rel="apple-touch-icon" href="logo192.png" />
+			<link rel="manifest" href="manifest.json" />
 			<title>{props.title!}</title>
 		</Head>
 	);

@@ -37,9 +37,18 @@ import '../styles/component/TrackList.css';
 import '../styles/component/UserMenu.css';
 
 import type { AppProps } from 'next/app';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en.json';
+
+TimeAgo.addDefaultLocale(en);
 
 function MyApp({ Component, pageProps }: AppProps) {
 	return <Component {...pageProps} />;
 }
+
+// if ('serviceWorker' in navigator) {
+// FIXME: UNCOMMENT IN PROD
+// navigator.serviceWorker.register('sw.js', { scope: '/' });
+// }
 
 export default MyApp;

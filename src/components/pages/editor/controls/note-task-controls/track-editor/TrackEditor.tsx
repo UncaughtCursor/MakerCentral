@@ -122,8 +122,10 @@ function TrackEditor() {
 							// Keep selected track index in bounds if there are deletions
 							setState({
 								...state,
-								selectedTrkId: Math.min(state.selectedTrkId,
-									buildInst.tracks.length - 1),
+								selectedTrkId: Math.min(
+									state.selectedTrkId,
+									buildInst.tracks.length - 1,
+								),
 							});
 						} else setState({ ...state });
 					}}
@@ -261,8 +263,12 @@ function TrackEditor() {
 		case 'Add Note': {
 			success = addNoteAtBeatAndPitch(data.beat, data.pitch, data.trkId);
 			if (success) {
-				previewInstrument(buildInst.tracks[state.selectedTrkId].instrument,
-					ctx.noteSchedule, data.pitch);
+				previewInstrument(
+					buildInst.tracks[state.selectedTrkId].instrument,
+					ctx.noteSchedule!,
+
+					data.pitch,
+				);
 			}
 			refreshTrack(data.trkId);
 			break;

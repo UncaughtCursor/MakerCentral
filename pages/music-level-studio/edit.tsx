@@ -1,4 +1,5 @@
 import AppFrame from '@components/AppFrame';
+import Gate from '@components/main/Gate';
 import React from 'react';
 import EditorContext, { defaultState } from '../../src/components/pages/editor/EditorContext';
 import EditorView from '../../src/components/pages/editor/EditorView';
@@ -9,9 +10,11 @@ import EditorView from '../../src/components/pages/editor/EditorView';
 function Editor() {
 	return (
 		<AppFrame>
-			<EditorContext.Provider value={defaultState}>
-				<EditorView />
-			</EditorContext.Provider>
+			<Gate requireEA showLogout={false}>
+				<EditorContext.Provider value={defaultState}>
+					<EditorView />
+				</EditorContext.Provider>
+			</Gate>
 		</AppFrame>
 	);
 }

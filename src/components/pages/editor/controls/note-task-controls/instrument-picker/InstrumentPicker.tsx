@@ -98,7 +98,7 @@ function InstrumentPicker(props: {
 					text={ins.name}
 					type={ins.name === props.selectedInstrument ? 'selected' : ''}
 					onClick={() => {
-						previewInstrument(ins.name, ctx.noteSchedule);
+						previewInstrument(ins.name, ctx.noteSchedule!);
 						props.onChange(ins.name as EntityType);
 					}}
 					animDelayPerPx={0.2}

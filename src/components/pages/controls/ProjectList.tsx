@@ -5,10 +5,8 @@ import {
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en.json';
 import EditorContext from '../editor/EditorContext';
 
-TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
 /**
