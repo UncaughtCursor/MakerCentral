@@ -1,8 +1,9 @@
+import AppFrame from '@components/AppFrame';
 import { getUser } from '@scripts/site/FirebaseUtil';
 import { hasEarlyAccess } from '@scripts/site/UserDataScripts';
 import React, { useState } from 'react';
-import RewardRedeemer from './controls/settings/RewardRedeemer';
-import SettingsGroup from './controls/settings/SettingsGroup';
+import RewardRedeemer from '../src/components/pages/controls/settings/RewardRedeemer';
+import SettingsGroup from '../src/components/pages/controls/settings/SettingsGroup';
 
 interface SettingsPageState {
 
@@ -42,23 +43,25 @@ function SettingsPage() {
 	);
 	const anOrAnother = hasEarlyAccess() ? 'another' : 'an';
 	return (
-		<div style={{
-			display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
-		}}
-		>
-			<h1>Settings</h1>
-			<SettingsGroup name="Your Info">
-				<p>Display Name: {user?.displayName}</p>
-				{/* <p>Email Address: {user?.email}</p> */}
-				<p>User ID: {user?.uid}</p>
-			</SettingsGroup>
-			<SettingsGroup name="Early Access">
-				{eaDisplay}
-				<p>If you have {anOrAnother} early access key, you can use it here.</p>
-				<RewardRedeemer />
-			</SettingsGroup>
-			<br />
-		</div>
+		<AppFrame>
+			<div style={{
+				display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
+			}}
+			>
+				<h1>Settings</h1>
+				<SettingsGroup name="Your Info">
+					<p>Display Name: {user?.displayName}</p>
+					{/* <p>Email Address: {user?.email}</p> */}
+					<p>User ID: {user?.uid}</p>
+				</SettingsGroup>
+				<SettingsGroup name="Early Access">
+					{eaDisplay}
+					<p>If you have {anOrAnother} early access key, you can use it here.</p>
+					<RewardRedeemer />
+				</SettingsGroup>
+				<br />
+			</div>
+		</AppFrame>
 	);
 }
 

@@ -1,17 +1,18 @@
 import React, { useContext } from 'react';
-import { useHistory } from 'react-router-dom';
-import EditorContext from './editor/EditorContext';
-import TriggerButton from './controls/TriggerButton';
-import ProjectList from './controls/ProjectList';
+import { useRouter } from 'next/router';
+import AppFrame from '@components/AppFrame';
+import EditorContext from '../../src/components/pages/editor/EditorContext';
+import TriggerButton from '../../src/components/pages/controls/TriggerButton';
+import ProjectList from '../../src/components/pages/controls/ProjectList';
 
 /**
  * The initial project creation page.
  */
 function Builder() {
-	const history = useHistory();
+	const router = useRouter();
 	const ctx = useContext(EditorContext);
 	return (
-		<div>
+		<AppFrame>
 			<h1>Music Level Studio</h1>
 			<p>To begin, start a new project or open an existing one.</p>
 			<br />
@@ -24,7 +25,7 @@ function Builder() {
 			<br />
 			<h3>Recent Projects</h3>
 			<ProjectList limit={3} />
-		</div>
+		</AppFrame>
 	);
 
 	/**
@@ -36,7 +37,7 @@ function Builder() {
 		ctx.projectId = projectId;
 		ctx.projectName = projectName;
 		ctx.isInitialized = false;
-		history.push('/builder/editor');
+		router.push('/music-level-studio/edit');
 	}
 }
 

@@ -36,7 +36,7 @@ const userLevelTags = [
 export interface UserLevel {
 	name: string;
 	id: string;
-	timestamp: Timestamp;
+	uploadTime: Timestamp | number;
 	thumbnailUrl: string;
 	levelCode: string;
 	makerName: string;
@@ -59,8 +59,10 @@ export type UserLevelTag = typeof userLevelTags[number];
  * @param numLevels The number of levels to get.
  * @returns The levels returned from the query.
  */
-export async function queryLevels(queryConstraints: QueryConstraint[],
-	numLevels: number): Promise<UserLevel[]> {
+export async function queryLevels(
+	queryConstraints: QueryConstraint[],
+	numLevels: number,
+): Promise<UserLevel[]> {
 	const levelsRef = collection(db, 'levels');
 	const constraints = [
 		...queryConstraints,
@@ -69,10 +71,14 @@ export async function queryLevels(queryConstraints: QueryConstraint[],
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
 
-	return queryDocs.docs.map((levelDoc) => ({
-		...levelDoc.data(),
-		id: levelDoc.id,
-	} as UserLevel));
+	return queryDocs.docs.map((levelDoc) => {
+		const data = levelDoc.data();
+		return {
+			...data,
+			uploadTime: (data.uploadTime as Timestamp).toDate().getTime(),
+			id: levelDoc.id,
+		} as UserLevel;
+	});
 }
 
 /**
@@ -84,8 +90,10 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 	const levelRef = doc(db, `levels/${id}`);
 	const levelDoc = await getDoc(levelRef);
 	if (!levelDoc.exists()) return null;
+	const data = levelDoc.data();
 	return {
-		...levelDoc.data(),
+		...data,
+		uploadTime: (data.uploadTime as Timestamp).toDate().getTime(),
 		id: levelDoc.id,
 	} as UserLevel;
 }

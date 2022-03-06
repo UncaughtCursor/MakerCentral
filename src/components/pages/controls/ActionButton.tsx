@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 
 /**
  * A button to lead the user to a new page.
@@ -9,8 +9,13 @@ import { Link } from 'react-router-dom';
  */
 function ActionButton(props: {to: string, text: string, onClick?: () => void}) {
 	return (
-		<Link to={props.to} onClick={props.onClick!}>
-			<button className="action-button" type="button">{props.text}</button>
+		<Link href={props.to}>
+			<button
+				className="action-button"
+				type="button"
+				onClick={props.onClick!}
+			>{props.text}
+			</button>
 		</Link>
 	);
 }

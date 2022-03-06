@@ -5,9 +5,11 @@ import React from 'react';
 import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
+import en from 'javascript-time-ago/locale/en.json';
 import TagDisplay from './TagDisplay';
 
+TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-us');
 
 /**
@@ -18,8 +20,10 @@ const timeAgo = new TimeAgo('en-us');
 function LevelPreview(props: {
 	level: UserLevel,
 }) {
-	const timeAgoStr = timeAgo.format(props.level.timestamp.toDate());
-	const history = useHistory();
+	// eslint-disable-next-line no-param-reassign
+	props.level.uploadTime = props.level.uploadTime as number;
+	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
+	const history = useRouter();
 	return (
 		<div
 			className="user-level-preview"

@@ -3,7 +3,7 @@ import {
 	collection, DocumentData, getDocs, limit, orderBy, query,
 } from 'firebase/firestore/lite';
 import React, { useContext, useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useRouter } from 'next/router';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
 import EditorContext from '../editor/EditorContext';
@@ -23,7 +23,7 @@ function ProjectList(props: {
 	const [projects, setProjects] = useState([] as DocumentData[]);
 
 	const ctx = useContext(EditorContext);
-	const history = useHistory();
+	const router = useRouter();
 
 	useEffect(() => {
 		const projectQuery = async function projectQuery() {
@@ -92,7 +92,7 @@ function ProjectList(props: {
 		ctx.projectId = projectId;
 		ctx.projectName = projectName;
 		ctx.isInitialized = false;
-		history.push('/builder/editor');
+		router.push('/music-level-studio/edit');
 	}
 }
 

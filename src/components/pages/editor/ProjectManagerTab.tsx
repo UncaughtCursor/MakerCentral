@@ -4,10 +4,12 @@ import { auth, getUser, randomString } from '@scripts/site/FirebaseUtil';
 import TimeAgo from 'javascript-time-ago';
 import useInterval from 'use-interval';
 import { onAuthStateChanged } from 'firebase/auth';
+import en from 'javascript-time-ago/locale/en.json';
 import TriggerButton from '../controls/TriggerButton';
 import TextField from '../controls/TextField';
 import EditorContext from './EditorContext';
 
+TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
 type ProjectManagerTabProperty = 'name' | 'description';

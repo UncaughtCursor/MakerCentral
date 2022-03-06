@@ -7,7 +7,7 @@ export interface EditorState {
 	projectId: string | null;
 	projectName: string;
 	isInitialized: boolean,
-	noteSchedule: NoteSchedule;
+	noteSchedule: NoteSchedule | null;
 	func: {
 		setPage(num: number): void;
 		genNoteGrids(): void;
@@ -22,7 +22,7 @@ export const defaultState: EditorState = {
 	projectId: null,
 	projectName: 'Untitled Project',
 	isInitialized: false,
-	noteSchedule: new NoteSchedule(),
+	noteSchedule: typeof window !== 'undefined' ? new NoteSchedule() : null,
 	func: {
 		setPage: () => {},
 		genNoteGrids: () => {},

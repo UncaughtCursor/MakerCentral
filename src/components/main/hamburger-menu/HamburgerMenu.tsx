@@ -32,7 +32,7 @@ function HamburgerMenu(props: {
 		<div className={`hamburger-menu${secondClassStr}`}>
 			<Navlink to="/" text="Home" onClick={requestMenuClose} />
 			<Navlink to="/levels" text="Level Gallery" onClick={requestMenuClose} />
-			<Navlink to="/builder" text="Music Level Studio" onClick={requestMenuClose} />
+			<Navlink to="/music-level-studio" text="Music Level Studio" onClick={requestMenuClose} />
 			<Navlink to="/news" text="News" onClick={requestMenuClose} />
 			<Navlink to="/about" text="About" onClick={requestMenuClose} />
 			<hr style={{ width: '85%' }} />

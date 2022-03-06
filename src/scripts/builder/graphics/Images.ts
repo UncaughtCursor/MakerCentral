@@ -19,7 +19,7 @@ export function getImage(name: string): HTMLImageElement {
 export async function loadImages() {
 	for (let i = 0; i < ImageNames.length; i++) {
 		const imageName = ImageNames[i];
-		const loadedImage = await loadImage(`${process.env.PUBLIC_URL}/img/${imageName}.png`);
+		const loadedImage = await loadImage(`/img/${imageName}.png`);
 		loadedImages.set(imageName, loadedImage);
 	}
 	isLoaded = true;

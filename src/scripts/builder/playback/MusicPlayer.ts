@@ -27,9 +27,13 @@ export async function loadBuffersInSchedule(schedule: NoteSchedule) {
 				// const baseNote: number = dataEntry.baseNote ? dataEntry.baseNote! : KEY_C5;
 				/* const sustainLength: number = dataEntry.sustainLength
 					? dataEntry.sustainLength! : DEFAULT_SUSTAIN_TIME; */
-				const loadPromise = schedule.addInstrument(instrumentName,
-					`${process.env.PUBLIC_URL}/sound/${instrumentName}.mp3`,
-					KEY_C5, DEFAULT_SUSTAIN_TIME);
+				const loadPromise = schedule.addInstrument(
+					instrumentName,
+					`/sound/${instrumentName}.mp3`,
+					KEY_C5,
+
+					DEFAULT_SUSTAIN_TIME,
+				);
 				loadPromise.then(() => { resolve(); }).catch((err) => { reject(err); });
 			})));
 		});
@@ -42,8 +46,11 @@ export async function loadBuffersInSchedule(schedule: NoteSchedule) {
  * @param noteSchedule The NoteSchedule to use for playback.
  * @param noteNumber (Optional) The note number to play.
  */
-export function previewInstrument(instrumentName: string,
-	noteSchedule: NoteSchedule, noteNumber: number = KEY_C5) {
+export function previewInstrument(
+	instrumentName: string,
+	noteSchedule: NoteSchedule,
+	noteNumber: number = KEY_C5,
+) {
 	noteSchedule.stop();
 	noteSchedule.clear();
 	noteSchedule.setOnDone(() => {});

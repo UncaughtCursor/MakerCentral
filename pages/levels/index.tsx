@@ -1,7 +1,8 @@
 import { orderBy, QueryConstraint, where } from 'firebase/firestore/lite';
 import React, { useState } from 'react';
-import SelectInput from '../controls/SelectInput';
-import LevelCategoryView from './LevelCategoryView';
+import AppFrame from '@components/AppFrame';
+import SelectInput from '../../src/components/pages/controls/SelectInput';
+import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const millisPerWeek = 604800000;
 const weekAgo = new Date(Date.now() - millisPerWeek);
@@ -28,7 +29,7 @@ function LevelBrowser() {
 	const [sort, setSort] = useState(levelBrowserSorts[defaultSortName]);
 	const [sortName, setSortName] = useState(defaultSortName);
 	return (
-		<>
+		<AppFrame>
 			<h1>Level Gallery</h1>
 			{/* FIXME: Timestamp query filter */}
 			<SelectInput
@@ -46,7 +47,7 @@ function LevelBrowser() {
 				numEntries={10}
 				doPaginate={false}
 			/>
-		</>
+		</AppFrame>
 	);
 }
 

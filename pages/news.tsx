@@ -1,3 +1,4 @@
+import AppFrame from '@components/AppFrame';
 import React from 'react';
 
 const discordLink = 'https://discord.gg/KhmXzfp';
@@ -8,7 +9,7 @@ const twitterLink = 'https://twitter.com/MusicLvlStudio';
  */
 function News() {
 	return (
-		<>
+		<AppFrame>
 			<h1>News</h1>
 			<p>Under Construction!</p>
 			<br />
@@ -27,7 +28,7 @@ function News() {
 				>Twitter
 				</a> for the latest news.
 			</p>
-		</>
+		</AppFrame>
 	);
 }
 

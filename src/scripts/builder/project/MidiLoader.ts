@@ -151,9 +151,7 @@ function processMidi(midiFile: any): ProjectMidi {
 
 	const tracks = processRawNotes(rawNotes);
 
-	const totalBeatDuration = tracks.reduce(
-		(max: number, track: ProjectMidiTrack) => Math.max(max, track.beatDuration), 0,
-	);
+	const totalBeatDuration = tracks.reduce((max: number, track: ProjectMidiTrack) => Math.max(max, track.beatDuration), 0);
 
 	// Set default tempo if none is found
 	if (tempoChanges.length === 0) {
