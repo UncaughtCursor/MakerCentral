@@ -29,12 +29,14 @@ function Gate(props: {
 		setOpenState(getOpenStateFromUser(authUser));
 	});
 
-	document.addEventListener('userinit', () => {
-		const newUser = getUser()!;
-		setOpenState(getOpenStateFromUser(newUser));
-		setUser(newUser);
-		setIsLoading(false);
-	});
+	if (typeof document !== 'undefined') {
+		document.addEventListener('userinit', () => {
+			const newUser = getUser()!;
+			setOpenState(getOpenStateFromUser(newUser));
+			setUser(newUser);
+			setIsLoading(false);
+		});
+	}
 
 	const [openState, setOpenState] = useState(getOpenStateFromUser(user));
 	console.log(getUser());

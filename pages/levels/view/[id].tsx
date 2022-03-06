@@ -20,7 +20,7 @@ function LevelPage(props: {
 		<AppFrame>
 			<div className="level-page-content">
 				<div className="level-page-top">
-					<div className="level-page-info-container">
+					<div className="level-page-info-container" style={{ flexGrow: 6 }}>
 						<div style={{ marginBottom: '10px' }}>
 							<h3 className="level-page-title">{level.name}</h3>
 							<p className="level-code">{level.levelCode}</p>
@@ -33,7 +33,7 @@ function LevelPage(props: {
 					<div
 						className="level-page-info-container"
 						style={{
-							flexGrow: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center',
+							flexGrow: 4, display: 'flex', flexDirection: 'column', justifyContent: 'center',
 						}}
 					>
 						<table className="info-table">

@@ -43,7 +43,9 @@ function ProjectList(props: {
 		};
 
 		if (getUser() !== null) projectQuery();
-		document.addEventListener('userinit', () => { projectQuery(); });
+		if (typeof document !== 'undefined') {
+			document.addEventListener('userinit', () => { projectQuery(); });
+		}
 	}, []);
 
 	return (

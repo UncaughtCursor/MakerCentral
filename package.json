@@ -6,15 +6,18 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "analyze": "cross-env ANALYZE=true next build"
   },
   "dependencies": {
     "@emotion/react": "^11.8.1",
     "@emotion/styled": "^11.8.1",
     "@mui/icons-material": "^5.4.4",
     "@mui/material": "^5.4.4",
+    "@next/bundle-analyzer": "^12.1.0",
     "color": "^4.2.1",
     "compute-lcm": "^1.1.2",
+    "cross-env": "^7.0.3",
     "firebase": "^9.6.8",
     "javascript-time-ago": "^2.3.13",
     "lz-string": "^1.4.4",

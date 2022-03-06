@@ -10,12 +10,14 @@
 
 .level-page-img-container {
 	max-width: 400px;
+	margin: 0 auto;
 }
 
 .level-page-top {
 	display: flex;
 	gap: 20px;
 	margin-top: 20px;
+	flex-wrap: wrap;
 }
 
 .level-page-title {

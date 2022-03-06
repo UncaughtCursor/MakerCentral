@@ -30,7 +30,7 @@ function InstrumentPicker(props: {
 	useEffect(() => {
 		const dropup = dropupRef.current!;
 
-		if (state.isOpen) {
+		if (state.isOpen && typeof window !== 'undefined') {
 			// Scroll dropup into view
 			const verticalOfs = 55 + 20; // Header height plus 20 px
 			const dropupPos = dropup.getBoundingClientRect().top;

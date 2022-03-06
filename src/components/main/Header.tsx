@@ -11,22 +11,58 @@ import HamburgerMenu from './hamburger-menu/HamburgerMenu';
  */
 function Header() {
 	const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
+	const isMakerCentral = false; // FIXME: SET TO FALSE IN PROD
+	const titleContents = isMakerCentral ? (
+		<>
+			<div style={{
+				display: 'flex',
+				flexDirection: 'column',
+				justifyContent: 'center',
+				marginLeft: '8px',
+			}}
+			>
+				<Image
+					src="/logo.png"
+					alt="Music Level Studio"
+					width={45}
+					height={45}
+					layout="fixed"
+				/>
+			</div>
+			<h3 style={{ textDecoration: 'none' }}>Music Level Studio</h3>
+			<p style={{
+				margin: 0,
+				marginLeft: '10px',
+				fontSize: '12px',
+				fontWeight: 'bold',
+				textDecoration: 'none',
+			}}
+			>EARLY ACCESS
+			</p>
+		</>
+	) : (
+		<div style={{
+			display: 'flex',
+			flexDirection: 'column',
+			justifyContent: 'center',
+			marginLeft: '8px',
+		}}
+		>
+			<Image
+				src="/logo.png"
+				alt="MakerCentral"
+				width={228}
+				height={25}
+				layout="fixed"
+			/>
+		</div>
+	);
 	return (
 		<>
 			<div className="header">
 				<Link href="/">
-					<div className="titleContainer">
-						<Image src="/logo.png" alt="Music Level Studio" width={45} height={45} />
-						<h3 style={{ textDecoration: 'none' }}>Music Level Studio</h3>
-						<p style={{
-							margin: 0,
-							marginLeft: '10px',
-							fontSize: '12px',
-							fontWeight: 'bold',
-							textDecoration: 'none',
-						}}
-						>EARLY ACCESS
-						</p>
+					<div className="titleContainer" style={{ cursor: 'pointer' }}>
+						{titleContents}
 					</div>
 				</Link>
 				<Navbar />

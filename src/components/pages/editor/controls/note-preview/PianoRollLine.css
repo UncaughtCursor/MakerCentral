@@ -1,7 +1,0 @@
-.piano-roll-line {
-	border: 1px solid white;
-	border-radius: 2px;
-	position: absolute;
-	z-index: 1;
-	pointer-events: none;
-}

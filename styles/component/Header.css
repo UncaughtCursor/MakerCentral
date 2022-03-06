@@ -12,6 +12,7 @@
 	display: flex;
 	align-items: stretch;
 	line-height: 55px;
+	height: 55px;
 }
 
 .titleContainer h3 {
