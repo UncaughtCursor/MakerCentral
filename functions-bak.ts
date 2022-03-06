@@ -2,6 +2,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import next from 'next';
+// eslint-disable-next-line import/no-extraneous-dependencies
 
 // IMPORTANT: RUN 'npx tsc -w' after changes are made!!
 
@@ -33,8 +34,8 @@ const server = next({
 });
 
 const nextjsHandle = server.getRequestHandler();
-export const nextServer = functions.https.onRequest(
-	(req: any, res: any) => server.prepare().then(() => nextjsHandle(req, res)),
+exports.nextServer = functions.https.onRequest(
+	(req, res) => server.prepare().then(() => nextjsHandle(req, res)),
 );
 
 export const initUser = functions.https.onCall(async (_data, context) => {
@@ -107,10 +108,10 @@ keyData.rewardDays,
 					} else {
 						// Return result of activating the reward (with expiry date)
 						activateReward(
-context.auth!.uid,
-keyData.reward,
-keyData.rewardDays,
-expiryDate,
+							context.auth!.uid,
+							keyData.reward,
+							keyData.rewardDays,
+							expiryDate,
 						).then((res) => { resolve(res); }).catch((e) => {
 							resolve({
 								success: false,

@@ -1,13 +1,8 @@
 import { getLevel, UserLevel } from '@scripts/browser/BrowserUtil';
-import TimeAgo from 'javascript-time-ago';
 import React from 'react';
-import en from 'javascript-time-ago/locale/en.json';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
-
-TimeAgo.addDefaultLocale(en);
-const timeAgo = new TimeAgo('en-us');
 
 /**
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
