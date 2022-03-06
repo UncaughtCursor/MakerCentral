@@ -1,20 +1,18 @@
 import React from 'react';
 
-import ProjectsPage from '@components/pages/ProjectsPage';
+import ProjectsPage from 'pages/projects';
 
-import SettingsPage from '@components/pages/SettingsPage';
+import SettingsPage from 'pages/settings';
 import Gate from '@components/main/Gate';
-import News from '@components/pages/News';
+import News from 'pages/news';
 import Admin from '@components/pages/Admin';
-import LevelBrowser from '@components/pages/browser/LevelBrowser';
-import LevelPage from '@components/pages/browser/LevelPage';
+import LevelBrowser from 'pages/levels';
+import LevelPage from 'pages/levels/view/[id]';
 import Header from './components/main/Header';
 import Footer from './components/main/Footer';
 
-import Home from './components/pages/Home';
-import About from './components/pages/About';
-import Builder from './components/pages/Builder';
-import Editor from './components/pages/editor/Editor';
+import Builder from '../pages/music-level-studio';
+import Editor from '../pages/music-level-studio/edit';
 
 /**
  * The main app component.
