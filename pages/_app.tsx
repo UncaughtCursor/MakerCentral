@@ -35,6 +35,7 @@ import '../styles/component/TileLengthChooser.css';
 import '../styles/component/TrackEditor.css';
 import '../styles/component/TrackList.css';
 import '../styles/component/UserMenu.css';
+import '../styles/component/LevelGallery.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';

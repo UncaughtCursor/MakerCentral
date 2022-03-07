@@ -38,7 +38,7 @@ function TrackSettingsEditor(props: {
 				<TextField
 					label="Track Name"
 					value={selectedTrack.name}
-					maxWidthPx={150}
+					widthPx={150}
 					onChange={(name: string) => {
 						selectedTrack.name = name.length > 0 ? name : 'Untitled Track';
 						props.onChange();

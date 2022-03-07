@@ -17,7 +17,7 @@ function SelectInput(props: {
 }) {
 	return (
 		<div>
-			<p style={{ margin: 0, marginBottom: '4px' }}>{props.label}</p>
+			<p style={{ margin: 0, marginBottom: '4px', fontSize: '14px' }}>{props.label}</p>
 			<select
 				className="select-input"
 				onChange={(e: SyntheticEvent) => {

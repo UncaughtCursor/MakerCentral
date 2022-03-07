@@ -1,23 +1,31 @@
 import React from 'react';
 
 /**
- * A text field input.
+ * A text area input.
  * @param props.label The text to display.
  * @param props.onChange The callback function to be called when the input text is changed.
  */
-function TextField(props: {label: string,
+function TextArea(props: {label: string,
 	onChange: (value: string) => void, value?: string,
-	widthPx?: number, password?: boolean, maxLength?: number}) {
+	widthPx?: number, heightPx?: number, maxLength?: number}) {
 	return (
 		<div className="text-field-container">
 			<div>
 				<label htmlFor={props.label}>{props.label}</label>
 			</div>
-			<input
+			<textarea
 				id={props.label}
-				type={props.password ? 'password' : 'text'}
 				value={props.value!}
-				style={{ width: `${props.widthPx!}px` }}
+				style={{
+					backgroundColor: 'var(--bg-darker)',
+					border: 'none',
+					width: `${props.widthPx!}px`,
+					height: `${props.heightPx!}px`,
+					resize: 'none',
+					color: 'var(--text-color)',
+					fontFamily: 'sans-serif',
+					fontSize: '14px',
+				}}
 				onChange={handleChange}
 				maxLength={props.maxLength!}
 			/>
@@ -34,11 +42,11 @@ function TextField(props: {label: string,
 	}
 }
 
-TextField.defaultProps = {
+TextArea.defaultProps = {
 	value: '',
-	widthPx: 250,
-	password: false,
+	widthPx: 350,
+	heightPx: 250,
 	maxLength: Infinity,
 };
 
-export default TextField;
+export default TextArea;

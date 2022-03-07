@@ -26,7 +26,11 @@ function LevelPage(props: {
 							<p className="level-code">{level.levelCode}</p>
 						</div>
 						<div className="level-page-img-container">
-							<img className="level-page-img" src={level.thumbnailUrl} alt={level.name} />
+							<img
+								className="level-page-img"
+								src={level.thumbnailUrl}
+								alt={level.name}
+							/>
 							<p><i>{level.shortDescription}</i></p>
 						</div>
 					</div>

@@ -27,9 +27,12 @@ function LevelPreview(props: {
 
 	const previewContainerContents = isMobileMode ? (
 		<div className="user-level-preview-details">
-			<h3>{props.level.name}</h3>
+			<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
 			<div className="user-level-preview-img-container">
-				<img alt={props.level.name} src={props.level.thumbnailUrl} />
+				<img
+					alt={props.level.name}
+					src={props.level.thumbnailUrl}
+				/>
 			</div>
 			<div style={{
 				display: 'flex',
@@ -47,7 +50,7 @@ function LevelPreview(props: {
 				</div>
 			</div>
 			<TagDisplay tags={props.level.tags} />
-			<p>{props.level.shortDescription}</p>
+			<p style={{ overflowWrap: 'anywhere' }}>{props.level.shortDescription}</p>
 		</div>
 	) : (
 		<>
@@ -55,7 +58,7 @@ function LevelPreview(props: {
 				<img alt={props.level.name} src={props.level.thumbnailUrl} />
 			</div>
 			<div className="user-level-preview-details">
-				<h3>{props.level.name}</h3>
+				<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
 				<p>{props.level.makerName} • {timeAgoStr}</p>
 				<div className="view-like-count">
 					<LikeIcon style={{ color: 'var(--text-color)' }} />
@@ -64,7 +67,7 @@ function LevelPreview(props: {
 					<p>{props.level.numComments}</p>
 				</div>
 				<TagDisplay tags={props.level.tags} />
-				<p>{props.level.shortDescription}</p>
+				<p style={{ overflowWrap: 'anywhere' }}>{props.level.shortDescription}</p>
 			</div>
 		</>
 	);

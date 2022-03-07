@@ -15,7 +15,7 @@ export interface QueryOrder {
 	order: OrderByDirection;
 }
 
-const userLevelTags = [
+export const userLevelTags = [
 	'Standard',
 	'Puzzle',
 	'Music',
@@ -36,21 +36,35 @@ const userLevelTags = [
 export interface UserLevel {
 	name: string;
 	id: string;
-	uploadTime: Timestamp | number;
+	uploadTime: number;
+	editedTime: number;
 	thumbnailUrl: string;
+	imageUrls: string[];
 	levelCode: string;
 	makerName: string;
 	makerUid: string;
-	difficulty: 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
-	gameStyle: 'SMB1' | 'SMB3' | 'SMW' | 'NSMBU' | 'SM3DW';
+	difficulty: Difficulty;
+	gameStyle: GameStyle;
 	numLikes: number;
 	numComments: number;
 	shortDescription: string;
 	description: string;
 	tags: UserLevelTag[];
+	publicationStatus: 'Private' | 'Public' | 'Removed';
+	removalMessage: string | undefined;
 }
 
 export type UserLevelTag = typeof userLevelTags[number];
+
+export const gameStyles = [
+	'SMB1', 'SMB3', 'SMW', 'NSMBU', 'SM3DW',
+] as const;
+export type GameStyle = typeof gameStyles[number];
+
+export const difficulties = [
+	'Easy', 'Normal', 'Expert', 'Super Expert',
+] as const;
+export type Difficulty = typeof difficulties[number];
 
 /**
  * Runs a query through the set of levels.
@@ -75,7 +89,6 @@ export async function queryLevels(
 		const data = levelDoc.data();
 		return {
 			...data,
-			uploadTime: (data.uploadTime as Timestamp).toDate().getTime(),
 			id: levelDoc.id,
 		} as UserLevel;
 	});
@@ -93,7 +106,6 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 	const data = levelDoc.data();
 	return {
 		...data,
-		uploadTime: (data.uploadTime as Timestamp).toDate().getTime(),
 		id: levelDoc.id,
 	} as UserLevel;
 }
