@@ -18,13 +18,14 @@ function TextArea(props: {label: string,
 				value={props.value!}
 				style={{
 					backgroundColor: 'var(--bg-darker)',
-					border: 'none',
 					width: `${props.widthPx!}px`,
 					height: `${props.heightPx!}px`,
 					resize: 'none',
 					color: 'var(--text-color)',
 					fontFamily: 'sans-serif',
 					fontSize: '14px',
+					border: '2px solid var(--bg-norm)',
+					borderRadius: '4px',
 				}}
 				onChange={handleChange}
 				maxLength={props.maxLength!}

@@ -37,7 +37,7 @@ label {
 	display: block;
 	background-color: var(--bg-darker);
 	border: 2px solid var(--bg-norm);
-	border-radius: 2px;
+	border-radius: 4px;
 	color: var(--text-color);
 	padding: 4px;
 }
@@ -200,9 +200,9 @@ label {
 }
 
 .select-input {
-	background-color: var(--bg-dark);
+	background-color: var(--bg-darker);
 	color: var(--text-color);
-	border: 2px solid var(--bg-darker);
+	border: 2px solid var(--bg-norm);
 	border-radius: 4px;
 	padding: 5px 10px;
 }

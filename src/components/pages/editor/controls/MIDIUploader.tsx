@@ -18,6 +18,7 @@ function MIDIUploader(props: {onChange: () => void}) {
 				accepts={['.mid', '.midi']}
 				maxFileSize={10000000}
 				minFileSize={0}
+				multiple={false}
 			>
 				Drop your file here or click to upload.
 			</Files>
