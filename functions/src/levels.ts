@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
-import { resolve } from 'path';
 
 interface UserLevelInformation {
 	name: string;
@@ -60,10 +59,12 @@ type UserLevelTag = typeof userLevelTags[number];
 
 // eslint-disable-next-line import/prefer-default-export
 export const publishLevel = functions.https.onCall(async (data: {
-	level: UserLevel, globalUrls: string[]
+	level: UserLevelInformation, globalUrls: string[]
 }, context) => {
 	const level = data.level;
 	if (!is<UserLevelInformation>(level)) throw new Error('Level data does not fit the schema.');
+	if (level.imageLocalUrls.length === 0) throw new Error('Level data does not include an image.');
+	if (!isValidLevelCode(level.levelCode)) throw new Error('Invalid course ID.');
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	// TODO: Level upload limit
 
@@ -73,7 +74,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 	// Construct the published level data structure
 	const fullLevelData: UserLevel = {
 		name: level.name,
-		levelCode: level.levelCode,
+		levelCode: getFormattedCode(level.levelCode),
 		shortDescription: level.shortDescription,
 		description: level.description,
 		gameStyle: level.gameStyle,
@@ -111,4 +112,37 @@ function randomString(length: number) {
  * charactersLength));
 	}
 	return result;
+}
+
+/**
+ * Determines if the level code is valid.
+ * Valid level codes contain 9 alphanumeric characters,
+ * end with an F, G, or H, and do not contain the characters O, I, or Z.
+ * @param code The code to validate
+ * @returns Whether or not the code is valid.
+ */
+function isValidLevelCode(code: string) {
+	const alphanumericRegex = /([A-Z0-9])\w+/g;
+	const alphanumericChunks = code.toUpperCase().match(alphanumericRegex);
+	if (alphanumericChunks === null) return false;
+	const normalizedCode = alphanumericChunks.join('');
+
+	if (normalizedCode.length !== 9) return false;
+	const forbiddenCharsRegex = /[OIZ]/g;
+	const lastChar = normalizedCode.charAt(8);
+	return !forbiddenCharsRegex.test(normalizedCode)
+	&& (lastChar === 'F' || lastChar === 'G' || lastChar === 'H');
+}
+
+/**
+ * Puts level codes in the XXX-XXX-XXX format.
+ * @param code The level code to format.
+ * @returns The formatted level code.
+ */
+function getFormattedCode(code: string) {
+	const alphanumericRegex = /([A-Z0-9])\w+/g;
+	const alphanumericChunks = code.toUpperCase().match(alphanumericRegex);
+	if (alphanumericChunks === null) return '';
+	const normalizedCode = alphanumericChunks.join('');
+	return `${normalizedCode.substring(0, 3)}-${normalizedCode.substring(3, 6)}-${normalizedCode.substring(6, 9)}`;
 }
