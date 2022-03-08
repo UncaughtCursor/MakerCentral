@@ -1,0 +1,36 @@
+.user-level-tag-selectable, .user-level-tag-disabled, .user-level-tag-selected {
+	color: var(--text-color);
+	padding: 3px 8px;
+	background-color: var(--bg-norm);
+	border-radius: 20px;
+	user-select: none;
+	transition: background-color 0.1s;
+	transform: color 0.1s;
+}
+
+.user-level-tag-selectable {
+	cursor: pointer;
+}
+
+.user-level-tag-disabled {
+	background-color: var(--bg-darker);
+	color: var(--inactive-white);
+	cursor: not-allowed;
+}
+
+.user-level-tag-selected {
+	cursor: pointer;
+	background-color: var(--hl-med);
+}
+
+.user-level-tag-container {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+@media (max-width: 850px) {
+	.user-level-tag-container {
+		justify-content: center;
+	}
+}

@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 // import { getAnalytics } from 'firebase/analytics';
+import { connectStorageEmulator, getStorage } from 'firebase/storage';
 
 import { initUser } from './UserDataScripts';
 
@@ -51,13 +52,15 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
+export const storage = getStorage(app);
 // export const analytics = getAnalytics(app);
 
 // FIXME: COMMENT OUT IN PROD
 try {
-	connectFirestoreEmulator(db, 'localhost', 8080);
-	connectAuthEmulator(auth, 'http://localhost:9099');
-	connectFunctionsEmulator(functions, 'localhost', 5001);
+	connectFirestoreEmulator(db, '192.168.1.190', 8080);
+	connectAuthEmulator(auth, 'http://192.168.1.190:9099');
+	connectFunctionsEmulator(functions, '192.168.1.190', 5001);
+	connectStorageEmulator(storage, '192.168.1.190', 9199);
 } catch (e) {
 	console.log(e);
 }

@@ -1,9 +1,11 @@
-/* eslint-disable import/prefer-default-export */
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import next from 'next';
 
-// IMPORTANT: RUN 'npx tsc -w' after changes are made!!
+// Exports from other source files
+export * from './levels';
+
+// IMPORTANT: RUN 'npx ttsc -w' after changes are made!! (ttsc isn't a typo!)
 
 admin.initializeApp();
 

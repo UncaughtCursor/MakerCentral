@@ -1,49 +1,59 @@
 import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
-import LevelImageUploader from '@components/pages/browser/LevelImageUploader';
+import ImageUploader from '@components/pages/browser/LevelImageUploader';
+import TagSelector from '@components/pages/browser/TagSelector';
 import SelectInput from '@components/pages/controls/SelectInput';
 import TextArea from '@components/pages/controls/TextArea';
 import TextField from '@components/pages/controls/TextField';
+import TriggerButton from '@components/pages/controls/TriggerButton';
 import {
-	difficulties, Difficulty, GameStyle, gameStyles, UserLevelTag,
+	difficulties, Difficulty, GameStyle, gameStyles, UserLevel, UserLevelTag, userLevelTags,
 } from '@scripts/browser/BrowserUtil';
+import {
+	functions, getUser, randomString, storage,
+} from '@scripts/site/FirebaseUtil';
+import { httpsCallable } from 'firebase/functions';
+import {
+	getDownloadURL, ref, uploadBytes, UploadResult,
+} from 'firebase/storage';
+import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 
 interface UserLevelInformation {
 	name: string;
 	levelCode: string;
-	thumbnailUrl: string;
-	imageUrls: string[];
+	thumbnailIndex: number;
+	imageLocalUrls: string[];
 	shortDescription: string;
 	description: string;
 	difficulty: Difficulty;
 	gameStyle: GameStyle;
 	tags: UserLevelTag[];
-	editedTime: number;
 }
 
 const defaultLevel: UserLevelInformation = {
 	name: '',
 	levelCode: '',
-	thumbnailUrl: '',
-	imageUrls: [],
+	thumbnailIndex: 0,
+	imageLocalUrls: [],
 	shortDescription: '',
 	description: '',
 	difficulty: 'Normal',
 	gameStyle: 'SMB1',
 	tags: [],
-	editedTime: Date.now(),
 };
 
 // Code validation:
 // 9 alphanumeric characters
 // Last character is F, G, or H
+// O, I and Z are not used
 
 /**
  * The page used for editing and uploading levels.
  */
 function LevelUploadPage() {
 	const [level, setLevel] = useState(defaultLevel);
+	const router = useRouter();
 	return (
 		<AppFrame>
 			<Gate requireEA={false} showLogout={false}>
@@ -92,7 +102,7 @@ function LevelUploadPage() {
 							<TextField
 								label="Preview Text"
 								value={level.shortDescription}
-								widthPx={356}
+								widthPx={355}
 								onChange={(text) => {
 									setLevel({
 										...level,
@@ -111,14 +121,20 @@ function LevelUploadPage() {
 										description: text,
 									});
 								}}
-								widthPx={363}
+								widthPx={359}
 								heightPx={125}
 							/>
 						</div>
 						<h4>Images</h4>
 						<div>
-							<LevelImageUploader
-								onUpload={() => {}}
+							<ImageUploader
+								onChange={(imgUrls, thumbnailIdx) => {
+									setLevel({
+										...level,
+										imageLocalUrls: imgUrls,
+										thumbnailIndex: thumbnailIdx,
+									});
+								}}
 								fileLimit={3}
 							/>
 						</div>
@@ -147,11 +163,79 @@ function LevelUploadPage() {
 								}}
 							/>
 						</div>
+						<div style={{ maxWidth: '360px', margin: '0 auto' }}>
+							<TagSelector
+								label="Tags (Up to 5)"
+								tags={userLevelTags as unknown as string[]}
+								initialTags={level.tags}
+								limit={5}
+								onChange={(tags: string[]) => {
+									setLevel({
+										...level,
+										tags: tags as UserLevelTag[],
+									});
+								}}
+							/>
+						</div>
+						<div>
+							<TriggerButton
+								text="Publish"
+								type="blue"
+								onClick={publishLevel}
+							/>
+						</div>
 					</form>
 				</div>
 			</Gate>
 		</AppFrame>
 	);
+
+	// TODO: Validation
+	function getValidationIssues() {
+
+	}
+
+	/**
+	 * Publishes a level based on the user-submitted data.
+	 */
+	async function publishLevel() {
+		const now = Date.now();
+		const user = getUser()!;
+
+		// Upload the images to Firebase storage
+		const globalUrls = new Array<string>(level.imageLocalUrls.length).fill('');
+		await Promise.all(level.imageLocalUrls.map(
+			// eslint-disable-next-line no-async-promise-executor
+			(localUrl, i) => new Promise(async (resolve, reject) => {
+				// Get blob to upload
+				const blob = await fetch(localUrl).then((r) => r.blob());
+
+				// Establish image reference in cloud storage
+				const imgId = randomString(24);
+				const imgRef = ref(storage, `/level-img/${imgId}`);
+
+				// Upload
+				try {
+					await uploadBytes(imgRef, blob);
+					globalUrls[i] = await getDownloadURL(imgRef);
+					resolve();
+				} catch (e) {
+					console.error(e);
+					resolve();
+				}
+			}) as Promise<void>,
+		));
+
+		try {
+			const publishFn = httpsCallable(functions, 'publishLevel');
+			const res = await publishFn({ level, globalUrls });
+			const levelId = res.data as string;
+			console.log(levelId);
+			router.push(`/levels/view/${levelId}`);
+		} catch (e) {
+			console.error(e);
+		}
+	}
 }
 
 export default LevelUploadPage;
