@@ -7,6 +7,7 @@ import NewIcon from '@mui/icons-material/FiberNew';
 import WeekTopIcon from '@mui/icons-material/Star';
 import AllTimeTopIcon from '@mui/icons-material/EmojiEvents';
 import ActionButton from '@components/pages/controls/ActionButton';
+import WarningIcon from '@mui/icons-material/Warning';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const levelCategories = [

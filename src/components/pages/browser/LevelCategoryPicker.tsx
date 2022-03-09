@@ -25,6 +25,9 @@ function LevelCategoryPicker(props: {
 	return (
 		<div
 			className="level-category-container"
+			style={{
+				gap: isCompact ? '3px' : '0',
+			}}
 		>
 			{getCategoryButtons()}
 		</div>
@@ -39,24 +42,14 @@ function LevelCategoryPicker(props: {
 			let style = {};
 			switch (i) {
 			case 0: {
-				if (isCompact) style = { borderTopLeftRadius: '10px' };
-				else style = { borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' };
+				if (!isCompact) style = { borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' };
 				break;
 			}
-			case 1: {
-				if (isCompact) style = { borderTopRightRadius: '10px' };
-				break;
-			}
-			case 2: {
-				if (isCompact) style = { borderBottomLeftRadius: '10px' };
-				break;
-			}
-			case 3: {
-				if (isCompact) style = { borderBottomRightRadius: '10px' };
-				else style = { borderBottomRightRadius: '10px', borderTopRightRadius: '10px' };
+			case props.categories.length - 1: {
+				if (!isCompact) style = { borderBottomRightRadius: '10px', borderTopRightRadius: '10px' };
 			}
 			}
-			if (isCompact) style = { ...style, width: '140px' };
+			if (isCompact) style = { ...style, width: '140px', borderRadius: '10px' };
 			return (
 				<div
 					className={i === props.selectedIndex
