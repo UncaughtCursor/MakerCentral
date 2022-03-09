@@ -53,6 +53,10 @@
 		max-width: 360px;
 	}
 
+	.user-level-preview:hover {
+		transform: none;
+	}
+
 	.user-level-preview-details > p, .user-level-preview-details > h3 {
 		text-align: center;
 	}

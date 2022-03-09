@@ -2,6 +2,7 @@ import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
 import ImageUploader from '@components/pages/browser/LevelImageUploader';
 import TagSelector from '@components/pages/browser/TagSelector';
+import ChecksWidget, { CheckResult } from '@components/pages/controls/ChecksWidget';
 import SelectInput from '@components/pages/controls/SelectInput';
 import TextArea from '@components/pages/controls/TextArea';
 import TextField from '@components/pages/controls/TextField';
@@ -54,6 +55,8 @@ const defaultLevel: UserLevelInformation = {
 function LevelUploadPage() {
 	const [level, setLevel] = useState(defaultLevel);
 	const router = useRouter();
+	const inputChecks = getValidationChecks();
+	const passedInputChecks = inputChecks.reduce((acc, val) => acc && val.passed, true);
 	return (
 		<AppFrame>
 			<Gate requireEA={false} showLogout={false}>
@@ -177,22 +180,68 @@ function LevelUploadPage() {
 								}}
 							/>
 						</div>
-						<div>
-							<TriggerButton
-								text="Publish"
-								type="blue"
-								onClick={publishLevel}
-							/>
-						</div>
 					</form>
+					<div style={{
+						display: 'flex',
+						justifyContent: 'center',
+					}}
+					>
+						<ChecksWidget
+							title="Requirements"
+							results={inputChecks}
+							passed={passedInputChecks}
+							showPassed={false}
+						/>
+					</div>
+					<div style={{ display: passedInputChecks ? '' : 'none', marginTop: '10px' }}>
+						<TriggerButton
+							text="Publish"
+							type="blue"
+							onClick={publishLevel}
+						/>
+					</div>
 				</div>
 			</Gate>
 		</AppFrame>
 	);
 
-	// TODO: Validation
-	function getValidationIssues() {
-
+	/**
+	 * Generates the check results to show to the user.
+	 * @returns The results.
+	 */
+	function getValidationChecks(): CheckResult[] {
+		return [
+			{
+				label: 'Have a title',
+				passed: level.name.length > 0,
+				note: 'Title is blank.',
+			},
+			{
+				label: 'Have a valid level code',
+				passed: isValidLevelCode(level.levelCode),
+				note: 'This level code is definitely not valid.',
+			},
+			{
+				label: 'Have preview text',
+				passed: level.shortDescription.length > 0,
+				note: 'Preview text field is blank.',
+			},
+			{
+				label: 'Have a description',
+				passed: level.description.length > 0,
+				note: 'Description is blank.',
+			},
+			{
+				label: 'Have at least one image',
+				passed: level.imageLocalUrls.length > 0,
+				note: 'You don\'t have any images set.',
+			},
+			{
+				label: 'Have at least one tag',
+				passed: level.tags.length > 0,
+				note: 'You don\'t have any tags set.',
+			},
+		];
 	}
 
 	/**
@@ -233,8 +282,30 @@ function LevelUploadPage() {
 			console.log(levelId);
 			router.push(`/levels/view/${levelId}`);
 		} catch (e) {
+			// eslint-disable-next-line no-alert
+			alert('An error occurred while attempting to upload the level.');
 			console.error(e);
 		}
+	}
+
+	/**
+	 * Determines if the level code can possibly be valid.
+	 * Valid level codes contain 9 alphanumeric characters,
+	 * end with an F, G, or H, and do not contain the characters O, I, or Z.
+	 * @param code The code to validate
+	 * @returns Whether or not the code is valid.
+	 */
+	function isValidLevelCode(code: string) {
+		const alphanumericRegex = /([A-Z0-9])\w+/g;
+		const alphanumericChunks = code.toUpperCase().match(alphanumericRegex);
+		if (alphanumericChunks === null) return false;
+		const normalizedCode = alphanumericChunks.join('');
+
+		if (normalizedCode.length !== 9) return false;
+		const forbiddenCharsRegex = /[OIZ]/g;
+		const lastChar = normalizedCode.charAt(8);
+		return !forbiddenCharsRegex.test(normalizedCode)
+	&& (lastChar === 'F' || lastChar === 'G' || lastChar === 'H');
 	}
 }
 
