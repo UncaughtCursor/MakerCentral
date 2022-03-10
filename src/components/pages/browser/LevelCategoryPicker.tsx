@@ -49,7 +49,7 @@ function LevelCategoryPicker(props: {
 				if (!isCompact) style = { borderBottomRightRadius: '10px', borderTopRightRadius: '10px' };
 			}
 			}
-			if (isCompact) style = { ...style, width: '140px', borderRadius: '10px' };
+			if (isCompact) style = { ...style, width: '160px', borderRadius: '10px' };
 			return (
 				<div
 					className={i === props.selectedIndex

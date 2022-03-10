@@ -31,7 +31,7 @@ const levelCategories = [
 		name: 'Top This Month',
 		icon: <WeekTopIcon />,
 		queryConstraints: [
-			orderBy('score', 'desc'), // TODO: Implement week queue
+			orderBy('score', 'desc'),
 		],
 		queueType: 'Month',
 	},
