@@ -27,6 +27,8 @@ interface UserLevel {
 	difficulty: Difficulty;
 	gameStyle: GameStyle;
 	numLikes: number;
+	numDislikes: number;
+	score: number;
 	numComments: number;
 	shortDescription: string;
 	description: string;
@@ -86,6 +88,8 @@ export const publishLevel = functions.https.onCall(async (data: {
 		makerName: 'User', // TODO: Saved display names
 		makerUid: context.auth.uid,
 		numLikes: 0,
+		numDislikes: 0,
+		score: 0,
 		numComments: 0,
 		publicationStatus: 'Public',
 		removalMessage: '',

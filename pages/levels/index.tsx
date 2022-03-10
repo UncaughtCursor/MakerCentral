@@ -15,7 +15,7 @@ const levelCategories = [
 		name: 'Popular',
 		icon: <HotIcon />,
 		queryConstraints: [
-			orderBy('numLikesThisHour', 'desc'), // TODO: Implement in week queue
+			orderBy('score', 'desc'), // TODO: Implement 48 hr queue
 		],
 		useWeekQueue: true,
 	},
@@ -31,7 +31,7 @@ const levelCategories = [
 		name: 'Top This Week',
 		icon: <WeekTopIcon />,
 		queryConstraints: [
-			orderBy('numLikes', 'desc'),
+			orderBy('score', 'desc'), // TODO: Implement week queue
 		],
 		useWeekQueue: true,
 	},
@@ -39,7 +39,7 @@ const levelCategories = [
 		name: 'Top Ever',
 		icon: <AllTimeTopIcon />,
 		queryConstraints: [
-			orderBy('numLikes', 'desc'),
+			orderBy('score', 'desc'),
 		],
 		useWeekQueue: false,
 	},

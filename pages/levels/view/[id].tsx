@@ -2,6 +2,7 @@ import { getLevel, UserLevel } from '@scripts/browser/BrowserUtil';
 import React from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
+import FeedbackControl from '@components/pages/browser/FeedbackControl';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -15,7 +16,9 @@ function LevelPage(props: {
 		return <Page404 />;
 	}
 
-	level.uploadTime = level.uploadTime as number;
+	const levelRating = level.numLikes + level.numDislikes > 0
+		? Math.round((100 * level.numLikes) / (level.numLikes + level.numDislikes))
+		: 100;
 	return (
 		<AppFrame>
 			<div className="level-page-content">
@@ -33,6 +36,7 @@ function LevelPage(props: {
 							/>
 							<p><i>{level.shortDescription}</i></p>
 						</div>
+						<FeedbackControl levelId={level.id} />
 					</div>
 					<div
 						className="level-page-info-container"
@@ -65,6 +69,10 @@ function LevelPage(props: {
 							<tr>
 								<td>Likes</td>
 								<td>{level.numLikes}</td>
+							</tr>
+							<tr>
+								<td>Rating</td>
+								<td>{levelRating}%</td>
 							</tr>
 						</table>
 					</div>

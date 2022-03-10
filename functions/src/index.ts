@@ -4,6 +4,7 @@ import next from 'next';
 
 // Exports from other source files
 export * from './levels';
+export * from './social';
 
 // IMPORTANT: RUN 'npx ttsc -w' after changes are made!! (ttsc isn't a typo!)
 

@@ -46,6 +46,8 @@ export interface UserLevel {
 	difficulty: Difficulty;
 	gameStyle: GameStyle;
 	numLikes: number;
+	numDislikes: number;
+	score: number;
 	numComments: number;
 	shortDescription: string;
 	description: string;

@@ -1,0 +1,8 @@
+.feedback-control-container {
+	display: inline-flex;
+	padding: 5px;
+}
+
+.feedback-control-container > div {
+	justify-content: center;
+}

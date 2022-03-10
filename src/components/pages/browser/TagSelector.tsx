@@ -8,6 +8,7 @@ import React, { useState } from 'react';
  * * onChange: The callback function for when the array of tags changes.
  * * initialTags (Optional): The array of tags that are already selected.
  * * limit (Optional): The limit for the number of tags that can be put on the level.
+ * * forceInitTags (Optional): Whether or not to force the tags to always be the input value.
  */
 function TagSelector(props: {
 	label: string,
@@ -15,6 +16,7 @@ function TagSelector(props: {
 	onChange: (arg0: string[]) => void,
 	initialTags?: string[],
 	limit?: number
+	forceInitTags?: boolean
 }) {
 	const [tagList, setTagList] = useState(props.initialTags!);
 	return (
@@ -30,9 +32,10 @@ function TagSelector(props: {
 	 * Generates elements for each tag for a level.
 	 */
 	function getTagElements(tags: string[]) {
-		const newTagsDisabled = tagList.length >= props.limit!;
+		const usedTagList = props.forceInitTags ? props.initialTags! : tagList;
+		const newTagsDisabled = usedTagList.length >= props.limit!;
 		return tags.map((tag, i) => {
-			const isSelected = tagList.includes(tag);
+			const isSelected = usedTagList.includes(tag);
 			if (isSelected) {
 				return (
 					<div
@@ -42,13 +45,13 @@ function TagSelector(props: {
 						tabIndex={i}
 						onClick={() => {
 							// Remove tag from array when clicked if the tag is selected
-							const newTags = tagList.filter((thisTag) => (thisTag !== tag));
+							const newTags = usedTagList.filter((thisTag) => (thisTag !== tag));
 							setTagList(newTags);
 							props.onChange(newTags);
 						}}
 						onKeyPress={() => {
 							// Remove tag from array when clicked if the tag is selected
-							const newTags = tagList.filter((thisTag) => (thisTag !== tag));
+							const newTags = usedTagList.filter((thisTag) => (thisTag !== tag));
 							setTagList(newTags);
 							props.onChange(newTags);
 						}}
@@ -65,13 +68,13 @@ function TagSelector(props: {
 						tabIndex={i}
 						onClick={() => {
 							// Add tag to array when clicked if the tag is selected
-							const newTags = tagList.concat(tag);
+							const newTags = usedTagList.concat(tag);
 							setTagList(newTags);
 							props.onChange(newTags);
 						}}
 						onKeyPress={() => {
 							// Add tag to array when clicked if the tag is selected
-							const newTags = tagList.concat(tag);
+							const newTags = usedTagList.concat(tag);
 							setTagList(newTags);
 							props.onChange(newTags);
 						}}
@@ -93,6 +96,7 @@ function TagSelector(props: {
 TagSelector.defaultProps = {
 	initialTags: [] as string[],
 	limit: Infinity,
+	forceInitTags: false,
 };
 
 export default TagSelector;
