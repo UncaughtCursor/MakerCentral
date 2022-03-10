@@ -54,6 +54,8 @@ export interface UserLevel {
 	tags: UserLevelTag[];
 	publicationStatus: 'Private' | 'Public' | 'Removed';
 	removalMessage: string | undefined;
+	epochDaysInPopularQueue: number[],
+	epochDaysInMonthQueue: number[],
 }
 
 export type UserLevelTag = typeof userLevelTags[number];

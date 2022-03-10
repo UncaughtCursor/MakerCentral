@@ -35,6 +35,8 @@ interface UserLevel {
 	tags: UserLevelTag[];
 	publicationStatus: 'Private' | 'Public' | 'Removed';
 	removalMessage: string | undefined;
+	epochDaysInPopularQueue: number[],
+	epochDaysInMonthQueue: number[],
 }
 
 const userLevelTags = [
@@ -73,6 +75,9 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const now = Date.now();
 	const levelId = randomString(24);
 
+	const popularQueueDays = getFutureEpochDays(5, now);
+	const monthQueueDays = getFutureEpochDays(30, now);
+
 	// Construct the published level data structure
 	const fullLevelData: UserLevel = {
 		name: level.name,
@@ -95,6 +100,8 @@ export const publishLevel = functions.https.onCall(async (data: {
 		removalMessage: '',
 		imageUrls: data.globalUrls,
 		thumbnailUrl: data.globalUrls[level.thumbnailIndex],
+		epochDaysInPopularQueue: popularQueueDays,
+		epochDaysInMonthQueue: monthQueueDays,
 	};
 
 	const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
@@ -149,4 +156,20 @@ function getFormattedCode(code: string) {
 	if (alphanumericChunks === null) return '';
 	const normalizedCode = alphanumericChunks.join('');
 	return `${normalizedCode.substring(0, 3)}-${normalizedCode.substring(3, 6)}-${normalizedCode.substring(6, 9)}`;
+}
+
+/**
+ * Generates an array of future epoch day values, counting today.
+ * @param numDays The number of days to generate in advance.
+ * @param time The current number of milliseconds since Jan 1st, 1970.
+ * @returns The array of values.
+ */
+function getFutureEpochDays(numDays: number, time: number) {
+	const millisPerDay = (1000 * 60 * 60 * 24);
+	const dayOne = Math.floor(time / millisPerDay);
+	const days = [];
+	for (let i = 0; i < numDays; i++) {
+		days.push(dayOne + i);
+	}
+	return days;
 }

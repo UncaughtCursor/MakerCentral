@@ -6,7 +6,7 @@ export interface LevelCategory {
 	name: string;
 	icon: JSX.Element;
 	queryConstraints: QueryConstraint[];
-	useWeekQueue: boolean;
+	queueType: 'Popular' | 'Month' | 'None';
 }
 
 /**

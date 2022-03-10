@@ -15,9 +15,9 @@ const levelCategories = [
 		name: 'Popular',
 		icon: <HotIcon />,
 		queryConstraints: [
-			orderBy('score', 'desc'), // TODO: Implement 48 hr queue
+			orderBy('score', 'desc'),
 		],
-		useWeekQueue: true,
+		queueType: 'Popular',
 	},
 	{
 		name: 'New',
@@ -25,15 +25,15 @@ const levelCategories = [
 		queryConstraints: [
 			orderBy('uploadTime', 'desc'),
 		],
-		useWeekQueue: false,
+		queueType: 'None',
 	},
 	{
-		name: 'Top This Week',
+		name: 'Top This Month',
 		icon: <WeekTopIcon />,
 		queryConstraints: [
 			orderBy('score', 'desc'), // TODO: Implement week queue
 		],
-		useWeekQueue: true,
+		queueType: 'Month',
 	},
 	{
 		name: 'Top Ever',
@@ -41,7 +41,7 @@ const levelCategories = [
 		queryConstraints: [
 			orderBy('score', 'desc'),
 		],
-		useWeekQueue: false,
+		queueType: 'None',
 	},
 ] as LevelCategory[];
 

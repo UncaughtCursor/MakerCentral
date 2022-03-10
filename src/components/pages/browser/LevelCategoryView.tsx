@@ -1,6 +1,7 @@
 import {
 	queryLevels, UserLevel,
 } from '@scripts/browser/BrowserUtil';
+import { serverTimestamp, Timestamp, where } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import Spinner from '../controls/Spinner';
 import { LevelCategory } from './LevelCategoryPicker';
@@ -23,9 +24,20 @@ interface LevelCategoryViewProps {
 function LevelCategoryView(props: LevelCategoryViewProps) {
 	const [loaded, setLoaded] = useState(false);
 	const [levels, setLevels] = useState([] as UserLevel[]);
+
 	useEffect(() => {
 		setLoaded(false);
-		queryLevels(props.category.queryConstraints, props.numEntries).then((foundLevels) => {
+
+		const epochDay = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
+
+		const usedQueryFilters = [...props.category.queryConstraints];
+		if (props.category.queueType !== 'None') {
+			usedQueryFilters.push(
+				where(`epochDaysIn${props.category.queueType}Queue`, 'array-contains', epochDay),
+			);
+		}
+
+		queryLevels(usedQueryFilters, props.numEntries).then((foundLevels) => {
 			setLevels(foundLevels);
 			setLoaded(true);
 		});
