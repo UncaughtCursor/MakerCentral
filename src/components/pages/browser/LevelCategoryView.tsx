@@ -11,6 +11,7 @@ import LevelPreview from './LevelPreview';
 interface LevelCategoryViewProps {
 	category: LevelCategory;
 	batchSize: number;
+	collectionPath?: string;
 }
 
 /**
@@ -29,14 +30,13 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 		setScrollEnded(false);
 		setLevels([]);
 		setLastLevelId(null);
-	}, [props.category]);
+	}, [props.category, props.collectionPath]);
 
 	return (
 		<InfiniteScroll
 			pageStart={0}
 			loadMore={fetchLevels}
 			hasMore={!scrollEnded}
-			loader={<Spinner isActive />}
 		>
 			<div style={{
 				minHeight: '100px',
@@ -55,7 +55,6 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 	 * Fetches more levels to display in the scrolling view.
 	 */
 	function fetchLevels() {
-		console.log('next');
 		const epochDay = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
 
 		const usedQueryFilters = [...props.category.queryConstraints];
@@ -65,14 +64,25 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 			);
 		}
 
-		queryLevels(usedQueryFilters, props.batchSize, lastLevelId).then((foundLevels) => {
+		queryLevels(
+			usedQueryFilters,
+			props.batchSize,
+			lastLevelId,
+			props.collectionPath!,
+		).then((foundLevels) => {
 			const newLevels = levels.concat(foundLevels);
 			setLevels(newLevels);
+
 			if (newLevels.length > 0) setLastLevelId(newLevels[newLevels.length - 1].id);
 			else setLastLevelId(null);
+
 			if (foundLevels.length === 0) setScrollEnded(true);
 		});
 	}
 }
+
+LevelCategoryView.defaultProps = {
+	collectionPath: 'levels',
+};
 
 export default LevelCategoryView;

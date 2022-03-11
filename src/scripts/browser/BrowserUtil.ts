@@ -75,21 +75,23 @@ export type Difficulty = typeof difficulties[number];
  * @param queryConstraints The constraints to apply.
  * @param numLevels The number of levels to get.
  * @param lastLevelId (Optional) The last level ID retrieved (for pagination).
+ * @param collectionPath (Optional) The path of the collection where the levels are.
  * @returns The levels returned from the query.
  */
 export async function queryLevels(
 	queryConstraints: QueryConstraint[],
 	numLevels: number,
 	lastLevelId: string | null = null,
+	collectionPath: string = 'levels',
 ): Promise<UserLevel[]> {
-	const levelsRef = collection(db, 'levels');
+	const levelsRef = collection(db, collectionPath);
 	const constraints = [
 		...queryConstraints,
 		limit(numLevels),
 	];
 
 	if (lastLevelId !== null) {
-		const lastLevelDoc = await getDoc(doc(db, `levels/${lastLevelId}`));
+		const lastLevelDoc = await getDoc(doc(db, `${collectionPath}/${lastLevelId}`));
 
 		constraints.push(
 			startAfter(lastLevelDoc),

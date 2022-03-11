@@ -8,8 +8,8 @@ import ProjectList from '../src/components/pages/controls/ProjectList';
 function ProjectsPage() {
 	return (
 		<AppFrame>
-			<h1>Your Projects</h1>
-			<p>Your projects are shown here. Click one to open it.</p>
+			<h1>Your Music Projects</h1>
+			<p>Your music projects are shown here. Click one to open it.</p>
 			<ProjectList />
 		</AppFrame>
 	);

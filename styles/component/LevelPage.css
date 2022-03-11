@@ -28,6 +28,7 @@
 	background-color: var(--bg-dark);
 	padding: 20px;
 	border-radius: 20px;
+	position: relative;
 }
 
 .level-page-info-container > p, .level-page-info-container > h4 {

@@ -3,6 +3,7 @@ import React from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import FeedbackControl from '@components/pages/browser/FeedbackControl';
+import BookmarkButton from '@components/pages/browser/BookmarkButton';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -24,6 +25,11 @@ function LevelPage(props: {
 			<div className="level-page-content">
 				<div className="level-page-top">
 					<div className="level-page-info-container" style={{ flexGrow: 6 }}>
+						<BookmarkButton
+							level={level}
+							left="calc(100% - 50px)"
+							top="15px"
+						/>
 						<div style={{ marginBottom: '10px' }}>
 							<h3 className="level-page-title">{level.name}</h3>
 							<p className="level-code">{level.levelCode}</p>

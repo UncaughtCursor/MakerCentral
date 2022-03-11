@@ -38,6 +38,7 @@ import '../styles/component/UserMenu.css';
 import '../styles/component/LevelGallery.css';
 import '../styles/component/TagSelector.css';
 import '../styles/component/FeedbackControl.css';
+import '../styles/component/BookmarkButton.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';
