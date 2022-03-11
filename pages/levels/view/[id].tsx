@@ -1,9 +1,13 @@
-import { getLevel, UserLevel } from '@scripts/browser/BrowserUtil';
-import React from 'react';
+import { deleteLevel, getLevel, UserLevel } from '@scripts/browser/BrowserUtil';
+import React, { useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import FeedbackControl from '@components/pages/browser/FeedbackControl';
 import BookmarkButton from '@components/pages/browser/BookmarkButton';
+import TriggerButton from '@components/pages/controls/TriggerButton';
+import { auth, getUser } from '@scripts/site/FirebaseUtil';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useRouter } from 'next/router';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -12,10 +16,17 @@ import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 function LevelPage(props: {
 	level: UserLevel | null
 }) {
+	const router = useRouter();
+
 	const level = props.level;
 	if (level === null) {
 		return <Page404 />;
 	}
+
+	const [user, setUser] = useState(getUser());
+	onAuthStateChanged(auth, (authUser) => {
+		setUser(authUser);
+	});
 
 	const levelRating = level.numLikes + level.numDislikes > 0
 		? Math.round((100 * level.numLikes) / (level.numLikes + level.numDislikes))
@@ -89,6 +100,41 @@ function LevelPage(props: {
 					<br />
 					<h4>Tags</h4>
 					<TagDisplay tags={level.tags} />
+				</div>
+				<div
+					className="level-page-info-container"
+					style={{ display: user?.uid === level.makerUid ? '' : 'none' }}
+				>
+					<h4>Actions</h4>
+					<div style={{ display: 'flex' }}>
+						<TriggerButton
+							text="Edit"
+							type="dark"
+							onClick={() => {
+								router.push(`/levels/edit/${level.id}`);
+							}}
+						/>
+						<TriggerButton
+							text="Delete"
+							type="dark"
+							onClick={() => {
+								if (typeof window !== 'undefined') {
+									// eslint-disable-next-line no-restricted-globals, no-alert
+									const doDelete = confirm(`Delete "${level.name}"? This cannot be undone.`);
+									if (doDelete) {
+										try {
+											deleteLevel(level.id);
+											router.push('/your-levels');
+										} catch (e) {
+											// eslint-disable-next-line no-alert
+											alert('An error occurred while trying to delete the level.');
+											console.error(e);
+										}
+									}
+								}
+							}}
+						/>
+					</div>
 				</div>
 			</div>
 		</AppFrame>

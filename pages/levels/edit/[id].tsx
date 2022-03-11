@@ -1,21 +1,23 @@
 import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
 import LevelEditor from '@components/pages/browser/LevelEditor';
+import { useRouter } from 'next/router';
 import React from 'react';
 
 /**
- * The page used for editing and uploading levels.
+ * Displays the page used to edit existing levels.
  */
-function LevelUploadPage() {
+function LevelEditPage() {
+	const router = useRouter();
+	const levelId = router.query.id as string;
 	return (
 		<AppFrame>
 			<Gate requireEA={false} showLogout={false}>
-				<div>
-					<h1>Upload a Level</h1>
-					<LevelEditor levelId={null} />
-				</div>
+				<h1>Edit Level</h1>
+				<LevelEditor levelId={levelId} />
 			</Gate>
 		</AppFrame>
 	);
 }
-export default LevelUploadPage;
+
+export default LevelEditPage;

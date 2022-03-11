@@ -24,7 +24,7 @@
 }
 
 .usermenudropdown {
-	width: 160px;
+	width: 180px;
 	background-color: var(--bg-dark);
 	box-shadow: 8px 8px 10px rgba(0, 0, 0, 0.6);
 	border: 1px solid var(--bg-lite);

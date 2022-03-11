@@ -61,7 +61,6 @@ type Difficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
 type GameStyle = 'SMB1' | 'SMB3' | 'SMW' | 'NSMBU' | 'SM3DW';
 type UserLevelTag = typeof userLevelTags[number];
 
-// eslint-disable-next-line import/prefer-default-export
 export const publishLevel = functions.https.onCall(async (data: {
 	level: UserLevelInformation, globalUrls: string[]
 }, context) => {
@@ -107,6 +106,36 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
 	await levelDocRef.set(fullLevelData);
 	return levelId;
+});
+
+export const publishLevelEdits = functions.https.onCall(async (data: {
+	levelId: string, level: UserLevel, globalUrls: string[]
+}, context) => {
+	const level = data.level;
+	if (!is<UserLevelInformation>(level)) throw new Error('Level data does not fit the schema.');
+	if (level.imageLocalUrls.length === 0) throw new Error('Level data does not include an image.');
+	if (!isValidLevelCode(level.levelCode)) throw new Error('Invalid course ID.');
+	if (context.auth === undefined) throw new Error('User is not logged in.');
+
+	const levelDocRef = admin.firestore().doc(`/levels/${data.levelId}`);
+	const levelDocSnap = await levelDocRef.get();
+	if (!levelDocSnap.exists) throw new Error('Level does not exist already.');
+	const levelDocData = levelDocSnap.data() as UserLevel;
+	if (context.auth.uid !== levelDocData.makerUid) throw new Error('User does not own this level.');
+
+	const now = Date.now();
+
+	// Construct the published level data structure
+	const fullLevelData: UserLevel = {
+		...level,
+		levelCode: getFormattedCode(level.levelCode),
+		id: data.levelId,
+		editedTime: now,
+		imageUrls: data.globalUrls,
+		thumbnailUrl: data.globalUrls[level.thumbnailIndex],
+	};
+
+	await levelDocRef.set(fullLevelData, { merge: true });
 });
 
 /**

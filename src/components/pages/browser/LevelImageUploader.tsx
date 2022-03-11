@@ -11,18 +11,26 @@ import CloseIcon from '@mui/icons-material/Close';
  * Callback parameters are the array of image URLs and the index of the selected
  * level thumbnail.
  * * fileLimit (Optional) The number of files that can be uploaded at once.
+ * * forcedImgUrls (Optional) Image URL state to force or null if none.
+ * * forcedThumbnailIdx (Optional) Thumbnail index state to force or null if none.
  */
 function LevelImageUploader(props: {
 		onChange: (arg0: string[], arg1: number) => void,
-		fileLimit?: number
+		fileLimit?: number,
+		forcedImgUrls?: string[] | null,
+		forcedThumbnailIdx?: number | null,
 	}) {
 	const [imgUrls, setImgUrls] = useState([] as string[]);
 	const [thumbnailIdx, setThumbnailIdx] = useState(0);
 
+	const usedImgUrls = props.forcedImgUrls !== null ? props.forcedImgUrls! : imgUrls;
+	const usedThumbnailIdx = props.forcedThumbnailIdx !== null
+		? props.forcedThumbnailIdx! : thumbnailIdx;
+
 	return (
 		<div>
 			<div style={{
-				display: imgUrls.length >= props.fileLimit! ? 'none' : '',
+				display: usedImgUrls.length >= props.fileLimit! ? 'none' : '',
 				marginBottom: '20px',
 			}}
 			>
@@ -60,9 +68,9 @@ function LevelImageUploader(props: {
 	 */
 	async function handleFileInput(files: File[]) {
 		const urls: string[] = files.map((file: File) => URL.createObjectURL(file));
-		const newUrls = imgUrls.concat(urls).slice(0, props.fileLimit!);
+		const newUrls = usedImgUrls.concat(urls).slice(0, props.fileLimit!);
 		setImgUrls(newUrls);
-		props.onChange(newUrls, thumbnailIdx);
+		props.onChange(newUrls, usedThumbnailIdx);
 	}
 
 	/**
@@ -70,7 +78,7 @@ function LevelImageUploader(props: {
 	 * @returns The created elements.
 	 */
 	function getImageElements() {
-		return imgUrls.map((imgUrl, i) => (
+		return usedImgUrls.map((imgUrl, i) => (
 			<div style={{ position: 'relative' }}>
 				<div
 					style={{
@@ -101,22 +109,22 @@ function LevelImageUploader(props: {
 					style={{
 						aspectRatio: '16 / 9',
 						height: '100px',
-						border: i === thumbnailIdx ? '2px solid var(--hl-med)' : '2px solid var(--bg-norm)',
+						border: i === usedThumbnailIdx ? '2px solid var(--hl-med)' : '2px solid var(--bg-norm)',
 						borderRadius: '4px',
 						cursor: 'pointer',
 						transition: 'border-color 0.1s',
 					}}
 					onClick={() => {
 						setThumbnailIdx(i);
-						props.onChange(imgUrls, i);
+						props.onChange(usedImgUrls, i);
 					}}
 					onKeyDown={() => {
 						setThumbnailIdx(i);
-						props.onChange(imgUrls, i);
+						props.onChange(usedImgUrls, i);
 					}}
 					tabIndex={i}
 					role="radio"
-					aria-checked={i === thumbnailIdx}
+					aria-checked={i === usedThumbnailIdx}
 				/>
 			</div>
 		));
@@ -126,8 +134,8 @@ function LevelImageUploader(props: {
 		 * @param url The URL to remove.
 		 */
 		function removeImageUrl(url: string) {
-			const newUrls = imgUrls.filter((imgUrl) => imgUrl !== url);
-			const newThumbnailIdx = Math.min(thumbnailIdx, newUrls.length - 1);
+			const newUrls = usedImgUrls.filter((imgUrl) => imgUrl !== url);
+			const newThumbnailIdx = Math.min(usedThumbnailIdx, newUrls.length - 1);
 			setImgUrls(newUrls);
 			setThumbnailIdx(newThumbnailIdx);
 			props.onChange(newUrls, newThumbnailIdx);
@@ -137,6 +145,8 @@ function LevelImageUploader(props: {
 
 LevelImageUploader.defaultProps = {
 	fileLimit: 1,
+	forcedImgUrls: null,
+	forcedThumbnailIdx: null,
 };
 
 export default LevelImageUploader;

@@ -1,7 +1,7 @@
 import { db } from '@scripts/site/FirebaseUtil';
 import {
-	collection, doc, FieldPath, getDoc, getDocs, limit,
-	OrderByDirection, query, QueryConstraint, startAfter, Timestamp, WhereFilterOp,
+	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
+	OrderByDirection, query, QueryConstraint, startAfter, WhereFilterOp,
 } from 'firebase/firestore/lite';
 
 export interface QueryFilter {
@@ -98,8 +98,6 @@ export async function queryLevels(
 		);
 	}
 
-	console.log(constraints);
-
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
 
@@ -126,4 +124,13 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 		...data,
 		id: levelDoc.id,
 	} as UserLevel;
+}
+
+/**
+ * Deletes a level.
+ * @param id The ID of the level to delete.
+ */
+export async function deleteLevel(id: string): Promise<void> {
+	const levelRef = doc(db, `levels/${id}`);
+	await deleteDoc(levelRef);
 }
