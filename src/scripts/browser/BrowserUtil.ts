@@ -1,7 +1,7 @@
 import { db } from '@scripts/site/FirebaseUtil';
 import {
 	collection, doc, FieldPath, getDoc, getDocs, limit,
-	OrderByDirection, query, QueryConstraint, Timestamp, WhereFilterOp,
+	OrderByDirection, query, QueryConstraint, startAfter, Timestamp, WhereFilterOp,
 } from 'firebase/firestore/lite';
 
 export interface QueryFilter {
@@ -72,20 +72,32 @@ export type Difficulty = typeof difficulties[number];
 
 /**
  * Runs a query through the set of levels.
- * @param filter The query filter to apply or null if none.
- * @param orders The orders to sort the results by.
+ * @param queryConstraints The constraints to apply.
  * @param numLevels The number of levels to get.
+ * @param lastLevelId (Optional) The last level ID retrieved (for pagination).
  * @returns The levels returned from the query.
  */
 export async function queryLevels(
 	queryConstraints: QueryConstraint[],
 	numLevels: number,
+	lastLevelId: string | null = null,
 ): Promise<UserLevel[]> {
 	const levelsRef = collection(db, 'levels');
 	const constraints = [
 		...queryConstraints,
 		limit(numLevels),
 	];
+
+	if (lastLevelId !== null) {
+		const lastLevelDoc = await getDoc(doc(db, `levels/${lastLevelId}`));
+
+		constraints.push(
+			startAfter(lastLevelDoc),
+		);
+	}
+
+	console.log(constraints);
+
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
 

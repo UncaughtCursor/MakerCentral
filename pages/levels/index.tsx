@@ -68,8 +68,7 @@ function LevelBrowser() {
 				/>
 				<LevelCategoryView
 					category={category}
-					numEntries={10}
-					doPaginate={false}
+					batchSize={10}
 				/>
 			</div>
 		</AppFrame>
