@@ -59,6 +59,7 @@ function LevelCategoryPicker(props: {
 					tabIndex={i}
 					onClick={() => { props.onChange(i); }}
 					onKeyPress={() => { props.onChange(i); }}
+					key={category.name}
 				>
 					{category.icon}
 					<p>{category.name}</p>

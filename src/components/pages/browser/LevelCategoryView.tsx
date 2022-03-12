@@ -30,6 +30,7 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 	const [levels, setLevels] = useState([] as UserLevel[]);
 	const [scrollEnded, setScrollEnded] = useState(false);
 	const [lastLevelId, setLastLevelId] = useState(null as string | null);
+	let locked = false;
 
 	useEffect(() => {
 		setScrollEnded(false);
@@ -51,7 +52,7 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 				gap: '20px',
 			}}
 			>
-				{levels.map((level) => <LevelPreview level={level} />)}
+				{levels.map((level) => <LevelPreview level={level} key={level.id} />)}
 			</div>
 		</InfiniteScroll>
 	);
@@ -60,6 +61,12 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 	 * Fetches more levels to display in the scrolling view.
 	 */
 	function fetchLevels() {
+		if (scrollEnded || locked) return;
+
+		// Prevent jittering and duplicate requests while loading more content
+		locked = true;
+		setScrollEnded(true);
+
 		const epochDay = Math.floor(Date.now() / (1000 * 60 * 60 * 24));
 
 		const usedQueryFilters = [...props.category.queryConstraints];
@@ -82,7 +89,8 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 			if (newLevels.length > 0) setLastLevelId(newLevels[newLevels.length - 1].id);
 			else setLastLevelId(null);
 
-			if (foundLevels.length === 0) setScrollEnded(true);
+			if (foundLevels.length === props.batchSize!) setScrollEnded(false);
+			locked = false;
 		});
 	}
 }

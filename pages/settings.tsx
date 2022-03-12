@@ -1,22 +1,20 @@
 import AppFrame from '@components/AppFrame';
-import { getUser } from '@scripts/site/FirebaseUtil';
+import Gate from '@components/main/Gate';
+import TextField from '@components/pages/controls/TextField';
+import TriggerButton from '@components/pages/controls/TriggerButton';
+import { db, getUser } from '@scripts/site/FirebaseUtil';
 import { hasEarlyAccess } from '@scripts/site/UserDataScripts';
-import React, { useState } from 'react';
+import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
+import React, { useEffect, useState } from 'react';
 import RewardRedeemer from '../src/components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '../src/components/pages/controls/settings/SettingsGroup';
-
-interface SettingsPageState {
-
-}
-
-// FIXME: Await user, possibly have an await user gate component
 
 /**
  * The page that displays user settings.
  */
 function SettingsPage() {
-	const [state, setState] = useState({} as SettingsPageState);
 	const user = getUser();
+	const [username, setUsername] = useState('');
 
 	const eaDisplay = hasEarlyAccess() ? (
 		<>
@@ -37,30 +35,57 @@ function SettingsPage() {
 			<p>I work hard to develop this site and its music level technology.
 				If you know you will find this website helpful,
 				please consider <a href="https://www.patreon.com/UncaughtCursor">becoming a Patron</a>.
-				It helps me a ton and I would really appreicate it. ❤️
+				It helps me a ton and I would really appreciate it. ❤️
 			</p>
 		</>
 	);
 	const anOrAnother = hasEarlyAccess() ? 'another' : 'an';
+
+	const userDocRef = doc(db, `users/${user?.uid}`);
+
+	useEffect(() => {
+		(async () => {
+			const userDataSnap = await getDoc(userDocRef);
+			if (!userDataSnap.exists()) return;
+			const userData = userDataSnap.data();
+			setUsername(userData.name);
+		})();
+	}, []);
+
 	return (
 		<AppFrame>
-			<div style={{
-				display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
-			}}
-			>
-				<h1>Settings</h1>
-				<SettingsGroup name="Your Info">
-					<p>Display Name: {user?.displayName}</p>
-					{/* <p>Email Address: {user?.email}</p> */}
-					<p>User ID: {user?.uid}</p>
-				</SettingsGroup>
-				<SettingsGroup name="Early Access">
-					{eaDisplay}
-					<p>If you have {anOrAnother} early access key, you can use it here.</p>
-					<RewardRedeemer />
-				</SettingsGroup>
-				<br />
-			</div>
+			<Gate requireEA={false} showLogout={false}>
+				<div style={{
+					display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',
+				}}
+				>
+					<h1>Settings</h1>
+					<SettingsGroup name="Your Info">
+						{/* <p>Email Address: {user?.email}</p> */}
+						<TextField
+							label="Display Name"
+							value={username}
+							onChange={(val) => { setUsername(val); }}
+						/>
+						<p>User ID: {user?.uid}</p>
+						<div>
+							<TriggerButton
+								text="Submit"
+								type="blue"
+								onClick={async () => {
+									setDoc(userDocRef, { name: username }, { merge: true });
+								}}
+							/>
+						</div>
+					</SettingsGroup>
+					<SettingsGroup name="Early Access">
+						{eaDisplay}
+						<p>If you have {anOrAnother} early access key, you can use it here.</p>
+						<RewardRedeemer />
+					</SettingsGroup>
+					<br />
+				</div>
+			</Gate>
 		</AppFrame>
 	);
 }

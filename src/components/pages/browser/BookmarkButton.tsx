@@ -55,6 +55,7 @@ function BookmarkButton(props: {
 			}}
 			role="button"
 			tabIndex={0}
+			title="Bookmark Level"
 		>
 			{icon}
 		</div>

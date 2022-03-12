@@ -14,7 +14,7 @@ interface UserLevelInformation {
 	tags: UserLevelTag[];
 }
 
-interface UserLevel {
+export interface UserLevelDocData {
 	name: string;
 	id: string;
 	uploadTime: number;
@@ -22,7 +22,6 @@ interface UserLevel {
 	thumbnailUrl: string;
 	imageUrls: string[];
 	levelCode: string;
-	makerName: string;
 	makerUid: string;
 	difficulty: Difficulty;
 	gameStyle: GameStyle;
@@ -78,7 +77,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const monthQueueDays = getFutureEpochDays(30, now);
 
 	// Construct the published level data structure
-	const fullLevelData: UserLevel = {
+	const fullLevelData: UserLevelDocData = {
 		name: level.name,
 		levelCode: getFormattedCode(level.levelCode),
 		shortDescription: level.shortDescription,
@@ -89,7 +88,6 @@ export const publishLevel = functions.https.onCall(async (data: {
 		id: levelId,
 		uploadTime: now,
 		editedTime: now,
-		makerName: 'User', // TODO: Saved display names
 		makerUid: context.auth.uid,
 		numLikes: 0,
 		numDislikes: 0,
@@ -109,7 +107,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 });
 
 export const publishLevelEdits = functions.https.onCall(async (data: {
-	levelId: string, level: UserLevel, globalUrls: string[]
+	levelId: string, level: UserLevelDocData, globalUrls: string[]
 }, context) => {
 	const level = data.level;
 	if (!is<UserLevelInformation>(level)) throw new Error('Level data does not fit the schema.');
@@ -120,13 +118,13 @@ export const publishLevelEdits = functions.https.onCall(async (data: {
 	const levelDocRef = admin.firestore().doc(`/levels/${data.levelId}`);
 	const levelDocSnap = await levelDocRef.get();
 	if (!levelDocSnap.exists) throw new Error('Level does not exist already.');
-	const levelDocData = levelDocSnap.data() as UserLevel;
+	const levelDocData = levelDocSnap.data() as UserLevelDocData;
 	if (context.auth.uid !== levelDocData.makerUid) throw new Error('User does not own this level.');
 
 	const now = Date.now();
 
 	// Construct the published level data structure
-	const fullLevelData: UserLevel = {
+	const fullLevelData: UserLevelDocData = {
 		...level,
 		levelCode: getFormattedCode(level.levelCode),
 		id: data.levelId,

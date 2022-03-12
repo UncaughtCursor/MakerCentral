@@ -1,7 +1,7 @@
 import { db } from '@scripts/site/FirebaseUtil';
 import {
 	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
-	OrderByDirection, query, QueryConstraint, startAfter, WhereFilterOp,
+	OrderByDirection, query, QueryConstraint, startAfter, where, WhereFilterOp,
 } from 'firebase/firestore/lite';
 
 export interface QueryFilter {
@@ -104,20 +104,35 @@ export async function queryLevels(
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
 
-	return Promise.all(queryDocs.docs.map(async (levelDoc) => {
-		const data = levelDoc.data();
-		if (!isLink) {
+	const rawLevelData = await Promise.all(queryDocs.docs.map(
+		async (levelDoc): Promise<UserLevel | null> => {
+			const mainDocData = levelDoc.data();
+
+			const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid}`));
+			const makerName: string = makerDoc.exists()
+				? makerDoc.data().name as string : 'Deleted User';
+
+			if (!isLink) {
+				return {
+					...mainDocData,
+					id: levelDoc.id,
+					makerName,
+				} as UserLevel;
+			}
+			const levelDataDoc = await getDoc(doc(db, `levels/${levelDoc.id}`));
+			if (!levelDataDoc.exists()) {
+			// Delete dead links
+				await deleteDoc(levelDoc.ref);
+				return null;
+			}
 			return {
-				...data,
+				...levelDataDoc.data(),
 				id: levelDoc.id,
 			} as UserLevel;
-		}
-		const levelDataDoc = await getDoc(doc(db, `levels/${levelDoc.id}`));
-		return {
-			...levelDataDoc.data(),
-			id: levelDoc.id,
-		} as UserLevel;
-	}));
+		},
+	));
+
+	return rawLevelData.filter((levelData) => levelData !== null) as UserLevel[];
 }
 
 /**
@@ -129,10 +144,16 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 	const levelRef = doc(db, `levels/${id}`);
 	const levelDoc = await getDoc(levelRef);
 	if (!levelDoc.exists()) return null;
-	const data = levelDoc.data();
+	const mainDocData = levelDoc.data();
+
+	const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid}`));
+	const makerName: string = makerDoc.exists()
+		? makerDoc.data().name as string : 'Deleted User';
+
 	return {
-		...data,
+		...mainDocData,
 		id: levelDoc.id,
+		makerName,
 	} as UserLevel;
 }
 

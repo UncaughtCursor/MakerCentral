@@ -82,7 +82,7 @@ function Gate(props: {
 						<p>I work hard to develop this site and its music level technology.
 							If you know you will find this website helpful,
 							please consider <a href="https://www.patreon.com/UncaughtCursor">becoming a Patron</a>.
-							It helps me a ton and I would really appreicate it. ❤️
+							It helps me a ton and I would really appreciate it. ❤️
 						</p>
 						<div style={{ display: props.showLogout ? '' : 'none' }}>
 							<p>Other Options:</p>

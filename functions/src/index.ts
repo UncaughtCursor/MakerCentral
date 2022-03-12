@@ -44,15 +44,26 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	if (context.auth === undefined) return { success: false, msg: 'User is not logged in.' };
 	const userDocRef = admin.firestore().doc(`users/${context.auth.uid}`);
 	const userDocSnap = await userDocRef.get();
-	const userPrivDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/access`);
-	const userPrivDocSnap = await userPrivDocRef.get();
+	const userAccessDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/access`);
+	const userAccessDocSnap = await userAccessDocRef.get();
+	const userSocialDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/social`);
+	const userSocialDocSnap = await userSocialDocRef.get();
 
 	if (!userDocSnap.exists) {
-		userDocRef.set({});
+		await userDocRef.set({
+			name: `User ${context.auth.uid.substring(0, 5)}...`,
+		});
 	}
-	if (!userPrivDocSnap.exists) {
-		userPrivDocRef.set({
+	if (!userAccessDocSnap.exists) {
+		await userAccessDocRef.set({
 			earlyAccessUntil: new admin.firestore.Timestamp(0, 0),
+		});
+	}
+	if (!userSocialDocSnap.exists) {
+		await userSocialDocRef.set({
+			points: 0,
+			lastProfileChangeTime: new admin.firestore.Timestamp(0, 0),
+			lastLevelUploadTime: new admin.firestore.Timestamp(0, 0),
 		});
 	}
 

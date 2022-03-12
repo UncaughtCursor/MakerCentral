@@ -39,7 +39,7 @@ function LevelPage(props: {
 						<BookmarkButton
 							level={level}
 							left="calc(100% - 50px)"
-							top="15px"
+							top="calc(100% - 50px)"
 						/>
 						<div style={{ marginBottom: '10px' }}>
 							<h3 className="level-page-title">{level.name}</h3>

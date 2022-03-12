@@ -26,7 +26,7 @@ function LevelPreview(props: {
 	const isMobileMode = useMediaQuery({ query: '(max-width: 850px)' });
 
 	const previewContainerContents = isMobileMode ? (
-		<div className="user-level-preview-details">
+		<div className="user-level-preview-details" key={props.level.id}>
 			<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
 			<div className="user-level-preview-img-container">
 				<img

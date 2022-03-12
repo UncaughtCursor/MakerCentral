@@ -1,6 +1,8 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
+import { firestore } from 'firebase-admin';
+import { UserLevelDocData } from './levels';
 
 type VoteValue = 1 | 0 | -1;
 
@@ -8,11 +10,11 @@ interface VoteData {
 	voteVal: VoteValue,
 }
 
-interface VotableDocument {
+/* interface VotableDocument {
 	numLikes: number,
 	numDislikes: number,
 	score: number,
-}
+} */
 
 // eslint-disable-next-line import/prefer-default-export
 export const voteOnLevel = functions.https.onCall(async (data: {
@@ -37,7 +39,7 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 
 		const levelSnap = await t.get(levelRef);
 		if (!levelSnap.exists) throw new Error('Level does not exist.');
-		const levelData = levelSnap.data() as VotableDocument;
+		const levelData = levelSnap.data() as UserLevelDocData;
 
 		const curLikes = levelData.numLikes;
 		const curDislikes = levelData.numDislikes;
@@ -52,5 +54,10 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 		t.set(voteRef, {
 			voteVal: data.voteVal,
 		});
+
+		const authorSocialRef = admin.firestore().doc(`users/${levelData.makerUid}/priv/social`);
+		t.set(authorSocialRef, {
+			points: firestore.FieldValue.increment(scoreChange),
+		}, { merge: true });
 	});
 });
