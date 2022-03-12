@@ -12,6 +12,7 @@ interface LevelCategoryViewProps {
 	category: LevelCategory;
 	batchSize: number;
 	collectionPath?: string;
+	isLink?: boolean;
 }
 
 /**
@@ -20,6 +21,10 @@ interface LevelCategoryViewProps {
  * * category: The level category to display levels for.
  * * numEntries: The number of levels to display at once.
  * False by default.
+ * * collectionPath: (Optional) The database path to the collection of levels.
+ * Default is levels/.
+ * * isLink: (Optional) Whether or not the documents contain actual level data or
+ * just link to a level in levels/ by sharing the same document ID.
  */
 function LevelCategoryView(props: LevelCategoryViewProps) {
 	const [levels, setLevels] = useState([] as UserLevel[]);
@@ -69,6 +74,7 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 			props.batchSize,
 			lastLevelId,
 			props.collectionPath!,
+			props.isLink!,
 		).then((foundLevels) => {
 			const newLevels = levels.concat(foundLevels);
 			setLevels(newLevels);
@@ -83,6 +89,7 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 
 LevelCategoryView.defaultProps = {
 	collectionPath: 'levels',
+	isLink: false,
 };
 
 export default LevelCategoryView;

@@ -35,6 +35,7 @@ function BookmarksPage() {
 					category={yourLevelsCategory}
 					batchSize={10}
 					collectionPath={`users/${user === null ? 'null' : user.uid}/bookmarks`}
+					isLink
 				/>
 			</Gate>
 		</AppFrame>

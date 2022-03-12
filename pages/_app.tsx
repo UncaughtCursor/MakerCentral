@@ -35,7 +35,7 @@ import '../styles/component/TileLengthChooser.css';
 import '../styles/component/TrackEditor.css';
 import '../styles/component/TrackList.css';
 import '../styles/component/UserMenu.css';
-import '../styles/component/LevelGallery.css';
+import '../styles/component/LevelExpo.css';
 import '../styles/component/TagSelector.css';
 import '../styles/component/FeedbackControl.css';
 import '../styles/component/BookmarkButton.css';

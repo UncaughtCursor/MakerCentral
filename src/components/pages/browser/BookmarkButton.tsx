@@ -86,7 +86,6 @@ function BookmarkButton(props: {
 		try {
 			if (status) {
 				await setDoc(bookmarkDoc, {
-					...props.level,
 					bookmarkedTime: serverTimestamp(),
 				});
 			} else {

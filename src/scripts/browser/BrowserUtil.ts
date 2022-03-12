@@ -76,6 +76,8 @@ export type Difficulty = typeof difficulties[number];
  * @param numLevels The number of levels to get.
  * @param lastLevelId (Optional) The last level ID retrieved (for pagination).
  * @param collectionPath (Optional) The path of the collection where the levels are.
+ * @param isLink (Optional) Whether or not the documents contain actual level data or
+ * just link to a level in levels/ by sharing the same document ID.
  * @returns The levels returned from the query.
  */
 export async function queryLevels(
@@ -83,6 +85,7 @@ export async function queryLevels(
 	numLevels: number,
 	lastLevelId: string | null = null,
 	collectionPath: string = 'levels',
+	isLink = false,
 ): Promise<UserLevel[]> {
 	const levelsRef = collection(db, collectionPath);
 	const constraints = [
@@ -101,13 +104,20 @@ export async function queryLevels(
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
 
-	return queryDocs.docs.map((levelDoc) => {
+	return Promise.all(queryDocs.docs.map(async (levelDoc) => {
 		const data = levelDoc.data();
+		if (!isLink) {
+			return {
+				...data,
+				id: levelDoc.id,
+			} as UserLevel;
+		}
+		const levelDataDoc = await getDoc(doc(db, `levels/${levelDoc.id}`));
 		return {
-			...data,
+			...levelDataDoc.data(),
 			id: levelDoc.id,
 		} as UserLevel;
-	});
+	}));
 }
 
 /**
