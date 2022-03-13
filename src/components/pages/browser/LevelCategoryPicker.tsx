@@ -1,5 +1,5 @@
+import useMediaQuery from '@components/hooks/useMediaQuery';
 import { QueryConstraint } from 'firebase/firestore/lite';
-import { useMediaQuery } from 'react-responsive';
 import React from 'react';
 
 export interface LevelCategory {
@@ -21,7 +21,7 @@ function LevelCategoryPicker(props: {
 	selectedIndex: number,
 	onChange: (arg0: number) => void,
 }) {
-	const isCompact = useMediaQuery({ query: '(max-width: 470px)' });
+	const isCompact = useMediaQuery('(max-width: 630px)');
 	return (
 		<div
 			className="level-category-container"

@@ -8,6 +8,7 @@ import WeekTopIcon from '@mui/icons-material/Star';
 import AllTimeTopIcon from '@mui/icons-material/EmojiEvents';
 import ActionButton from '@components/pages/controls/ActionButton';
 import WarningIcon from '@mui/icons-material/Warning';
+import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const levelCategories = [
@@ -40,6 +41,14 @@ const levelCategories = [
 		icon: <AllTimeTopIcon />,
 		queryConstraints: [
 			orderBy('score', 'desc'),
+		],
+		queueType: 'None',
+	},
+	{
+		name: 'By Patrons',
+		icon: <LoyaltyIcon />,
+		queryConstraints: [
+			orderBy('uploadTime', 'desc'), // FIXME: Sort patrons
 		],
 		queueType: 'None',
 	},

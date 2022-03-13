@@ -6,7 +6,7 @@ import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useRouter } from 'next/router';
-import { useMediaQuery } from 'react-responsive';
+import useMediaQuery from '@components/hooks/useMediaQuery';
 import TagDisplay from './TagDisplay';
 
 const timeAgo = new TimeAgo('en-us');
@@ -23,7 +23,7 @@ function LevelPreview(props: {
 	props.level.uploadTime = props.level.uploadTime as number;
 	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
 	const history = useRouter();
-	const isMobileMode = useMediaQuery({ query: '(max-width: 850px)' });
+	const isMobileMode = useMediaQuery('(max-width: 850px)');
 
 	const previewContainerContents = isMobileMode ? (
 		<div className="user-level-preview-details" key={props.level.id}>

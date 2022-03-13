@@ -54,6 +54,9 @@ const userLevelTags = [
 	'Exploration',
 	'Troll',
 	'Story',
+	'One Screen',
+	'Kaizo',
+	'Presentation',
 ] as const;
 
 type Difficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
