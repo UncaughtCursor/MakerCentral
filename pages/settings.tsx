@@ -3,7 +3,7 @@ import Gate from '@components/main/Gate';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import { db, getUser } from '@scripts/site/FirebaseUtil';
-import { isPatron } from '@scripts/site/UserDataScripts';
+import { getPatronType } from '@scripts/site/UserDataScripts';
 import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import RewardRedeemer from '../src/components/pages/controls/settings/RewardRedeemer';
@@ -16,9 +16,13 @@ function SettingsPage() {
 	const user = getUser();
 	const [username, setUsername] = useState('');
 
-	const eaDisplay = isPatron() ? (
+	const patronType = getPatronType();
+	const isPatron = patronType !== 'None' && patronType !== null;
+
+	const eaDisplay = isPatron ? (
 		<>
 			<p>You are a patron! Thank you for supporting me!</p>
+			<p>You are in the {patronType} Tier.</p>
 			{/* <p>Your patron status will last until [TODO].</p> */}
 		</>
 	) : (
@@ -36,7 +40,7 @@ function SettingsPage() {
 			</p>
 		</>
 	);
-	const anOrAnother = isPatron() ? 'another' : 'an';
+	const anOrAnother = isPatron ? 'another' : 'an';
 
 	const userDocRef = doc(db, `users/${user?.uid}`);
 

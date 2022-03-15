@@ -1,7 +1,7 @@
 import RewardRedeemer from '@components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '@components/pages/controls/settings/SettingsGroup';
 import { auth, getUser, logout } from '@scripts/site/FirebaseUtil';
-import { isPatron, refreshUserData } from '@scripts/site/UserDataScripts';
+import { getPatronType, refreshUserData } from '@scripts/site/UserDataScripts';
 import React, { useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import TriggerButton from '@components/pages/controls/TriggerButton';
@@ -22,7 +22,7 @@ function Gate(props: {
 	children: React.ReactNode
 }) {
 	const [user, setUser] = useState(getUser() as User | null);
-	const [isLoading, setIsLoading] = useState(getUser() !== null && isPatron() === null);
+	const [isLoading, setIsLoading] = useState(getUser() !== null && getPatronType() === null);
 
 	onAuthStateChanged(auth, (authUser: User | null) => {
 		setUser(authUser);
@@ -40,7 +40,7 @@ function Gate(props: {
 
 	const [openState, setOpenState] = useState(getOpenStateFromUser(user));
 	console.log(getUser());
-	if (getUser() !== null && isPatron() === null && !isLoading) setIsLoading(true);
+	if (getUser() !== null && getPatronType() === null && !isLoading) setIsLoading(true);
 
 	const boldMsg = props.requireEA ? 'You\'ll be able to use this page with patron status.'
 		: 'You\'ll be able to use this page after logging in.';
@@ -107,7 +107,8 @@ function Gate(props: {
 	 * @returns The GateOpenState to render.
 	 */
 	function getOpenStateFromUser(user: User | null): GateOpenState {
-		const hasEA = isPatron();
+		const patronType = getPatronType();
+		const hasEA = patronType === 'Fire Flower' || patronType === 'Super Star';
 		let newOpenState: GateOpenState = 'closed';
 		if (user === null || hasEA === null) newOpenState = 'login';
 		else if (!hasEA && props.requireEA) newOpenState = 'EA';

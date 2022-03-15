@@ -13,19 +13,22 @@ import {
 	db, functions, getUser,
 } from './FirebaseUtil';
 
-let hasEA: boolean | null = null;
+export type PatronStatus = 'None' | 'Mushroom' | 'Fire Flower' | 'Super Star';
+
+let curPatronStatus: PatronStatus | null = null;
 
 /**
  * Initializes and/or updates user data after login.
  * @param user The User whose data to initialize.
  */
 export async function initUser() {
-	hasEA = null;
+	curPatronStatus = null;
 	const userInit = httpsCallable(functions, 'initUser');
 	await userInit();
 
-	const checkEA = httpsCallable(functions, 'isPatron');
-	hasEA = (await checkEA()).data as boolean;
+	const getPatronStatus = httpsCallable(functions, 'getPatronStatus');
+	const patronType = (await getPatronStatus()).data as 'None' | 'Mushroom' | 'Fire Flower' | 'Super Star';
+	curPatronStatus = patronType;
 
 	const evt = new Event('userinit');
 	if (typeof window !== 'undefined') document.dispatchEvent(evt);
@@ -126,6 +129,6 @@ export async function refreshUserData() {
 /**
  * Returns whether or not the user has patron status. Returns null if the user data isn't loaded.
  */
-export function isPatron(): boolean | null {
-	return hasEA;
+export function getPatronType(): PatronStatus | null {
+	return curPatronStatus;
 }

@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
+import { PatronStatus } from './rewards';
 
 interface UserLevelInformation {
 	name: string;
@@ -80,6 +81,13 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const popularQueueDays = getFutureEpochDays(5, now);
 	const monthQueueDays = getFutureEpochDays(30, now);
 
+	// Load Patron status to determine if the level gets featured in the Patrons section
+	const userPrivDocRef = admin.firestore().doc(`/users/${context.auth.uid}/priv/access`);
+	const userPrivDocSnap = await userPrivDocRef.get();
+	if (!userPrivDocSnap.exists) throw new Error('User access data not found.');
+	const userPrivData = userPrivDocSnap.data()!;
+	const patronStatus = userPrivData.patronStatus as PatronStatus;
+
 	// Construct the published level data structure
 	const fullLevelData: UserLevelDocData = {
 		name: level.name,
@@ -103,7 +111,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 		thumbnailUrl: data.globalUrls[level.thumbnailIndex],
 		epochDaysInPopularQueue: popularQueueDays,
 		epochDaysInMonthQueue: monthQueueDays,
-		isByPatron: false,
+		isByPatron: patronStatus === 'Super Star',
 	};
 
 	const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
