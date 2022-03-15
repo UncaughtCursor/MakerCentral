@@ -37,7 +37,7 @@ function Header() {
 				fontWeight: 'bold',
 				textDecoration: 'none',
 			}}
-			>EARLY ACCESS
+			>PATRON
 			</p>
 		</>
 	) : (

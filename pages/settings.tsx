@@ -3,7 +3,7 @@ import Gate from '@components/main/Gate';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import { db, getUser } from '@scripts/site/FirebaseUtil';
-import { hasEarlyAccess } from '@scripts/site/UserDataScripts';
+import { isPatron } from '@scripts/site/UserDataScripts';
 import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import RewardRedeemer from '../src/components/pages/controls/settings/RewardRedeemer';
@@ -16,17 +16,14 @@ function SettingsPage() {
 	const user = getUser();
 	const [username, setUsername] = useState('');
 
-	const eaDisplay = hasEarlyAccess() ? (
+	const eaDisplay = isPatron() ? (
 		<>
-			<p>You have early access! Thank you for supporting me!</p>
-			{/* <p>Your early access will last until [TODO].</p> */}
-			<p>If this key was from Patreon, you&apos;ll be given another one every month as long as you
-				stay in the Fire Flower tier.
-			</p>
+			<p>You are a patron! Thank you for supporting me!</p>
+			{/* <p>Your patron status will last until [TODO].</p> */}
 		</>
 	) : (
 		<>
-			<p>You can unlock early access by supporting me on Patreon!
+			<p>You can unlock Early Access and more by supporting me on Patreon!
 			</p>
 			{/* <p>I work very hard to develop this site and its music level technology.
 				If you found this website helpful, please consider becoming a Patron.
@@ -39,7 +36,7 @@ function SettingsPage() {
 			</p>
 		</>
 	);
-	const anOrAnother = hasEarlyAccess() ? 'another' : 'an';
+	const anOrAnother = isPatron() ? 'another' : 'an';
 
 	const userDocRef = doc(db, `users/${user?.uid}`);
 
@@ -78,9 +75,9 @@ function SettingsPage() {
 							/>
 						</div>
 					</SettingsGroup>
-					<SettingsGroup name="Early Access">
+					<SettingsGroup name="Patron Status">
 						{eaDisplay}
-						<p>If you have {anOrAnother} early access key, you can use it here.</p>
+						<p>If you have {anOrAnother} reward key, you can use it here.</p>
 						<RewardRedeemer />
 					</SettingsGroup>
 					<br />

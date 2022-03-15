@@ -24,9 +24,8 @@ export async function initUser() {
 	const userInit = httpsCallable(functions, 'initUser');
 	await userInit();
 
-	const checkEA = httpsCallable(functions, 'hasEarlyAccess');
+	const checkEA = httpsCallable(functions, 'isPatron');
 	hasEA = (await checkEA()).data as boolean;
-	console.log(hasEA ? 'You have early access!' : 'You don\'t have early access.');
 
 	const evt = new Event('userinit');
 	if (typeof window !== 'undefined') document.dispatchEvent(evt);
@@ -125,8 +124,8 @@ export async function refreshUserData() {
 }
 
 /**
- * Returns whether or not the user has early access. Returns null if the user data isn't loaded.
+ * Returns whether or not the user has patron status. Returns null if the user data isn't loaded.
  */
-export function hasEarlyAccess(): boolean | null {
+export function isPatron(): boolean | null {
 	return hasEA;
 }

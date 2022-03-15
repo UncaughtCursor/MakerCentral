@@ -12,7 +12,7 @@ admin.initializeApp();
 
 type Timestamp = admin.firestore.Timestamp;
 
-type Reward = 'Early Access';
+type Reward = 'Patron';
 type RewardDays = number | 'Until Expiry';
 type RewardExpiry = Timestamp | null;
 type UID = string;
@@ -25,7 +25,7 @@ interface KeyData {
 }
 
 interface UserData {
-	earlyAccessUntil: Timestamp;
+	patronUntil: Timestamp;
 }
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -49,6 +49,8 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	const userSocialDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/social`);
 	const userSocialDocSnap = await userSocialDocRef.get();
 
+	// FIXME: Initialize fields if they don't exist
+
 	if (!userDocSnap.exists) {
 		await userDocRef.set({
 			name: `User ${context.auth.uid.substring(0, 5)}...`,
@@ -56,7 +58,7 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	}
 	if (!userAccessDocSnap.exists) {
 		await userAccessDocRef.set({
-			earlyAccessUntil: new admin.firestore.Timestamp(0, 0),
+			patronUntil: new admin.firestore.Timestamp(0, 0),
 		});
 	}
 	if (!userSocialDocSnap.exists) {
@@ -70,16 +72,16 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	return { success: true, msg: '' };
 });
 
-export const hasEarlyAccess = functions.https.onCall(async (_data, context): Promise<boolean> => {
+export const isPatron = functions.https.onCall(async (_data, context): Promise<boolean> => {
 	if (context.auth === undefined) return false;
 
 	const userPrivDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/access`);
 	const userPrivDocSnap = await userPrivDocRef.get();
 	if (!userPrivDocSnap.exists || userPrivDocSnap.data() === undefined) return false;
-	const earlyAccessUntil = userPrivDocSnap.data()!.earlyAccessUntil as Timestamp;
+	const patronUntil = userPrivDocSnap.data()!.patronUntil as Timestamp;
 
 	const now = Date.now();
-	const subEndTime = earlyAccessUntil.seconds * 1000;
+	const subEndTime = patronUntil.seconds * 1000;
 	const hasEA = now < subEndTime;
 
 	return hasEA;
@@ -171,9 +173,9 @@ expiryDate,
 
 		// TODO: Eventually generalize for other rewards
 		// Reward's expiry date adds to today's date if in the past, else it adds onto the
-		// user's future early access expiry
-		const currentExpiry = userData.earlyAccessUntil.toDate().getTime() <= nowMillis
-			? nowMillis : userData.earlyAccessUntil.toDate().getTime();
+		// user's future patron expiry
+		const currentExpiry = userData.patronUntil.toDate().getTime() <= nowMillis
+			? nowMillis : userData.patronUntil.toDate().getTime();
 
 		// Compute expiry date when redeemed
 		let redeemedExpiryTime: number;
@@ -186,7 +188,7 @@ expiryDate,
 			if (currentExpiry >= rewardExpireMillis) {
 				return {
 					success: false,
-					msg: 'The user already has early access up'
+					msg: 'The user already has patron status up'
 				+ ' through the reward\'s expiration date. This key may be given'
 				+ ' away to another user to make use of it.',
 				};
@@ -198,9 +200,9 @@ expiryDate,
 		redeemedExpiryTime = Math.floor(redeemedExpiryTime / 1000);
 
 		// Redeem reward - set relevant field in the user data
-		if (reward === 'Early Access') {
+		if (reward === 'Patron') {
 			await userPrivDocRef.set({
-				earlyAccessUntil: new admin.firestore.Timestamp(redeemedExpiryTime, 0),
+				patronUntil: new admin.firestore.Timestamp(redeemedExpiryTime, 0),
 			}, { merge: true });
 		} else {
 			return { success: false, msg: 'Invalid reward type.' };

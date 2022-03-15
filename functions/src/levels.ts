@@ -36,6 +36,7 @@ export interface UserLevelDocData {
 	removalMessage: string | undefined;
 	epochDaysInPopularQueue: number[],
 	epochDaysInMonthQueue: number[],
+	isByPatron: boolean,
 }
 
 const userLevelTags = [
@@ -102,6 +103,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 		thumbnailUrl: data.globalUrls[level.thumbnailIndex],
 		epochDaysInPopularQueue: popularQueueDays,
 		epochDaysInMonthQueue: monthQueueDays,
+		isByPatron: false,
 	};
 
 	const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);

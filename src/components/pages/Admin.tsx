@@ -31,7 +31,7 @@ function Admin() {
 					}}
 				/>
 			</SettingsGroup>
-			<SettingsGroup name="Early Access Key Generator">
+			<SettingsGroup name="Reward Key Generator">
 				<TriggerButton
 					type="normal"
 					text="Generate"

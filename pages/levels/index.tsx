@@ -48,7 +48,8 @@ const levelCategories = [
 		name: 'By Patrons',
 		icon: <LoyaltyIcon />,
 		queryConstraints: [
-			orderBy('uploadTime', 'desc'), // FIXME: Sort patrons
+			where('isByPatron', '==', true),
+			orderBy('uploadTime', 'desc'),
 		],
 		queueType: 'None',
 	},

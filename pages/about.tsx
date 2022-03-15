@@ -40,8 +40,6 @@ function About() {
 					has been a huge undertaking. If you find this site helpful and want to support me,
 					or just want some awesome perks, you can become my supporter
 					on <a href="https://www.patreon.com/UncaughtCursor">Patreon</a>.
-					Fire Flower tier patrons gain early access,
-					which will allows them to access powerful new features earlier than everyone else.
 				</p>
 				<p className="explanatory-text">Thank you for your interest in my project!
 					I hope you find good use out of it. ❤️

@@ -59,6 +59,7 @@ export interface UserLevel {
 	removalMessage: string | undefined;
 	epochDaysInPopularQueue: number[],
 	epochDaysInMonthQueue: number[],
+	isByPatron: boolean,
 }
 
 export type UserLevelTag = typeof userLevelTags[number];

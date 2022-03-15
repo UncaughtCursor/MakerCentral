@@ -26,7 +26,7 @@ function RewardRedeemer(props: {
 			}}
 			>
 				<TextField
-					label="Early Access Key"
+					label="Reward Key"
 					value={key}
 					widthPx={160}
 					onChange={(input: string) => {

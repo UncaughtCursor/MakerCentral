@@ -1,7 +1,7 @@
 import RewardRedeemer from '@components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '@components/pages/controls/settings/SettingsGroup';
 import { auth, getUser, logout } from '@scripts/site/FirebaseUtil';
-import { hasEarlyAccess, refreshUserData } from '@scripts/site/UserDataScripts';
+import { isPatron, refreshUserData } from '@scripts/site/UserDataScripts';
 import React, { useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import TriggerButton from '@components/pages/controls/TriggerButton';
@@ -11,9 +11,9 @@ import LoginPrompt from './LoginPrompt';
 type GateOpenState = 'login' | 'EA' | 'open' | 'closed';
 
 /**
- * A component to force the user to log in and, optionally, to also have Early Access.
+ * A component to force the user to log in and, optionally, to also have patron status.
  * @param props The props:
- * * requireEA: Whether or not Early Access is required.
+ * * requireEA: Whether or not patron status is required.
  * * showLogout: Whether or not to show a button to allow the user to log out on key entry.
  */
 function Gate(props: {
@@ -22,7 +22,7 @@ function Gate(props: {
 	children: React.ReactNode
 }) {
 	const [user, setUser] = useState(getUser() as User | null);
-	const [isLoading, setIsLoading] = useState(getUser() !== null && hasEarlyAccess() === null);
+	const [isLoading, setIsLoading] = useState(getUser() !== null && isPatron() === null);
 
 	onAuthStateChanged(auth, (authUser: User | null) => {
 		setUser(authUser);
@@ -40,10 +40,9 @@ function Gate(props: {
 
 	const [openState, setOpenState] = useState(getOpenStateFromUser(user));
 	console.log(getUser());
-	console.log(`EA ${hasEarlyAccess()}`);
-	if (getUser() !== null && hasEarlyAccess() === null && !isLoading) setIsLoading(true);
+	if (getUser() !== null && isPatron() === null && !isLoading) setIsLoading(true);
 
-	const boldMsg = props.requireEA ? 'You\'ll be able to use this page with early access.'
+	const boldMsg = props.requireEA ? 'You\'ll be able to use this page with patron status.'
 		: 'You\'ll be able to use this page after logging in.';
 
 	switch (openState) {
@@ -72,13 +71,13 @@ function Gate(props: {
 					<SettingsGroup name="Want a Taste of What's Cooking? 🍳">
 						<p><b>{boldMsg}</b></p>
 						<br />
-						<p>If you have an early access key, you can use it below.</p>
+						<p>If you have a reward key, you can use it below.</p>
 						{ /* TODO: Change functionality when other rewards are implemented */}
 						<RewardRedeemer onSuccess={() => {
 							refreshUserData();
 						}}
 						/>
-						<p>You can unlock early access by supporting me on Patreon!</p>
+						<p>You can unlock this feature and more by supporting me on Patreon!</p>
 						<p>I work hard to develop this site and its music level technology.
 							If you know you will find this website helpful,
 							please consider <a href="https://www.patreon.com/UncaughtCursor">becoming a Patron</a>.
@@ -108,7 +107,7 @@ function Gate(props: {
 	 * @returns The GateOpenState to render.
 	 */
 	function getOpenStateFromUser(user: User | null): GateOpenState {
-		const hasEA = hasEarlyAccess();
+		const hasEA = isPatron();
 		let newOpenState: GateOpenState = 'closed';
 		if (user === null || hasEA === null) newOpenState = 'login';
 		else if (!hasEA && props.requireEA) newOpenState = 'EA';
