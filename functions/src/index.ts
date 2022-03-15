@@ -32,17 +32,28 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	const userSocialDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/social`);
 	const userSocialDocSnap = await userSocialDocRef.get();
 
-	// FIXME: Initialize fields if they don't exist
-
 	if (!userDocSnap.exists) {
 		await userDocRef.set({
-			name: `User ${context.auth.uid.substring(0, 5)}...`,
+			name: `User ${context.auth.uid.substring(0, 3)}...`,
+		});
+	} else if (userAccessDocSnap.data()!.name === undefined) {
+		await userDocRef.set({
+			name: `User ${context.auth.uid.substring(0, 3)}...`,
 		});
 	}
 	if (!userAccessDocSnap.exists) {
 		await userAccessDocRef.set({
 			patronUntil: new admin.firestore.Timestamp(0, 0),
 		});
+	} else {
+		const userAccessData = userAccessDocSnap.data()!;
+		// Update old patreon data to new schema
+		if (userAccessData.earlyAccessUntil !== undefined) {
+			await userAccessDocRef.set({
+				patronUntil: userAccessData.earlyAccessUntil,
+				patronStatus: 'Fire Flower',
+			});
+		}
 	}
 	if (!userSocialDocSnap.exists) {
 		await userSocialDocRef.set({
