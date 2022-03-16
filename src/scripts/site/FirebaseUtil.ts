@@ -4,11 +4,13 @@ import {
 } from 'firebase/firestore/lite';
 import {
 	getAuth, connectAuthEmulator, onAuthStateChanged, User,
-	signOut, signInWithPopup, GoogleAuthProvider,
+	signOut, GoogleAuthProvider,
+	EmailAuthProvider,
 } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 // import { getAnalytics } from 'firebase/analytics';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
+import 'firebaseui/dist/firebaseui.css';
 
 import { initUser } from './UserDataScripts';
 
@@ -48,6 +50,31 @@ const firebaseConfig = {
 
 };
 
+const firebaseUiConfig: firebaseui.auth.Config = {
+	signInOptions: [
+		GoogleAuthProvider.PROVIDER_ID,
+		EmailAuthProvider.PROVIDER_ID,
+	],
+	signInFlow: 'popup',
+	tosUrl: 'https://www.termsfeed.com/live/3cf94489-44da-4cca-a1fa-22c192b7113d',
+	privacyPolicyUrl: 'https://www.termsfeed.com/live/9b12f22d-2228-4b5f-81dd-071a4cb079ed',
+	callbacks: {
+		signInSuccessWithAuthResult: () => {
+			if (typeof window !== 'undefined') {
+				const evt = new Event('login-end');
+				document.dispatchEvent(evt);
+			}
+			return false;
+		},
+		signInFailure: () => {
+			if (typeof window !== 'undefined') {
+				const evt = new Event('login-end');
+				document.dispatchEvent(evt);
+			}
+		},
+	},
+};
+
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
@@ -70,6 +97,34 @@ onAuthStateChanged(auth, (authUser) => {
 	user = authUser;
 	if (user !== null) initUser();
 });
+
+// ui-sign-in-name-input
+
+if (typeof window !== 'undefined') {
+	// https://eager.io/blog/how-to-decide-when-your-code-should-run/
+
+	const observer = new MutationObserver((mutations) => {
+		for (let i = 0; i < mutations.length; i++) {
+			for (let j = 0; j < mutations[i].addedNodes.length; j++) {
+				const thisElement = mutations[i].addedNodes[j] as Element;
+
+				// Target the 'First & last name' field and replace it with "Display Name"
+				if (thisElement.className === 'mdl-card mdl-shadow--2dp firebaseui-container firebaseui-id-page-password-sign-up') {
+					// eslint-disable-next-line no-param-reassign
+					thisElement.id = 'firebase-ui-injection';
+					thisElement.childNodes[0]
+						.childNodes[1].childNodes[2]
+						.childNodes[0].textContent = 'Display Name';
+				}
+			}
+		}
+	});
+
+	observer.observe(document.documentElement, {
+		childList: true,
+		subtree: true,
+	});
+}
 
 /**
  * Gets the currently logged in user or null if logged out.
@@ -95,23 +150,32 @@ export function randomString(length: number) {
 	return result;
 }
 
-const provider = new GoogleAuthProvider();
+let firebaseAuthUi: any;
+
+if (typeof window !== 'undefined' && firebaseAuthUi === undefined) {
+	try {
+		import('firebaseui').then((firebaseui) => {
+			firebaseAuthUi = new firebaseui.auth.AuthUI(auth);
+		});
+	} catch (e) {
+		console.error(e);
+	}
+}
 
 /**
- * Prompts the user to log in with Google.
+ * Prompts the user to log in or sign up.
+ * Ideally, the page they were just on.
  */
-export function promptGoogleLogin() {
-	signInWithPopup(auth, provider)
-		.catch((error) => {
-			// Handle Errors here.
-			const errorCode = error.code;
-			const errorMessage = error.message;
-			// The email of the user's account used.
-			const email = error.email;
-			// The AuthCredential type that was used.
-			const credential = GoogleAuthProvider.credentialFromError(error);
-			console.error(errorCode, errorMessage, email, credential);
-		});
+export async function promptLogin() {
+	if (typeof window !== 'undefined') {
+		const evt = new Event('login-request');
+		document.dispatchEvent(evt);
+	}
+	try {
+		firebaseAuthUi.start('#firebaseui-auth-container', firebaseUiConfig);
+	} catch (e) {
+		console.error(e);
+	}
 }
 
 /**

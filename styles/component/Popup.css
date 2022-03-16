@@ -1,0 +1,22 @@
+.popup {
+	background-color: var(--bg-dark);
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translateX(-50%) translateY(-50%);
+	z-index: 10;
+	padding: 30px;
+	border-radius: 20px;
+	box-shadow: 4px 4px 4px black;
+}
+
+.popup-x {
+	position: absolute;
+	left: calc(100% - 35px);
+	top: 10px;
+	cursor: pointer;
+}
+
+.popup-x > svg {
+	color: var(--text-color);
+}

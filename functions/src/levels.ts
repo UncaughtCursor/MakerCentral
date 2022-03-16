@@ -65,7 +65,7 @@ type Difficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
 type GameStyle = 'SMB1' | 'SMB3' | 'SMW' | 'NSMBU' | 'SM3DW';
 type UserLevelTag = typeof userLevelTags[number];
 
-const regularUploadDelayHr = 3;
+const regularUploadDelayHr = 4;
 const patronUploadDelayHr = 2;
 
 export const publishLevel = functions.https.onCall(async (data: {

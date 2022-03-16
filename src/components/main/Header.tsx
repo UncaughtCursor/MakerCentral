@@ -5,6 +5,7 @@ import Navbar from './Nav';
 import UserMenu from './UserMenu';
 import HamburgerMenuButton from './hamburger-menu/HamburgerMenuButton';
 import HamburgerMenu from './hamburger-menu/HamburgerMenu';
+import EventPopup from './EventPopup';
 
 /**
  * The header of the webpage, containing the logo and navigation buttons.
@@ -37,7 +38,7 @@ function Header() {
 				fontWeight: 'bold',
 				textDecoration: 'none',
 			}}
-			>PATRON
+			>BETA
 			</p>
 		</>
 	) : (
@@ -77,6 +78,11 @@ function Header() {
 				onCloseEvent={() => {
 					setHamburgerMenuOpenState(false);
 				}}
+			/>
+			<EventPopup
+				id="firebaseui-auth-container"
+				eventName="login-request"
+				hideEventName="login-end"
 			/>
 		</>
 	);

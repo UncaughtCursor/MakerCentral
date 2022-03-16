@@ -1,6 +1,6 @@
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import {
-	auth, getUser, logout, promptGoogleLogin,
+	auth, getUser, logout, promptLogin,
 } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import React, { useState } from 'react';
@@ -58,7 +58,14 @@ function HamburgerMenu(props: {
 				</div>
 			</div>
 			<div style={{ display: user === null ? '' : 'none', padding: '10px' }}>
-				<TriggerButton text="Log In" type="blue" onClick={() => { promptGoogleLogin(); }} />
+				<TriggerButton
+					text="Log In"
+					type="blue"
+					onClick={() => {
+						requestMenuClose();
+						promptLogin();
+					}}
+				/>
 			</div>
 		</div>
 	);

@@ -1,6 +1,6 @@
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
-import { promptGoogleLogin } from '@scripts/site/FirebaseUtil';
+import { promptLogin } from '@scripts/site/FirebaseUtil';
 import React, { useState } from 'react';
 
 /**
@@ -17,7 +17,7 @@ function LoginPrompt() {
 			<TriggerButton
 				text="Use Google Account"
 				type="blue"
-				onClick={promptGoogleLogin}
+				onClick={promptLogin}
 			/>
 			{/* <p>- or -</p>
 			<div style={{ display: 'flex' }}>

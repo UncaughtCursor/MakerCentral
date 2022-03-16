@@ -9,7 +9,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import {
 	onAuthStateChanged, User,
 } from 'firebase/auth';
-import { auth, logout, promptGoogleLogin } from '@scripts/site/FirebaseUtil';
+import { auth, logout, promptLogin } from '@scripts/site/FirebaseUtil';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 
 /**
@@ -40,7 +40,11 @@ function UserMenu() {
 	return (
 		<div className="usermenu-container">
 			<div className="login-container" style={{ display: !signedIn ? 'flex' : 'none' }}>
-				<TriggerButton text="Log In" type="blue" onClick={() => { promptGoogleLogin(); }} />
+				<TriggerButton
+					text="Log In"
+					type="blue"
+					onClick={promptLogin}
+				/>
 			</div>
 			<div style={{ display: signedIn ? 'flex' : 'none' }}>
 				<OutsideClickHandler onOutsideClick={() => { setIsOpen(false); }}>

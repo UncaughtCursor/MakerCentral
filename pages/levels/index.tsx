@@ -61,7 +61,7 @@ const levelCategories = [
 	},
 ] as LevelCategory[];
 
-const normalUploadDelayHr = 3;
+const normalUploadDelayHr = 4;
 const patronUploadDelayHr = 2;
 
 /**

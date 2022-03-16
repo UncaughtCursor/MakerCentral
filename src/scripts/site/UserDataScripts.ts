@@ -19,12 +19,22 @@ let curPatronStatus: PatronStatus | null = null;
 
 /**
  * Initializes and/or updates user data after login.
- * @param user The User whose data to initialize.
  */
 export async function initUser() {
 	curPatronStatus = null;
+
+	const curUser = getUser()!;
+	const userDocRef = doc(db, `users/${curUser.uid}`);
+	const isFirstLogin = !(await getDoc(userDocRef)).exists();
+
 	const userInit = httpsCallable(functions, 'initUser');
 	await userInit();
+
+	if (isFirstLogin) {
+		setDoc(userDocRef, {
+			name: curUser.displayName,
+		}, { merge: true });
+	}
 
 	const getPatronStatus = httpsCallable(functions, 'getPatronStatus');
 	const patronType = (await getPatronStatus()).data as 'None' | 'Mushroom' | 'Fire Flower' | 'Super Star';
