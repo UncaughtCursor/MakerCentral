@@ -22,7 +22,7 @@
 	top: var(--header-height);
 	width: 100%;
 	background-color: var(--bg-dark);
-	z-index: 4;
+	z-index: 5;
 	box-shadow: 0 3px 2px black;
 	border-top: 1px solid black;
 	transition: transform ease-in-out 0.25s;

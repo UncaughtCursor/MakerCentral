@@ -8,6 +8,7 @@ import TriggerButton from '@components/pages/controls/TriggerButton';
 import { auth, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
+import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -28,6 +29,13 @@ function LevelPage(props: {
 		setUser(authUser);
 	});
 
+	const thumbnailIdx = props.level!.imageUrls.indexOf(props.level!.thumbnailUrl);
+
+	const images: ReactImageGalleryItem[] = props.level!.imageUrls.map((imageUrl) => ({
+		original: imageUrl,
+		originalClass: 'level-page-img-container',
+	}));
+
 	const levelRating = level.numLikes + level.numDislikes > 0
 		? Math.round((100 * level.numLikes) / (level.numLikes + level.numDislikes))
 		: 100;
@@ -46,11 +54,15 @@ function LevelPage(props: {
 							<p className="level-code">{level.levelCode}</p>
 						</div>
 						<div className="level-page-img-container">
-							<img
-								className="level-page-img"
-								src={level.thumbnailUrl}
-								alt={level.name}
-							/>
+							<div>
+								<ImageGallery
+									items={images}
+									showThumbnails={false}
+									showPlayButton={false}
+									showFullscreenButton={false}
+									startIndex={thumbnailIdx}
+								/>
+							</div>
 							<p><i>{level.shortDescription}</i></p>
 						</div>
 						<FeedbackControl levelId={level.id} />

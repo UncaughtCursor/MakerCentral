@@ -1,7 +1,4 @@
-.level-page-img {
-	aspect-ratio: 16 / 9;
-	width: 100%;
-}
+@import "~react-image-gallery/styles/css/image-gallery.css";
 
 .level-page-img-container > p {
 	margin: 4px auto;
@@ -11,6 +8,11 @@
 .level-page-img-container {
 	max-width: 400px;
 	margin: 0 auto;
+}
+
+.level-page-img-container > img {
+	aspect-ratio: 16 / 9;
+	width: 100%;
 }
 
 .level-page-top {

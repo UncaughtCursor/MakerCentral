@@ -61,8 +61,8 @@ const levelCategories = [
 	},
 ] as LevelCategory[];
 
-const normalLevelWaitTimeHr = 5;
-const patronLevelWaitTimeHr = 3;
+const normalUploadDelayHr = 3;
+const patronUploadDelayHr = 2;
 
 /**
  * The user level browsing view.
@@ -72,16 +72,18 @@ function LevelBrowser() {
 	const category = levelCategories[categoryIdx];
 
 	const [timeUntilUpload, setTimeUntilUpload] = useState(Infinity);
+	const [user, setUser] = useState(null as User | null);
 
 	const getLevelUploadablityStatus = (async () => {
-		const user = getUser();
 		if (user === null) return;
 
 		const socialDocSnap = await getDoc(doc(db, `users/${user.uid}/priv/social`));
 		const lastUploadTimestamp = socialDocSnap.data()!.lastLevelUploadTime as Timestamp;
 
 		const lastUploadTime = lastUploadTimestamp.toDate().getTime();
-		const waitTimeMs = (getPatronType() === 'None' ? normalLevelWaitTimeHr : patronLevelWaitTimeHr) * 60 * 60 * 1000;
+		const patronStatus = getPatronType();
+		const waitTimeMs = (patronStatus === 'None' || patronStatus === null
+			? normalUploadDelayHr : patronUploadDelayHr) * 60 * 60 * 1000;
 		const nextAvailUploadTime = lastUploadTime + waitTimeMs;
 
 		setTimeUntilUpload(nextAvailUploadTime - Date.now());
@@ -90,8 +92,8 @@ function LevelBrowser() {
 	useEffect(() => {
 		getLevelUploadablityStatus();
 
-		onAuthStateChanged(auth, () => {
-			getLevelUploadablityStatus();
+		onAuthStateChanged(auth, (authUser) => {
+			setUser(authUser);
 		});
 
 		if (typeof window !== 'undefined') {
@@ -102,7 +104,7 @@ function LevelBrowser() {
 				window.removeEventListener('userinit', getLevelUploadablityStatus);
 			}
 		};
-	}, []);
+	}, [user]);
 
 	const msPerHr = 1000 * 60 * 60;
 	const hrsUntilNextUpload = Math.floor(timeUntilUpload / msPerHr);
@@ -126,6 +128,9 @@ function LevelBrowser() {
 					<p>You can upload your next level in&nbsp;
 						<b>{hrsUntilNextUpload} hr {minsUntilNextUpload} min</b>.
 					</p>
+				</div>
+				<div style={{ display: user === null ? '' : 'none' }}>
+					<p>Want to add your own level? Log in or create an account in the upper right.</p>
 				</div>
 				<LevelCategoryPicker
 					categories={levelCategories}
