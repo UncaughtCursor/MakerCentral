@@ -65,6 +65,9 @@ type Difficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
 type GameStyle = 'SMB1' | 'SMB3' | 'SMW' | 'NSMBU' | 'SM3DW';
 type UserLevelTag = typeof userLevelTags[number];
 
+const regularUploadDelayHr = 5;
+const patronUploadDelayHr = 3;
+
 export const publishLevel = functions.https.onCall(async (data: {
 	level: UserLevelInformation, globalUrls: string[]
 }, context) => {
@@ -73,7 +76,6 @@ export const publishLevel = functions.https.onCall(async (data: {
 	if (level.imageLocalUrls.length === 0) throw new Error('Level data does not include an image.');
 	if (!isValidLevelCode(level.levelCode)) throw new Error('Invalid course ID.');
 	if (context.auth === undefined) throw new Error('User is not logged in.');
-	// TODO: Level upload limit
 
 	const now = Date.now();
 	const levelId = randomString(24);
@@ -88,34 +90,55 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const userPrivData = userPrivDocSnap.data()!;
 	const patronStatus = userPrivData.patronStatus as PatronStatus;
 
-	// Construct the published level data structure
-	const fullLevelData: UserLevelDocData = {
-		name: level.name,
-		levelCode: getFormattedCode(level.levelCode),
-		shortDescription: level.shortDescription,
-		description: level.description,
-		gameStyle: level.gameStyle,
-		difficulty: level.difficulty,
-		tags: level.tags,
-		id: levelId,
-		uploadTime: now,
-		editedTime: now,
-		makerUid: context.auth.uid,
-		numLikes: 0,
-		numDislikes: 0,
-		score: 0,
-		numComments: 0,
-		publicationStatus: 'Public',
-		removalMessage: '',
-		imageUrls: data.globalUrls,
-		thumbnailUrl: data.globalUrls[level.thumbnailIndex],
-		epochDaysInPopularQueue: popularQueueDays,
-		epochDaysInMonthQueue: monthQueueDays,
-		isByPatron: patronStatus === 'Super Star',
-	};
+	await admin.firestore().runTransaction(async (t) => {
+		// Update the users' last posted level time
+		const userSocialDoc = admin.firestore().doc(`/users/${context.auth!.uid}/priv/social`);
+		const userSocialDocSnap = await userSocialDoc.get();
+		if (!userSocialDocSnap.exists) throw new Error('User social data does not exist.');
+		const userSocialData = userSocialDocSnap.data()!;
 
-	const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
-	await levelDocRef.set(fullLevelData);
+		// Prevent frequent uploads
+		const lastLevelUploadTime =	(userSocialData.lastLevelUploadTime as admin.firestore.Timestamp)
+			.toDate().getTime();
+		const uploadDelayHr = patronStatus === 'None' ? regularUploadDelayHr : patronUploadDelayHr;
+		const uploadDelayMs = uploadDelayHr * 60 * 60 * 1000;
+		if (now < lastLevelUploadTime + uploadDelayMs) throw Error('Levels are being uploaded too frequently.');
+
+		const seconds = Math.floor(now / 1000);
+		t.set(userSocialDoc, {
+			lastLevelUploadTime: new admin.firestore.Timestamp(seconds, 0),
+		}, { merge: true });
+
+		// Construct the published level data structure
+		const fullLevelData: UserLevelDocData = {
+			name: level.name,
+			levelCode: getFormattedCode(level.levelCode),
+			shortDescription: level.shortDescription,
+			description: level.description,
+			gameStyle: level.gameStyle,
+			difficulty: level.difficulty,
+			tags: level.tags,
+			id: levelId,
+			uploadTime: now,
+			editedTime: now,
+			makerUid: context.auth!.uid,
+			numLikes: 0,
+			numDislikes: 0,
+			score: 0,
+			numComments: 0,
+			publicationStatus: 'Public',
+			removalMessage: '',
+			imageUrls: data.globalUrls,
+			thumbnailUrl: data.globalUrls[level.thumbnailIndex],
+			epochDaysInPopularQueue: popularQueueDays,
+			epochDaysInMonthQueue: monthQueueDays,
+			isByPatron: patronStatus === 'Super Star',
+		};
+
+		const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
+		t.set(levelDocRef, fullLevelData);
+	});
+
 	return levelId;
 });
 

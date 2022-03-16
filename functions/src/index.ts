@@ -34,11 +34,11 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 
 	if (!userDocSnap.exists) {
 		await userDocRef.set({
-			name: `User ${context.auth.uid.substring(0, 3)}...`,
+			name: `New User ${context.auth.uid.substring(0, 4)}`,
 		});
-	} else if (userAccessDocSnap.data()!.name === undefined) {
+	} else if (userDocSnap.data()!.name === undefined) {
 		await userDocRef.set({
-			name: `User ${context.auth.uid.substring(0, 3)}...`,
+			name: `New User ${context.auth.uid.substring(0, 4)}`,
 		});
 	}
 	if (!userAccessDocSnap.exists) {
@@ -58,7 +58,6 @@ export const initUser = functions.https.onCall(async (_data, context) => {
 	if (!userSocialDocSnap.exists) {
 		await userSocialDocRef.set({
 			points: 0,
-			lastProfileChangeTime: new admin.firestore.Timestamp(0, 0),
 			lastLevelUploadTime: new admin.firestore.Timestamp(0, 0),
 		});
 	}
