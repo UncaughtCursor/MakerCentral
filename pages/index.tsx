@@ -1,4 +1,5 @@
 import AppFrame from '@components/AppFrame';
+import Link from 'next/link';
 import React from 'react';
 import ActionButton from '../src/components/pages/controls/ActionButton';
 
@@ -13,7 +14,10 @@ function Home() {
 			</p>
 			<br />
 			<ActionButton text="Get Started" to="/music-level-studio" />
-
+			<br />
+			<br />
+			<p>Once you&apos;re done, you can share it in the <Link href="/levels">level gallery!</Link></p>
+			<p>(You can also share any non-music levels you&apos;ve made there, too!)</p>
 		</AppFrame>
 	);
 }

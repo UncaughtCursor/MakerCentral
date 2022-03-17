@@ -37,6 +37,7 @@ function RewardRedeemer(props: {
 					text="Submit"
 					type="blue"
 					onClick={submitKey}
+					isLoading={statusText === 'Submitting...'}
 				/>
 			</div>
 			<p style={{ fontSize: '13px' }}>{statusText}</p>

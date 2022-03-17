@@ -62,6 +62,7 @@ function LevelEditor(props: {
 	const [level, setLevel] = useState(defaultLevel);
 	const [user, setUser] = useState(getUser());
 	const [hasAccess, setHasAccess] = useState(true);
+	const [isLoading, setIsLoading] = useState(false);
 
 	onAuthStateChanged(auth, (authUser) => {
 		setUser(authUser);
@@ -242,6 +243,7 @@ function LevelEditor(props: {
 					text="Publish"
 					type="blue"
 					onClick={publishLevel}
+					isLoading={isLoading}
 				/>
 			</div>
 		</>
@@ -290,6 +292,7 @@ function LevelEditor(props: {
 	 * Publishes a level based on the user-submitted data.
 	 */
 	async function publishLevel() {
+		setIsLoading(true);
 		// Upload the images to Firebase storage
 		const globalUrls = new Array<string>(level.imageLocalUrls.length).fill('');
 		await Promise.all(level.imageLocalUrls.map(
@@ -329,6 +332,7 @@ function LevelEditor(props: {
 			// eslint-disable-next-line no-alert
 			alert('An error occurred while attempting to upload the level.');
 			console.error(e);
+			setIsLoading(false);
 		}
 	}
 

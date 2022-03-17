@@ -15,6 +15,7 @@ import LoyaltyIcon from '@mui/icons-material/Loyalty';
 import { auth, db, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getPatronType } from '@scripts/site/UserDataScripts';
+import { getPatronStatus } from 'functions/src';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const levelCategories = [
@@ -138,7 +139,7 @@ function LevelBrowser() {
 					onChange={setCategoryIdx}
 				/>
 				<div>
-					<p style={{ display: category.name === 'By Patrons' ? '' : 'none' }}>
+					<p style={{ display: (category.name === 'By Patrons' && getPatronType() !== 'Super Star') ? '' : 'none' }}>
 						You can have your level showcased here if you support me on <a href="https://www.patreon.com/UncaughtCursor">Patreon</a>!
 						New levels by Super Star tier patrons will show up here.
 					</p>
