@@ -8,10 +8,10 @@ import {
 	EmailAuthProvider,
 } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
-// import { getAnalytics } from 'firebase/analytics';
+import { Analytics, getAnalytics } from 'firebase/analytics';
 import { connectStorageEmulator, getStorage } from 'firebase/storage';
 import 'firebaseui/dist/firebaseui.css';
-
+import { getCookieConsentValue } from 'react-cookie-consent';
 import { initUser } from './UserDataScripts';
 
 // Non-EAP prod
@@ -83,7 +83,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
 export const storage = getStorage(app);
-// export const analytics = getAnalytics(app);
+let analytics: Analytics | null = null;
 
 // FIXME: COMMENT OUT IN PROD
 try {
@@ -127,6 +127,12 @@ if (typeof window !== 'undefined') {
 		childList: true,
 		subtree: true,
 	});
+
+	// Init Google Analytics if the user has cookies enabled
+	const hasCookiesEnabled = getCookieConsentValue();
+	if (hasCookiesEnabled) {
+		initAnalytics();
+	}
 }
 
 /**
@@ -191,4 +197,19 @@ export function logout() {
 		// An error happened.
 		console.error(error);
 	});
+}
+
+/**
+ * Initializes Google Analytics. Should only be done if the user consented to it first.
+ */
+export function initAnalytics() {
+	analytics = getAnalytics(app);
+}
+
+/**
+ * Returns the Google Analytics object or null if not initialized.
+ * @returns
+ */
+export function getAppAnalytics() {
+	return analytics;
 }
