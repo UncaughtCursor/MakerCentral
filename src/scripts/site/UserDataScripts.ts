@@ -4,7 +4,6 @@ import {
 	deleteDoc,
 	doc, getDoc, serverTimestamp, setDoc,
 } from 'firebase/firestore/lite';
-import serialize from 'serialize-javascript';
 import LZString from 'lz-string';
 import UndoRedoManager from '@scripts/builder/project/UndoRedoManager';
 import ProjectTrack from '@scripts/builder/project/ProjectTrack';
@@ -61,7 +60,7 @@ export async function saveProject(
 	const optResult = projectData.buildInstances[0].optResult;
 	projectData.buildInstances[0].optResult = null;
 
-	const serializedData = serialize(projectData);
+	const serializedData = JSON.stringify(projectData);
 	const compressedData = LZString.compressToUTF16(serializedData);
 
 	await setDoc(projectRef, {
@@ -100,16 +99,18 @@ export async function loadProject(
 		const data = projectSnap.data().data;
 		const compressedData = data as unknown as string;
 
-		const decompressedData = LZString.decompressFromUTF16(compressedData as unknown as string);
-		console.log(decompressedData);
+		const decompressedData = LZString.decompressFromUTF16(compressedData) as string;
 
-		const project = eval(`(${decompressedData})`);
+		const project = JSON.parse(decompressedData);
 
 		// Restore class objects from saved data
 		const projectData: ProjectData = project;
 
 		const undoRedoData = project.buildInstances[0].undoRedoManager;
-		project.buildInstances[0].undoRedoManager = new UndoRedoManager(undoRedoData.history, undoRedoData.historyIndex);
+		project.buildInstances[0].undoRedoManager = new UndoRedoManager(
+			undoRedoData.history,
+			undoRedoData.historyIndex,
+		);
 
 		const baseTrackData = projectData.buildInstances[0].baseTracks;
 		for (let i = 0; i < baseTrackData.length; i++) {

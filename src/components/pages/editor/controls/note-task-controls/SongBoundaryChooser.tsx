@@ -218,17 +218,9 @@ function SongBoundaryChooser() {
 		buildInst.baseTracks = ctx.project.createTracksFromSelection(selection, buildInst.buildMode);
 		buildInst.tracks = [];
 
-		// Reset track dictionary
-		buildInst.trackDict.clear();
-
 		buildInst.baseTracks.forEach((track) => {
-			// Add these tracks to the track dictionary for quick lookup
-			buildInst.trackDict.set(track.id, track);
-
 			// Calculate best octave shift
-			const avgNotePitch = track.notes.length > 0 ? track.notes.reduce(
-				(acc, note) => acc + note.pitch, 0,
-			) / track.notes.length : 0;
+			const avgNotePitch = track.notes.length > 0 ? track.notes.reduce((acc, note) => acc + note.pitch, 0) / track.notes.length : 0;
 			const octaveShift = -Math.round((avgNotePitch - KEY_C4 - 12) / 12);
 
 			// Shift each track into the best octave possible
@@ -382,8 +374,10 @@ function getXFromBeat(beat: number | null) {
  * @param endBound The ending boundary location.
  * @returns Which page to jump to.
  */
-function getEarliestUnfinishedPage(startBound: number | null,
-	endBound: number | null): SongBoundaryChooserPage {
+function getEarliestUnfinishedPage(
+	startBound: number | null,
+	endBound: number | null,
+): SongBoundaryChooserPage {
 	if (startBound === null) return 'start';
 	if (endBound === null) return 'end';
 	return 'confirm';

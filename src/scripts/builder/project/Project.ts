@@ -10,7 +10,7 @@ import { ScrollBpbConfig, TraditionalOptimizationResult } from '../optimization/
 type TrackId = number;
 export type BuildMode = 'traditional' | 'looping' | 'prototype' | 'minecraft' | 'unspecified';
 
-const currentVersion = 0;
+const currentVersion = 1;
 
 export interface ProjectData {
 	version: number;
@@ -23,7 +23,6 @@ export interface BuildInstance {
 	selections: MusicSelection[];
 	baseTracks: ProjectTrack[];
 	tracks: ProjectTrack[];
-	trackDict: Map<TrackId, ProjectTrack>;
 	optResult: TrackOptimizationResult | TraditionalOptimizationResult | null;
 	optResultConfig: ScrollBpbConfig | null;
 	noteGrids: UnboundedGridEntityManager<ProjectNoteEntity>[];
@@ -79,7 +78,6 @@ export default class Project {
 				}],
 				tracks: [],
 				baseTracks: [],
-				trackDict: new Map(),
 				optResult: null,
 				optResultConfig: null,
 				noteGrids: [],
@@ -148,9 +146,7 @@ export default class Project {
 				|| (buildMode === 'looping' && !insData.isLoopingBuildable);
 				if (isIllegalInstrument) instrument = 'Goomba';
 
-				const createdTrack = new ProjectTrack(
-					projectNotes, instrument, selection.endBeat! - selection.startBeat!,
-				);
+				const createdTrack = new ProjectTrack(projectNotes, instrument, selection.endBeat! - selection.startBeat!);
 				createdTrack.name = midiInstrument.name;
 				tracks.push(createdTrack);
 			}
