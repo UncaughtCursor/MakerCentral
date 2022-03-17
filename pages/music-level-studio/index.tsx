@@ -14,20 +14,18 @@ function Builder() {
 	const ctx = useContext(EditorContext);
 	return (
 		<AppFrame>
-			<Gate requireEA showLogout={false}>
-				<h1>Music Level Studio</h1>
-				<p>To begin, start a new project or open an existing one.</p>
-				<br />
-				<TriggerButton
-					text="New Project"
-					type="blue"
-					onClick={() => { launchEditor(null); }}
-				/>
-				<br />
-				<br />
-				<h3>Recent Projects</h3>
-				<ProjectList limit={3} />
-			</Gate>
+			<h1>Music Level Studio</h1>
+			<p>To begin, start a new project or open an existing one.</p>
+			<br />
+			<TriggerButton
+				text="New Project"
+				type="blue"
+				onClick={() => { launchEditor(null); }}
+			/>
+			<br />
+			<br />
+			<h3>Recent Projects</h3>
+			<ProjectList limit={3} />
 		</AppFrame>
 	);
 

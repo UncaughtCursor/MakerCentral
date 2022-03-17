@@ -53,7 +53,7 @@ function Gate(props: {
 		return (
 			<div className="gate-background">
 				<div style={{ display: isLoading ? 'none' : '' }}>
-					<SettingsGroup name="Want a Taste of What's Cooking? 🍳">
+					<SettingsGroup name="Log in to Continue">
 						<p><b>{boldMsg}</b></p>
 						<br />
 						<p>Log into your account or create a new one below.</p>

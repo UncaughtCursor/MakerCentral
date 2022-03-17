@@ -137,6 +137,12 @@ function LevelBrowser() {
 					selectedIndex={categoryIdx}
 					onChange={setCategoryIdx}
 				/>
+				<div>
+					<p style={{ display: category.name === 'By Patrons' ? '' : 'none' }}>
+						You can have your level showcased here if you support me on <a href="https://www.patreon.com/UncaughtCursor">Patreon</a>!
+						New levels by Super Star tier patrons will show up here.
+					</p>
+				</div>
 				<LevelCategoryView
 					category={category}
 					batchSize={10}

@@ -10,11 +10,9 @@ import EditorView from '../../src/components/pages/editor/EditorView';
 function Editor() {
 	return (
 		<AppFrame>
-			<Gate requireEA showLogout={false}>
-				<EditorContext.Provider value={defaultState}>
-					<EditorView />
-				</EditorContext.Provider>
-			</Gate>
+			<EditorContext.Provider value={defaultState}>
+				<EditorView />
+			</EditorContext.Provider>
 		</AppFrame>
 	);
 }
