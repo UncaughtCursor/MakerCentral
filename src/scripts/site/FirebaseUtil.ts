@@ -50,14 +50,17 @@ const firebaseConfig = {
 
 };
 
+export const termsOfServiceUrl = 'https://www.termsfeed.com/live/3cf94489-44da-4cca-a1fa-22c192b7113d';
+export const privacyPolicyUrl = 'https://www.termsfeed.com/live/9b12f22d-2228-4b5f-81dd-071a4cb079ed';
+
 const firebaseUiConfig: firebaseui.auth.Config = {
 	signInOptions: [
 		GoogleAuthProvider.PROVIDER_ID,
 		EmailAuthProvider.PROVIDER_ID,
 	],
 	signInFlow: 'popup',
-	tosUrl: 'https://www.termsfeed.com/live/3cf94489-44da-4cca-a1fa-22c192b7113d',
-	privacyPolicyUrl: 'https://www.termsfeed.com/live/9b12f22d-2228-4b5f-81dd-071a4cb079ed',
+	tosUrl: termsOfServiceUrl,
+	privacyPolicyUrl,
 	callbacks: {
 		signInSuccessWithAuthResult: () => {
 			if (typeof window !== 'undefined') {
@@ -163,7 +166,7 @@ if (typeof window !== 'undefined' && firebaseAuthUi === undefined) {
 }
 
 /**
- * Prompts the user to log in or sign up.
+ * Prompts the user to log in or register.
  * Ideally, the page they were just on.
  */
 export async function promptLogin() {

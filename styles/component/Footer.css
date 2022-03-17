@@ -1,16 +1,19 @@
 .footer {
 	background-color: var(--bg-dark);
-	height: 55px;
-	line-height: 55px;
+	min-height: 55px;
 	position: absolute;
 	bottom: 0;
 	width: 100%;
 	box-shadow: 2px 1px 5px black;
 	overflow: hidden;
 	margin-top: 20px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
 }
 
 .footer p {
-	margin: auto;
+	margin: auto min(5vw, 20px);
 	font-size: 14px;
+	width: max-content;
 }

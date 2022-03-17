@@ -1,13 +1,15 @@
 .popup {
 	background-color: var(--bg-dark);
-	position: absolute;
+	position: fixed;
 	left: 50%;
 	top: 50%;
 	transform: translateX(-50%) translateY(-50%);
 	z-index: 10;
-	padding: 30px;
+	padding: 35px;
 	border-radius: 20px;
 	box-shadow: 4px 4px 4px black;
+	max-width: 400px;
+	width: 80vw;
 }
 
 .popup-x {
