@@ -75,20 +75,25 @@ function LevelBrowser() {
 	const [timeUntilUpload, setTimeUntilUpload] = useState(Infinity);
 	const [user, setUser] = useState(null as User | null);
 
-	const getLevelUploadablityStatus = (async () => {
-		if (user === null) return;
+	const getLevelUploadablityStatus = () => {
+		console.log('g');
+		(async () => {
+			if (user === null) return;
 
-		const socialDocSnap = await getDoc(doc(db, `users/${user.uid}/priv/social`));
-		const lastUploadTimestamp = socialDocSnap.data()!.lastLevelUploadTime as Timestamp;
+			const socialDocSnap = await getDoc(doc(db, `users/${user.uid}/priv/social`));
+			const lastUploadTimestamp = socialDocSnap.data()!.lastLevelUploadTime as Timestamp;
 
-		const lastUploadTime = lastUploadTimestamp.toDate().getTime();
-		const patronStatus = getPatronType();
-		const waitTimeMs = (patronStatus === 'None' || patronStatus === null
-			? normalUploadDelayHr : patronUploadDelayHr) * 60 * 60 * 1000;
-		const nextAvailUploadTime = lastUploadTime + waitTimeMs;
+			const lastUploadTime = lastUploadTimestamp.toDate().getTime();
+			const patronStatus = getPatronType();
+			if (patronStatus === null) return;
 
-		setTimeUntilUpload(nextAvailUploadTime - Date.now());
-	});
+			const waitTimeMs = (patronStatus === 'None' ? normalUploadDelayHr
+				: patronUploadDelayHr) * 60 * 60 * 1000;
+			const nextAvailUploadTime = lastUploadTime + waitTimeMs;
+
+			setTimeUntilUpload(nextAvailUploadTime - Date.now());
+		})();
+	};
 
 	useEffect(() => {
 		getLevelUploadablityStatus();
@@ -97,13 +102,10 @@ function LevelBrowser() {
 			setUser(authUser);
 		});
 
-		if (typeof window !== 'undefined') {
-			window.addEventListener('userinit', getLevelUploadablityStatus);
-		}
+		document.addEventListener('userinit', getLevelUploadablityStatus);
+
 		return () => {
-			if (typeof window !== 'undefined') {
-				window.removeEventListener('userinit', getLevelUploadablityStatus);
-			}
+			document.removeEventListener('userinit', getLevelUploadablityStatus);
 		};
 	}, [user]);
 

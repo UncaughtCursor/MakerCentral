@@ -40,7 +40,7 @@ export async function initUser() {
 	curPatronStatus = patronType;
 
 	const evt = new Event('userinit');
-	if (typeof window !== 'undefined') document.dispatchEvent(evt);
+	document.dispatchEvent(evt);
 }
 
 /**
