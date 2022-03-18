@@ -13,7 +13,7 @@ import EventPopup from './EventPopup';
 function Header() {
 	const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
 	const isMakerCentral = false; // FIXME: SET TO FALSE IN PROD
-	const titleContents = isMakerCentral ? (
+	const titleContents = !isMakerCentral ? (
 		<>
 			<div style={{
 				display: 'flex',

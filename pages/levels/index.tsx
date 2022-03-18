@@ -76,11 +76,11 @@ function LevelBrowser() {
 	const [user, setUser] = useState(null as User | null);
 
 	const getLevelUploadablityStatus = () => {
-		console.log('g');
 		(async () => {
 			if (user === null) return;
 
 			const socialDocSnap = await getDoc(doc(db, `users/${user.uid}/priv/social`));
+			if (!socialDocSnap.exists()) return;
 			const lastUploadTimestamp = socialDocSnap.data()!.lastLevelUploadTime as Timestamp;
 
 			const lastUploadTime = lastUploadTimestamp.toDate().getTime();

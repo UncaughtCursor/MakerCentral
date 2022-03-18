@@ -11,7 +11,7 @@ function News() {
 	return (
 		<AppFrame>
 			<h1>News</h1>
-			<p>Under Construction!</p>
+			<p>News feed for site updates coming soon!</p>
 			<br />
 			<p>For now, check the official&nbsp;
 				<a

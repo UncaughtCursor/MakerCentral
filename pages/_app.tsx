@@ -44,16 +44,23 @@ import '../styles/component/Popup.css';
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
+import { useEffect } from 'react';
 
 TimeAgo.addDefaultLocale(en);
 
+/**
+ * The app.
+ */
 function MyApp({ Component, pageProps }: AppProps) {
+	useEffect(() => {
+		if ('serviceWorker' in navigator) {
+			window.addEventListener('load', () => {
+				navigator.serviceWorker.register('sw.js', { scope: '/' });
+			});
+		}
+	}, []);
+
 	return <Component {...pageProps} />;
 }
-
-// if ('serviceWorker' in navigator) {
-// FIXME: UNCOMMENT IN PROD
-// navigator.serviceWorker.register('sw.js', { scope: '/' });
-// }
 
 export default MyApp;
