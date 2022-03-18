@@ -8,7 +8,8 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/node_modules/**"
+      "**/node_modules/**",
+      "functions/src/.next/cache/**"
     ],
     "rewrites": [
       {

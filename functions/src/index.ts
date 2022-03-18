@@ -20,9 +20,10 @@ const server = next({
 
 const nextjsHandle = server.getRequestHandler();
 export const nextServer = functions.https.onRequest(
-	(req: any, res: any) => server.prepare().then(() => nextjsHandle(req, res)),
+	(request, response) => server.prepare().then(() => nextjsHandle(request, response)).catch((e) => {
+		console.error(e);
+	}),
 );
-
 export const initUser = functions.https.onCall(async (_data, context) => {
 	if (context.auth === undefined) return { success: false, msg: 'User is not logged in.' };
 	const userDocRef = admin.firestore().doc(`users/${context.auth.uid}`);
