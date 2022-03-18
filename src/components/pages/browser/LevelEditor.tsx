@@ -295,27 +295,38 @@ function LevelEditor(props: {
 		setIsLoading(true);
 		// Upload the images to Firebase storage
 		const globalUrls = new Array<string>(level.imageLocalUrls.length).fill('');
-		await Promise.all(level.imageLocalUrls.map(
-			// eslint-disable-next-line no-async-promise-executor
-			(localUrl, i) => new Promise(async (resolve) => {
-				// Get blob to upload
-				const blob = await fetch(localUrl).then((r) => r.blob());
+		try {
+			await Promise.all(level.imageLocalUrls.map(
+				// eslint-disable-next-line no-async-promise-executor
+				(localUrl, i) => new Promise(async (resolve, reject) => {
+					// If the image is already uploaded, add the current URL to the list of global URLs
+					if (localUrl.substring(0, 4) !== 'blob') {
+						globalUrls[i] = localUrl;
+						resolve();
+					}
 
-				// Establish image reference in cloud storage
-				const imgId = randomString(24);
-				const imgRef = ref(storage, `/level-img/${imgId}`);
+					// Get blob to upload
+					const blob = await fetch(localUrl).then((r) => r.blob());
 
-				// Upload
-				try {
-					await uploadBytes(imgRef, blob);
-					globalUrls[i] = await getDownloadURL(imgRef);
-					resolve();
-				} catch (e) {
-					console.error(e);
-					resolve();
-				}
-			}) as Promise<void>,
-		));
+					// Establish image reference in cloud storage
+					const imgId = randomString(24);
+					const imgRef = ref(storage, `/level-img/${imgId}`);
+
+					// Upload
+					try {
+						await uploadBytes(imgRef, blob);
+						globalUrls[i] = await getDownloadURL(imgRef);
+						resolve();
+					} catch (e) {
+						console.error(e);
+						reject(e);
+					}
+				}) as Promise<void>,
+			));
+		} catch (e) {
+			// eslint-disable-next-line no-alert
+			alert('An error occurred while attempting to upload the images.');
+		}
 
 		try {
 			if (props.levelId === null) {

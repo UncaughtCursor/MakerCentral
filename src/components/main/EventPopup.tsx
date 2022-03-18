@@ -16,7 +16,6 @@ function EventPopup(props: {
 	id?: string;
 }) {
 	const [open, setOpen] = useState(false);
-	console.log(open);
 
 	const openFn = () => {
 		setOpen(true);

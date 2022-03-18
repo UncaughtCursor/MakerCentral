@@ -1,6 +1,6 @@
 .footer {
 	background-color: var(--bg-dark);
-	min-height: 55px;
+	min-height: var(--header-height);
 	position: absolute;
 	bottom: 0;
 	width: 100%;

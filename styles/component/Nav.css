@@ -1,5 +1,5 @@
 .navbar {
-	height: 55px;
+	height: var(--header-height);
 	display: flex;
 	justify-content: flex-end;
 	flex-grow: 1;
@@ -7,8 +7,8 @@
 
 .navlink {
 	display: inline-block;
-	line-height: 55px;
-	height: 55px;
+	line-height: var(--header-height);
+	height: var(--header-height);
 	padding: 0px 20px;
 	color: var(--text-color);
 	text-decoration: none;

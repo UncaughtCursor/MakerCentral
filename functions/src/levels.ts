@@ -102,7 +102,6 @@ export const publishLevel = functions.https.onCall(async (data: {
 			.toDate().getTime();
 		const uploadDelayHr = patronStatus === 'None' ? regularUploadDelayHr : patronUploadDelayHr;
 		const uploadDelayMs = uploadDelayHr * 60 * 60 * 1000;
-		console.log(lastLevelUploadTime, uploadDelayMs, now);
 		if (now < lastLevelUploadTime + uploadDelayMs) throw Error('Levels are being uploaded too frequently.');
 
 		const seconds = Math.floor(now / 1000);

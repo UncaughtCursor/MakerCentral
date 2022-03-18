@@ -92,7 +92,7 @@ let analytics: Analytics | null = null;
 	connectFunctionsEmulator(functions, '192.168.1.190', 5001);
 	connectStorageEmulator(storage, '192.168.1.190', 9199);
 } catch (e) {
-	console.log(e);
+	console.error(e);
 } */
 
 let user: User | null = null;

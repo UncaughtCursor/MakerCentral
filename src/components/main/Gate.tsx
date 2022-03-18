@@ -39,7 +39,6 @@ function Gate(props: {
 	}
 
 	const [openState, setOpenState] = useState(getOpenStateFromUser(user));
-	console.log(getUser());
 	if (getUser() !== null && getPatronType() === null && !isLoading) setIsLoading(true);
 
 	const boldMsg = props.requireEA ? 'You\'ll be able to use this page with patron status.'

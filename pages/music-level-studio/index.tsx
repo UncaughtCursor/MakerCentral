@@ -34,7 +34,6 @@ function Builder() {
 	 * @param projectId The ID of the project to open or null to start a new one.
 	 */
 	function launchEditor(projectId: string | null, projectName: string = 'Untitled Project') {
-		console.log('launch');
 		ctx.projectId = projectId;
 		ctx.projectName = projectName;
 		ctx.isInitialized = false;

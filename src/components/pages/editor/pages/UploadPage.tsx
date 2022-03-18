@@ -16,7 +16,6 @@ function UploadPage() {
 			// Setup MIDI
 			// const loadedMidi = await loadPublicMidi(testMidiPath);
 			// ctx.project.addMidi(loadedMidi);
-			console.log(ctx);
 		}
 
 		setupPage();

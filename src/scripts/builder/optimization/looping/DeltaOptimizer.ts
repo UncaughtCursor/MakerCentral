@@ -83,9 +83,7 @@ const straightHTemp = getTrackTemplate('straightH')!;
 const straightVTemp = getTrackTemplate('straightV')!;
 const diagUDTemp = getTrackTemplate('diagUD')!;
 
-const trackComboGen = new SumCombinationGenerator(
-	[straightTrkTime, diagTrkTime, curvedTrkTime], 30 * 60,
-);
+const trackComboGen = new SumCombinationGenerator([straightTrkTime, diagTrkTime, curvedTrkTime], 30 * 60);
 
 // updated every time the track column setup data changes
 const maxFramesInColumn = 554;
@@ -123,8 +121,14 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 
 		const thisLoopDuration = config.loopFrameDuration / targetGroup.subloopDivision;
 
-		const sectionRes = buildSection(targetGroup, thisLoopDuration,
-			config.areaWidth, currentX, isBaseSection, config.scrollMethod);
+		const sectionRes = buildSection(
+			targetGroup,
+			thisLoopDuration,
+			config.areaWidth,
+			currentX,
+			isBaseSection,
+			config.scrollMethod,
+		);
 
 		/*
 		 If just some of the targets are rejected, split the targets into
@@ -161,8 +165,10 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 
 	sections.forEach((section) => {
 		const copyX = section.x - lastSection.x + marginWidth;
-		trkMap.copyOtherMapTo(section.optResult.trkMap,
-			{ x: copyX, y: -2 });
+		trkMap.copyOtherMapTo(
+			section.optResult.trkMap,
+			{ x: copyX, y: -2 },
+		);
 		entityGrid.addEntity({
 			type: section.instrument,
 			pos: { x: copyX + section.loopWidth - 5, y: 9 },
@@ -175,9 +181,7 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 
 	// The true total width is the highest x-coordinate in
 	// the final trkMap of either attach point plus 1
-	const trueTotalWidth = trkMap.tracks.reduce(
-		(maxX, trk) => Math.max(maxX, trk.paths[0].pos.x, trk.paths[1].pos.x), 0,
-	) + 1;
+	const trueTotalWidth = trkMap.tracks.reduce((maxX, trk) => Math.max(maxX, trk.paths[0].pos.x, trk.paths[1].pos.x), 0) + 1;
 
 	if (trueTotalWidth > mapWidth + marginWidth) {
 		succeeded = false;
@@ -207,9 +211,14 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
  * @param scrollMethod The type of scrolling to perform in the level.
  * @returns The result of the optimization.
  */
-function buildSection(targetGroup: TrackOptimizerTargetGroup,
-	loopFrameDuration: number, levelWidth: number,
-	currentX: number, isBaseSection: boolean, scrollMethod: MM2ScrollMethod): SectionBuildResult {
+function buildSection(
+	targetGroup: TrackOptimizerTargetGroup,
+	loopFrameDuration: number,
+	levelWidth: number,
+	currentX: number,
+	isBaseSection: boolean,
+	scrollMethod: MM2ScrollMethod,
+): SectionBuildResult {
 	const loopBuildResult = buildLoopSection(loopFrameDuration);
 	const loadStartX = loopBuildResult.areaWidth - 1;
 
@@ -293,17 +302,19 @@ function buildSection(targetGroup: TrackOptimizerTargetGroup,
  * @param scrollMethod The type of scrolling to perform in the level.
  * @returns The result of the delivery section construction.
  */
-function buildDelivery(targetGroup: TrackOptimizerTargetGroup,
-	areaWidth: number, extraTime: number, scrollMethod: MM2ScrollMethod): DeliveryBuildResult {
+function buildDelivery(
+	targetGroup: TrackOptimizerTargetGroup,
+	areaWidth: number,
+	extraTime: number,
+	scrollMethod: MM2ScrollMethod,
+): DeliveryBuildResult {
 	const trkMap = new TrackMap(areaWidth, mapHeight);
 
 	const baseLoadTime = 180; // 3 sec buffer; TODO: Calculate required load time
 
 	const loadTime = Math.round(baseLoadTime + extraTime);
 
-	const firstNoteFrame = targetGroup.targets.reduce(
-		(acc, target) => Math.min(acc, target.frames), Infinity,
-	);
+	const firstNoteFrame = targetGroup.targets.reduce((acc, target) => Math.min(acc, target.frames), Infinity);
 
 	// FIXME: Stretches of empty flat delivery track
 
@@ -314,9 +325,7 @@ function buildDelivery(targetGroup: TrackOptimizerTargetGroup,
 	const waveRes = buildWaves(excessFrames);
 	if (waveRes.width > 0) trkMap.copyOtherMapTo(waveRes.trkMap, { x: 0, y: 0 });
 
-	const columnsBuildRes = buildColumnDeliverySection(
-		targetGroup, areaWidth, loadTime - waveRes.frameDelay, scrollMethod,
-	);
+	const columnsBuildRes = buildColumnDeliverySection(targetGroup, areaWidth, loadTime - waveRes.frameDelay, scrollMethod);
 
 	trkMap.copyOtherMapTo(columnsBuildRes.optResult.trkMap, { x: waveRes.width, y: 0 });
 
@@ -338,8 +347,12 @@ function buildDelivery(targetGroup: TrackOptimizerTargetGroup,
  * @param scrollMethod The type of scrolling to perform in the level.
  * @returns The result of the delivery section construction.
  */
-function buildColumnDeliverySection(targetGroup: TrackOptimizerTargetGroup,
-	areaWidth: number, loadTime: number, scrollMethod: MM2ScrollMethod): DeliveryBuildResult {
+function buildColumnDeliverySection(
+	targetGroup: TrackOptimizerTargetGroup,
+	areaWidth: number,
+	loadTime: number,
+	scrollMethod: MM2ScrollMethod,
+): DeliveryBuildResult {
 	const messages: OptimizerMessage[] = [];
 
 	const maxHeight = 20;
@@ -520,22 +533,20 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 		trkMap = new TrackMap(mapWidth, mapHeight);
 
 		// Build launch track from delivery
-		trkMap.addTrack(TrackBuilder.createRootTrack(
-			diagUDTemp, { x: mapWidth - 3, y: mapHeight - 3 },
-		));
+		trkMap.addTrack(TrackBuilder.createRootTrack(diagUDTemp, { x: mapWidth - 3, y: mapHeight - 3 }));
 
 		// Build loop stub
-		const loopRoot = TrackBuilder.createRootTrack(straightVTemp,
-			{ x: mapWidth - 5, y: mapHeight - 6 });
+		const loopRoot = TrackBuilder.createRootTrack(
+			straightVTemp,
+			{ x: mapWidth - 5, y: mapHeight - 6 },
+		);
 		trkMap.addTrack(loopRoot);
 		const loopStub = TrackBuilder.createAttachedTrack(loopRoot, 1, straightHTemp, 0);
 		trkMap.addTrack(loopStub);
 
 		const loopTrackQuantities = sumCombos[i];
 
-		const buildRes = OptimizedTrackBuilder.buildStandardTracksWithScore(
-			trkMap, loopStub, loopTrackQuantities, loopBuildFn,
-		);
+		const buildRes = OptimizedTrackBuilder.buildStandardTracksWithScore(trkMap, loopStub, loopTrackQuantities, loopBuildFn);
 
 		loopRoot.hasCaps = true;
 		if (buildRes.addedTracks.length > 0) {

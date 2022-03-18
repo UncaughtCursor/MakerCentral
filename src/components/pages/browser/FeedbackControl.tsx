@@ -25,19 +25,16 @@ function FeedbackControl(props: {
 	});
 
 	useEffect(() => {
-		console.log('e');
 		if (user === null) {
 			setLoading(false);
 			return;
 		}
 		const engagementRef = doc(db, `/users/${user.uid}/engagements/${props.levelId}`);
 		getDoc(engagementRef).then((engagementRefSnap) => {
-			console.log(engagementRefSnap);
 			if (!engagementRefSnap.exists()) setVoteVal(0);
 			else {
 				const data = engagementRefSnap.data()!;
 				setVoteVal(data.voteVal);
-				console.log(data.voteVal);
 			}
 			setLoading(false);
 		}).catch((e) => {
@@ -51,7 +48,6 @@ function FeedbackControl(props: {
 	const initialTags = [];
 	if (voteVal === 1) initialTags.push('I liked it!');
 	if (voteVal === -1) initialTags.push('I didn\'t like it...');
-	console.log(initialTags);
 
 	if (user === null) {
 		return (
@@ -99,11 +95,10 @@ function FeedbackControl(props: {
 		voteFn({ levelId: props.levelId, voteVal: queuedVoteVal }).then(() => {
 			setVoteVal(queuedVoteVal);
 			setLoading(false);
-			console.log(queuedVoteVal);
 		}).catch((e) => {
 			// eslint-disable-next-line no-alert
 			alert('An error occurred while attempting to vote.');
-			console.log(e);
+			console.error(e);
 		});
 	}
 }

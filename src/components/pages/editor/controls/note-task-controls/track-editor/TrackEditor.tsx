@@ -336,16 +336,12 @@ function TrackEditor() {
 			const action = buildInst.undoRedoManager.undo();
 			const success = undoAction(action);
 			if (!success) buildInst.undoRedoManager.redo();
-
-			console.log(buildInst.undoRedoManager);
 			break;
 		}
 		case 'Redo': {
 			const action = buildInst.undoRedoManager.redo();
 			const success = doAction(action);
 			if (!success) buildInst.undoRedoManager.undo();
-
-			console.log(buildInst.undoRedoManager);
 			break;
 		}
 		case 'Zoom In': {

@@ -101,7 +101,7 @@ function BuildSettingsPage() {
 			await submitForTraditionalOptimization();
 			break;
 		default:
-			console.log('Optimizer unavailable.');
+			console.error('Optimizer unavailable.');
 		}
 	}
 
@@ -124,8 +124,12 @@ function BuildSettingsPage() {
 		for (let i = 0; i < tracks.length; i++) {
 			const trk = tracks[i];
 			if (useSubloops) {
-				subloops.push(...createSubloops(trk.notes,
-					trk.duration, trk.instrument));
+				subloops.push(...createSubloops(
+					trk.notes,
+					trk.duration,
+
+					trk.instrument,
+				));
 			} else {
 				subloops.push({
 					notes: trk.notes,
@@ -135,9 +139,7 @@ function BuildSettingsPage() {
 			}
 		}
 
-		const mostRepeats = subloops.reduce(
-			(acc, thisSubloop) => Math.max(acc, thisSubloop.repeatCount), 1,
-		);
+		const mostRepeats = subloops.reduce((acc, thisSubloop) => Math.max(acc, thisSubloop.repeatCount), 1);
 		const shortestBuildPeriod = DeltaOptimizer.getNearestLoopPeriod(
 			((origDuration / mostRepeats) / 2) - (2 * DeltaOptimizer.straightTrkTime),
 		);
@@ -187,7 +189,6 @@ function BuildSettingsPage() {
 			scrollMethod,
 		});
 		ctx.project.buildInstances[0].optResult = buildRes;
-		console.log(buildRes);
 	}
 
 	/**
@@ -211,9 +212,12 @@ function BuildSettingsPage() {
 			optTargetGroups.push(targets);
 		}
 
-		const buildRes = await AlphaOptimizer.buildMusic(optTargetGroups, bpm,
-			buildInst.maxWidth, buildInst.scrollPref);
-		console.log(buildRes);
+		const buildRes = await AlphaOptimizer.buildMusic(
+			optTargetGroups,
+			bpm,
+			buildInst.maxWidth,
+			buildInst.scrollPref,
+		);
 		buildInst.optResult = buildRes.optResult;
 		buildInst.optResultConfig = buildRes.config;
 	}

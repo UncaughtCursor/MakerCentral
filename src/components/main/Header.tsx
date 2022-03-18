@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import Navbar from './Nav';
 import UserMenu from './UserMenu';
 import HamburgerMenuButton from './hamburger-menu/HamburgerMenuButton';
@@ -22,12 +21,11 @@ function Header() {
 				marginLeft: '8px',
 			}}
 			>
-				<Image
+				<img
 					src="/logo.png"
 					alt="Music Level Studio"
 					width={45}
 					height={45}
-					layout="fixed"
 				/>
 			</div>
 			<h3 style={{ textDecoration: 'none' }}>Music Level Studio</h3>
@@ -49,12 +47,11 @@ function Header() {
 			marginLeft: '8px',
 		}}
 		>
-			<Image
+			<img
 				src="/logo.png"
 				alt="MakerCentral"
 				width={228}
 				height={25}
-				layout="fixed"
 			/>
 		</div>
 	);

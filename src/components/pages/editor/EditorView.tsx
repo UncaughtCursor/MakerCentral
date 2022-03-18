@@ -106,7 +106,6 @@ function EditorView() {
 
 		// Load old codebase images
 		await Images.loadImages();
-		console.log('img loaded');
 
 		// Set context functions
 		ctx.func.setPage = (num: number) => {

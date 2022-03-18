@@ -7,7 +7,6 @@ export default async function loadBinaryFileObj(file: File): Promise<Uint8Array>
 	return new Promise<Uint8Array>((resolve, reject) => {
 		const reader = new FileReader();
 		reader.onload = () => {
-			console.log(reader.result);
 			const result = reader.result as ArrayBuffer;
 			resolve(new Uint8Array(result));
 		};
