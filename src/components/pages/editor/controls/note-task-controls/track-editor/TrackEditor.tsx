@@ -46,6 +46,7 @@ function TrackEditor() {
 	const buildInst = ctx.project.buildInstances[0];
 
 	const [state, setState] = useState(defaultState);
+	const [hasMouseDown, setHasMouseDown] = useState(false);
 
 	const noteGroups = getNoteGroups();
 	const gridTilesPerBeat = 4; // Math.max(getQuantizationLevel(), 4);
@@ -78,8 +79,10 @@ function TrackEditor() {
 				focusedGroupIndex={state.selectedTrkId}
 				endBeat={endBeat}
 				onHover={(evt) => { handleMouseMove(evt); }}
-				onClick={(evt) => { handleMouseClick(evt); }}
+				onClick={(evt) => { handleMouseInteraction(evt); }}
 				onMouseOut={() => { handleMouseExit(); }}
+				onMouseDown={handleMouseDown}
+				onMouseUp={handleMouseUp}
 				toolbarAdditions={(
 					<TrackEditorToolbar
 						selectedToolButton={state.selectedToolbarButton}
@@ -173,6 +176,7 @@ function TrackEditor() {
 		const coords = (target.className === 'note-display-area')
 			? getQuantizedCoords(getPianoRollCoords(evt))
 			: { x: -100, y: -100 };
+		if (hasMouseDown && state.selectedToolbarButton !== 'Add Note') handleMouseInteraction(evt);
 		setState({
 			...state,
 			cursorPos: coords,
@@ -188,13 +192,31 @@ function TrackEditor() {
 
 	// TODO: Support drag-clicking tools to repeatedly use them and create action groups
 
-	// TODO: Adding, removing, and cloning tracks
+	// TODO: Adding tracks
 
 	/**
-	 * Triggers whenever the mouse clicks in the editor area.
+	 * Handles when the mouse button is pressed.
+	 * @param evt The SyntheticEvent from the mouse event.
+	 */
+	function handleMouseDown(evt: React.SyntheticEvent) {
+		setHasMouseDown(true);
+		console.log('down');
+		if (state.selectedToolbarButton !== 'Add Note') handleMouseInteraction(evt);
+	}
+
+	/**
+	 * Handles when the mouse button is released.
+	 */
+	function handleMouseUp() {
+		console.log('up');
+		setHasMouseDown(false);
+	}
+
+	/**
+	 * Triggers whenever the mouse triggers a tool in the editor area.
 	 * @param evt The resulting mouse event.
 	 */
-	function handleMouseClick(evt: React.SyntheticEvent) {
+	function handleMouseInteraction(evt: React.SyntheticEvent) {
 		const target = evt.target as HTMLElement;
 
 		let beat;

@@ -36,6 +36,8 @@ function PianoRoll(props: {
 	onClick?: (evt: React.MouseEvent<HTMLElement>) => void,
 	onHover?: (evt: React.MouseEvent<HTMLElement>) => void,
 	onMouseOut?: (evt: React.MouseEvent<HTMLElement>) => void,
+	onMouseDown?: (evt: React.MouseEvent<HTMLElement>) => void,
+	onMouseUp?: (evt: React.MouseEvent<HTMLElement>) => void,
 }) {
 	const noteDiv = (
 		<PianoRollNotes
@@ -57,16 +59,15 @@ function PianoRoll(props: {
 	const heightPx = Math.max(totalNotes * props.gridTileLength!, 200);
 
 	const noteSurface = createNoteSurface(
-props.quartersPerMeasure!,
-props.children,
-
-() => {},
-
-props.onClick!,
-
-props.onHover!,
-
-props.onMouseOut!,
+		props.quartersPerMeasure!,
+		props.children,
+		props.onMouseDown!,
+		(evt: React.MouseEvent<HTMLElement, MouseEvent>) => {
+			props.onClick!(evt);
+			props.onMouseUp!(evt);
+		},
+		props.onHover!,
+		props.onMouseOut!,
 	);
 
 	return (
@@ -141,6 +142,8 @@ PianoRoll.defaultProps = {
 	onClick: () => {},
 	onHover: () => {},
 	onMouseOut: () => {},
+	onMouseDown: () => {},
+	onMouseUp: () => {},
 };
 
 /**

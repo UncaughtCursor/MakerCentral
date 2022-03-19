@@ -24,6 +24,8 @@ interface MusicPreviewerProps {
 	onClick?: (evt: React.MouseEvent<HTMLElement>) => void,
 	onHover?: (evt: React.MouseEvent<HTMLElement>) => void,
 	onMouseOut?: (evt: React.MouseEvent<HTMLElement>) => void,
+	onMouseDown?: (evt: React.MouseEvent<HTMLElement>) => void,
+	onMouseUp?: (evt: React.MouseEvent<HTMLElement>) => void,
 	toolbarAdditions?: React.ReactNode,
 	children: React.ReactNode,
 	gridTileLength?: number,
@@ -86,6 +88,8 @@ function MusicPreviewer(props: MusicPreviewerProps) {
 				onClick={handleClick}
 				onHover={props.onHover!}
 				onMouseOut={props.onMouseOut!}
+				onMouseDown={props.onMouseDown!}
+				onMouseUp={props.onMouseUp!}
 				gridTileLength={props.gridTileLength!}
 				gridTilesPerBeat={props.gridTilesPerBeat!}
 			>
@@ -212,7 +216,9 @@ MusicPreviewer.defaultProps = {
 	onClick: () => {},
 	onHover: () => {},
 	onMouseOut: () => {},
-	toolbarAdditions: <></>,
+	onMouseDown: () => {},
+	onMouseUp: () => {},
+	toolbarAdditions: null,
 	gridTileLength: 8,
 	gridTilesPerBeat: 4,
 };

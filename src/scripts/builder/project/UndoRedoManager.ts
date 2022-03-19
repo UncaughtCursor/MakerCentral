@@ -30,8 +30,12 @@ export default class UndoRedoManager {
 	 */
 	do(action: EditorAction) {
 		if (this.historyIndex !== -1) {
-			this.history.splice(this.historyIndex + 1,
-				this.history.length - this.historyIndex - 1, action);
+			this.history.splice(
+				this.historyIndex + 1,
+				this.history.length - this.historyIndex - 1,
+
+				action,
+			);
 		} else {
 			// Special case for index -1
 			this.history = [action];
