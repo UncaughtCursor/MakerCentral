@@ -54,7 +54,7 @@ function PianoRoll(props: {
 	const maxOctave = Math.floor(props.noteBounds.maxPitch / 12);
 	const totalNotes = (12 * (maxOctave + 1)) - props.noteBounds.minPitch + octaveLineOffset;
 
-	const heightPx = Math.max(totalNotes * props.gridTileLength!, vh(60));
+	const heightPx = Math.max(totalNotes * props.gridTileLength!, 200);
 
 	const noteSurface = createNoteSurface(
 props.quartersPerMeasure!,

@@ -20,7 +20,8 @@
 }
 
 .piano-roll-container {
-	height: 60vh;
+	max-height: 200px;
+	min-height: calc((8px * (12 * 2 + 4)));
 	overflow: auto;
 	display: flex;
 }

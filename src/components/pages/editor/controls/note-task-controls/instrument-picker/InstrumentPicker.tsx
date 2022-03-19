@@ -28,20 +28,29 @@ function InstrumentPicker(props: {
 	const dropupRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
-		const dropup = dropupRef.current!;
+		const handleInstrumentPickerOpen = () => {
+			console.log('handle');
+			const dropup = dropupRef.current!;
 
-		if (state.isOpen && typeof window !== 'undefined') {
+			if (typeof window !== 'undefined') {
 			// Scroll dropup into view
-			const verticalOfs = 55 + 20; // Header height plus 20 px
-			const dropupPos = dropup.getBoundingClientRect().top;
-			const ofsPos = dropupPos + window.pageYOffset - verticalOfs;
+				const verticalOfs = 55 + 20; // Header height plus 20 px
+				const dropupPos = dropup.getBoundingClientRect().top;
+				const ofsPos = dropupPos + window.pageYOffset - verticalOfs;
 
-			window.scrollTo({
-				top: ofsPos,
-				behavior: 'smooth',
-			});
-		}
-	});
+				window.scrollTo({
+					top: ofsPos,
+					behavior: 'smooth',
+				});
+			}
+		};
+
+		document.addEventListener('instrument-picker-open', handleInstrumentPickerOpen);
+
+		return () => {
+			document.removeEventListener('instrument-picker-open', handleInstrumentPickerOpen);
+		};
+	}, []);
 
 	return (
 		<div>
@@ -55,6 +64,11 @@ function InstrumentPicker(props: {
 						...state,
 						isOpen: !state.isOpen,
 					});
+					if (!state.isOpen && typeof document !== 'undefined') {
+						const evt = new Event('instrument-picker-open');
+						console.log(evt);
+						document.dispatchEvent(evt);
+					}
 				}}
 			>
 				<p
