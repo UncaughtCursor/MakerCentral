@@ -20,7 +20,13 @@ function PageHead(props: {
 			<meta name="og:title" content={props.title!} />
 			<meta name="og:description" content={props.description!} />
 			<meta name="og:type" content="website" />
-			{props.imageUrl! !== '' ? <meta name="og:image" content={props.imageUrl!} /> : null}
+			{props.imageUrl! !== '' ? (
+				<>
+					<meta name="og:image" content={props.imageUrl!} />
+					<meta name="og:image:width" content="1280" />
+					<meta name="og:image:height" content="720" />
+				</>
+			) : null}
 			<link rel="apple-touch-icon" href="logo192.png" />
 			<link rel="manifest" href="manifest.json" />
 			<title>{props.title!}</title>
