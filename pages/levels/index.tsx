@@ -114,7 +114,10 @@ function LevelBrowser() {
 	const minsUntilNextUpload = Math.floor(((timeUntilUpload / msPerHr) - hrsUntilNextUpload) * 60);
 
 	return (
-		<AppFrame>
+		<AppFrame
+			title="Community Levels - Music Level Studio"
+			description="Browse and play levels made by the Music Level Studio community!"
+		>
 			<div style={{
 				display: 'flex',
 				flexDirection: 'column',

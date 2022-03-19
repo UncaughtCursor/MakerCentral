@@ -9,7 +9,10 @@ const twitterLink = 'https://twitter.com/MusicLvlStudio';
  */
 function News() {
 	return (
-		<AppFrame>
+		<AppFrame
+			title="News - Music Level Studio"
+			description="The latest news regarding Music Level Studio, the automatic music level generator!"
+		>
 			<h1>News</h1>
 			<p>News feed for site updates coming soon!</p>
 			<br />

@@ -325,7 +325,12 @@ function buildDelivery(
 	const waveRes = buildWaves(excessFrames);
 	if (waveRes.width > 0) trkMap.copyOtherMapTo(waveRes.trkMap, { x: 0, y: 0 });
 
-	const columnsBuildRes = buildColumnDeliverySection(targetGroup, areaWidth, loadTime - waveRes.frameDelay, scrollMethod);
+	const columnsBuildRes = buildColumnDeliverySection(
+		targetGroup,
+		areaWidth,
+		loadTime - waveRes.frameDelay,
+		scrollMethod,
+	);
 
 	trkMap.copyOtherMapTo(columnsBuildRes.optResult.trkMap, { x: waveRes.width, y: 0 });
 
@@ -428,7 +433,9 @@ function buildColumnDeliverySection(
 			} else {
 				messages.push({
 					type: 'ERR',
-					text: 'No sufficiently precise setup found for one or more notes.',
+					text: 'Failed to find a setup for one or more notes.'
+					+ ' Notes playing in quick succession and low-pitched notes are'
+					+ ' most likely to have this issue; try mitigating instances of these.',
 				});
 			}
 			succeeded = false;

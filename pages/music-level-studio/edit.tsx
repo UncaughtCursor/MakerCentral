@@ -9,7 +9,10 @@ import EditorView from '../../src/components/pages/editor/EditorView';
  */
 function Editor() {
 	return (
-		<AppFrame>
+		<AppFrame
+			title="Music Editor - Music Level Studio"
+			description="Automatically generate music levels, even global looping music!"
+		>
 			<EditorContext.Provider value={defaultState}>
 				<EditorView />
 			</EditorContext.Provider>

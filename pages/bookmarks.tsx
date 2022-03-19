@@ -28,7 +28,7 @@ function BookmarksPage() {
 	};
 
 	return (
-		<AppFrame>
+		<AppFrame title="Bookmarks - Music Level Studio">
 			<Gate requireEA={false} showLogout={false}>
 				<h1>Your Bookmarks</h1>
 				<LevelCategoryView

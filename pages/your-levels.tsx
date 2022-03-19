@@ -29,7 +29,7 @@ function YourLevelsPage() {
 	};
 
 	return (
-		<AppFrame>
+		<AppFrame title="Your Levels - Music Level Studio">
 			<Gate requireEA={false} showLogout={false}>
 				<h1>Your Levels</h1>
 				<LevelCategoryView

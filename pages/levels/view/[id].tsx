@@ -40,7 +40,11 @@ function LevelPage(props: {
 		? Math.round((100 * level.numLikes) / (level.numLikes + level.numDislikes))
 		: 100;
 	return (
-		<AppFrame>
+		<AppFrame
+			title={`${props.level!.name} - Music Level Studio`}
+			description={`"${props.level!.shortDescription}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on Music Level Studio.`}
+			imageUrl={props.level!.thumbnailUrl}
+		>
 			<div className="level-page-content">
 				<div className="level-page-top">
 					<div className="level-page-info-container" style={{ flexGrow: 6 }}>

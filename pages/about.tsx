@@ -6,7 +6,7 @@ import AppFrame from '@components/AppFrame';
  */
 function About() {
 	return (
-		<AppFrame>
+		<AppFrame title="About - Music Level Studio">
 			<h1>About</h1>
 			<div style={{ maxWidth: '600px', margin: '0 auto' }}>
 				<h2 style={{ textAlign: 'left' }}>Music Levels for Everyone.</h2>

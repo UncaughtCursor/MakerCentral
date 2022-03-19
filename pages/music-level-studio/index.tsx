@@ -13,7 +13,10 @@ function Builder() {
 	const router = useRouter();
 	const ctx = useContext(EditorContext);
 	return (
-		<AppFrame>
+		<AppFrame
+			title="Music Editor - Music Level Studio"
+			description="Automatically generate music levels, even global looping music!"
+		>
 			<h1>Music Level Studio</h1>
 			<p>To begin, start a new project or open an existing one.</p>
 			<br />

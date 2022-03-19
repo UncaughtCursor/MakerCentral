@@ -1,3 +1,4 @@
+/* eslint-disable react/require-default-props */
 import Footer from '@components/main/Footer';
 import Header from '@components/main/Header';
 import { initAnalytics } from '@scripts/site/FirebaseUtil';
@@ -11,11 +12,18 @@ import PageHead from './DefaultHead';
  * * children: The page content.
  */
 function AppFrame(props: {
+	title?: string,
+	description?: string,
+	imageUrl?: string,
 	children: React.ReactNode,
 }) {
 	return (
 		<>
-			<PageHead />
+			<PageHead
+				title={props.title}
+				description={props.description}
+				imageUrl={props.imageUrl}
+			/>
 			<main>
 				<div className="App">
 					<Header />

@@ -54,7 +54,7 @@ function SettingsPage() {
 	}, []);
 
 	return (
-		<AppFrame>
+		<AppFrame title="Settings - Music Level Studio">
 			<Gate requireEA={false} showLogout={false}>
 				<div style={{
 					display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',

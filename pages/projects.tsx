@@ -7,7 +7,7 @@ import ProjectList from '../src/components/pages/controls/ProjectList';
  */
 function ProjectsPage() {
 	return (
-		<AppFrame>
+		<AppFrame title="Your Projects - Music Level Studio">
 			<h1>Your Music Projects</h1>
 			<p>Your music projects are shown here. Click one to open it.</p>
 			<ProjectList />
