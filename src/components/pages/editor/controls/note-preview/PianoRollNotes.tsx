@@ -50,7 +50,6 @@ const PianoRollNotes = React.memo((props: {
 						backgroundColor: fillColor.string(),
 						borderColor: borderColor.string(),
 					}}
-					onClick={() => { console.log(`Clicked note ${note.beat}-${note.pitch}`); }}
 					key={`${i}-${j}`}
 				/>
 			);

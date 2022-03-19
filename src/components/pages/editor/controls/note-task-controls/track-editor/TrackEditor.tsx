@@ -159,7 +159,7 @@ function TrackEditor() {
 	function getNoteGroups(): PianoRollNoteGroup[] {
 		return buildInst.tracks.map((projectTrack) => ({
 			color: NoteColors[projectTrack.id % NoteColors.length],
-			notes: projectTrack.notes,
+			notes: projectTrack.notes.sort((a, b) => a.beat - b.beat),
 			instrument: projectTrack.instrument,
 		}));
 	}
