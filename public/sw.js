@@ -23,6 +23,8 @@ async function tryCacheFetch(event) {
 	return fetchThenCache(event.request);
 }
 
+const cachedExtensions = ['.js', '.mp3', '.png', '.jpeg', '.jpg', '.webp'];
+
 self.addEventListener('fetch', (event) => {
 	// resources served from the same folder as the service worker should be cached
 	if (
@@ -35,8 +37,9 @@ self.addEventListener('fetch', (event) => {
 	const path = event.request.url.replace(self.location.href.replace(/\/[^/]+$/, '/'), '/');
 
 	// Always use cached js or mp3 files since their filenames change on revision
+	// Also, png, jpeg, jpg, and webp because of cloud storage bandwidth
 	// Always try to download otherwise. When offline, always use cache.
-	if (!path.endsWith('.js') && !path.endsWith('.mp3')) {
+	if (!hasCachedExtension(path)) {
 		event.respondWith(
 			fetchThenCache(event.request).catch(() => caches.match(event.request)),
 		);
@@ -44,3 +47,16 @@ self.addEventListener('fetch', (event) => {
 		event.respondWith(tryCacheFetch(event));
 	}
 });
+
+/**
+ * Determines if the resource has an extension that would make it load cache-first.
+ * @param {string} path The path to the resource to fetch.
+ * @returns {boolean} Whether or not there was a match.
+ */
+function hasCachedExtension(path) {
+	for (let i = 0; i < cachedExtensions.length; i++) {
+		const ext = cachedExtensions[i];
+		if (path.endsWith(ext)) return true;
+	}
+	return false;
+}
