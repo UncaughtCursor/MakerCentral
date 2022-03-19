@@ -16,10 +16,11 @@ function PageHead(props: {
 			<link rel="icon" href="favicon.ico" />
 			<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=12.0, user-scalable=yes" />
 			<meta name="theme-color" content="#191d25" />
-			<meta
-				name="description"
-				content={props.description!}
-			/>
+			<meta name="description" content={props.description!} />
+			<meta name="og:title" content={props.title!} />
+			<meta name="og:description" content={props.description!} />
+			<meta name="og:type" content="website" />
+			{props.imageUrl! !== '' ? <meta name="og:image" content={props.imageUrl!} /> : null}
 			<link rel="apple-touch-icon" href="logo192.png" />
 			<link rel="manifest" href="manifest.json" />
 			<title>{props.title!}</title>
