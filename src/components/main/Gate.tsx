@@ -1,6 +1,8 @@
 import RewardRedeemer from '@components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '@components/pages/controls/settings/SettingsGroup';
-import { auth, getUser, logout } from '@scripts/site/FirebaseUtil';
+import {
+	auth, getUser, logout, patreonLink,
+} from '@scripts/site/FirebaseUtil';
 import { getPatronType, refreshUserData } from '@scripts/site/UserDataScripts';
 import React, { useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
@@ -79,7 +81,7 @@ function Gate(props: {
 						<p>You can unlock this feature and more by supporting me on Patreon!</p>
 						<p>I work hard to develop this site and its music level technology.
 							If you know you will find this website helpful,
-							please consider <a href="https://www.patreon.com/UncaughtCursor">becoming a Patron</a>.
+							please consider <a href={patreonLink}>becoming a Patron</a>.
 							It helps me a ton and I would really appreciate it. ❤️
 						</p>
 						<div style={{ display: props.showLogout ? '' : 'none' }}>

@@ -12,7 +12,9 @@ import AllTimeTopIcon from '@mui/icons-material/EmojiEvents';
 import ActionButton from '@components/pages/controls/ActionButton';
 import WarningIcon from '@mui/icons-material/Warning';
 import LoyaltyIcon from '@mui/icons-material/Loyalty';
-import { auth, db, getUser } from '@scripts/site/FirebaseUtil';
+import {
+	auth, db, getUser, patreonLink,
+} from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getPatronType } from '@scripts/site/UserDataScripts';
 import { getPatronStatus } from 'functions/src';
@@ -145,7 +147,7 @@ function LevelBrowser() {
 				/>
 				<div>
 					<p style={{ display: (category.name === 'By Patrons' && getPatronType() !== 'Super Star') ? '' : 'none' }}>
-						You can have your level showcased here if you support me on <a href="https://www.patreon.com/UncaughtCursor">Patreon</a>!
+						You can have your level showcased here if you support me on <a href={patreonLink}>Patreon</a>!
 						New levels by Super Star tier patrons will show up here.
 					</p>
 				</div>

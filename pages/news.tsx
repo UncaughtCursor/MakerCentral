@@ -1,8 +1,6 @@
 import AppFrame from '@components/AppFrame';
+import { discordLink, twitterLink } from '@scripts/site/FirebaseUtil';
 import React from 'react';
-
-const discordLink = 'https://discord.gg/KhmXzfp';
-const twitterLink = 'https://twitter.com/MusicLvlStudio';
 
 /**
  * Displays site news.

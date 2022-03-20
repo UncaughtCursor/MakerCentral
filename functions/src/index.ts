@@ -19,7 +19,10 @@ const server = next({
 });
 
 const nextjsHandle = server.getRequestHandler();
-export const nextServer = functions.https.onRequest(
+export const nextServer = functions.runWith({
+	minInstances: 1,
+	memory: '1GB',
+}).https.onRequest(
 	(request, response) => server.prepare().then(() => nextjsHandle(request, response)).catch((e) => {
 		console.error(e);
 	}),

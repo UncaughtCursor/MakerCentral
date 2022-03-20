@@ -1,5 +1,6 @@
 import React from 'react';
 import AppFrame from '@components/AppFrame';
+import { patreonLink } from '@scripts/site/FirebaseUtil';
 
 /**
  * The landing page of the site.
@@ -39,7 +40,7 @@ function About() {
 					Developing the site, along with the complex algorithms used to generate music levels,
 					has been a huge undertaking. If you find this site helpful and want to support me,
 					or just want some awesome perks, you can become my supporter
-					on <a href="https://www.patreon.com/UncaughtCursor">Patreon</a>.
+					on <a href={patreonLink}>Patreon</a>.
 				</p>
 				<p className="explanatory-text">Thank you for your interest in my project!
 					I hope you find good use out of it. ❤️

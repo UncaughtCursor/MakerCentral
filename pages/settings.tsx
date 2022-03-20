@@ -2,7 +2,7 @@ import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
-import { db, getUser } from '@scripts/site/FirebaseUtil';
+import { db, getUser, patreonLink } from '@scripts/site/FirebaseUtil';
 import { getPatronType } from '@scripts/site/UserDataScripts';
 import { doc, getDoc, setDoc } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
@@ -35,7 +35,7 @@ function SettingsPage() {
 			</p> */}
 			<p>I work hard to develop this site and its music level technology.
 				If you know you will find this website helpful,
-				please consider <a href="https://www.patreon.com/UncaughtCursor">becoming a Patron</a>.
+				please consider <a href={patreonLink}>becoming a Patron</a>.
 				It helps me a ton and I would really appreciate it. ❤️
 			</p>
 		</>
