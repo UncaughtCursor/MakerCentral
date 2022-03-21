@@ -25,6 +25,7 @@ export interface TraditionalOptimizerTarget {
 	y: number;
 	beats: number;
 	entityType: number;
+	id: number;
 }
 
 export interface TraditionalOptimizationResult extends OptimizationResult {
@@ -86,9 +87,12 @@ export interface ScrollBpbConfig {
  * @param scrollPref The user's preference for how the level should scroll.
  * @returns The first successful result or a failure case if there were no successful builds.
  */
-export async function buildMusic(targetGroups: TraditionalOptimizerTarget[][],
-	bpm: number, levelWidth: number = maxLevelWidth,
-	scrollPref: ScrollPreference = 'Any Scroll Method'):
+export async function buildMusic(
+	targetGroups: TraditionalOptimizerTarget[][],
+	bpm: number,
+	levelWidth: number = maxLevelWidth,
+	scrollPref: ScrollPreference = 'Any Scroll Method',
+):
 	Promise<{optResult: TraditionalOptimizationResult, config: ScrollBpbConfig}> {
 	const configs = getPossibleConfigs(targetGroups, bpm, levelWidth, scrollPref);
 	console.log(configs);
@@ -103,8 +107,14 @@ export async function buildMusic(targetGroups: TraditionalOptimizerTarget[][],
 	for (let i = 0; i < configs.length; i++) {
 		const config = configs[i];
 		const setups = getScrollSetups(config.scrollMethod);
-		const level = new TraditionalLevel(targetGroups,
-			config.bpb, setups, levelWidth);
+		const level = new TraditionalLevel(
+			targetGroups,
+			config.bpb,
+
+			setups,
+
+			levelWidth,
+		);
 		await level.build();
 		optResult = {
 			type: 'traditional',
@@ -152,8 +162,12 @@ export async function buildMusic(targetGroups: TraditionalOptimizerTarget[][],
  * @param scrollPref The user's preference for how the level should scroll.
  * @returns A list of possible configurations to build with.
  */
-function getPossibleConfigs(targetGroups: TraditionalOptimizerTarget[][],
-	bpm: number, levelWidth: number, scrollPref: ScrollPreference): ScrollBpbConfig[] {
+function getPossibleConfigs(
+	targetGroups: TraditionalOptimizerTarget[][],
+	bpm: number,
+	levelWidth: number,
+	scrollPref: ScrollPreference,
+): ScrollBpbConfig[] {
 	const configs: ScrollBpbConfig[] = [];
 	const bpbs = getPossibleBpbs(targetGroups, levelWidth);
 	for (let i = 0; i < bpbs.length; i++) {
@@ -204,8 +218,11 @@ function getScrollSetups(scrollMethod: MM2ScrollMethod): Setup[] {
  * @param bpb The number of tiles per beat.
  * @param scrollPref The user's scroll preference.
  */
-function getPossibleScrolls(origBpm: number, bpb: number,
-	scrollPref: ScrollPreference): MM2ScrollMethod[] {
+function getPossibleScrolls(
+	origBpm: number,
+	bpb: number,
+	scrollPref: ScrollPreference,
+): MM2ScrollMethod[] {
 	// Want index of closest bpm to original that's reasonable (At least 0.8x speed)
 	let closestBpmDiff = Infinity;
 	let closestBpmIdx = -1;
@@ -248,8 +265,10 @@ function getPossibleScrolls(origBpm: number, bpb: number,
  * @param targetGroups The target groups to compute bpbs for.
  * @param levelWidth The maximum level width.
  */
-function getPossibleBpbs(targetGroups: TraditionalOptimizerTarget[][],
-	levelWidth: number = maxLevelWidth): number[] {
+function getPossibleBpbs(
+	targetGroups: TraditionalOptimizerTarget[][],
+	levelWidth: number = maxLevelWidth,
+): number[] {
 	const availableWidth = levelWidth - marginWidth;
 	const minBpb = getQuantizationLevel(targetGroups);
 	const beatDuration = getBeatDuration(targetGroups);
@@ -269,11 +288,7 @@ function getPossibleBpbs(targetGroups: TraditionalOptimizerTarget[][],
  * @param targetGroups The target groups to search.
  */
 function getBeatDuration(targetGroups: TraditionalOptimizerTarget[][]): number {
-	return targetGroups.reduce(
-		(acc, targets) => Math.max(acc, targets.reduce(
-			(acc2, target) => Math.max(acc2, target.beats), 0,
-		)), 0,
-	);
+	return targetGroups.reduce((acc, targets) => Math.max(acc, targets.reduce((acc2, target) => Math.max(acc2, target.beats), 0)), 0);
 }
 
 /**
@@ -340,9 +355,7 @@ export function handleAllConflicts() { // TODO: Let either colliding structure m
 				if (!useSolver) break;
 
 				const availableMoves = attempt.availableMoves.filter(
-					(move) => (!(isAlreadyUsed(
-						entry.history, blacklist, move.structs[0],
-					) || move.structs.length > 1)),
+					(move) => (!(isAlreadyUsed(entry.history, blacklist, move.structs[0]) || move.structs.length > 1)),
 				);
 				/* if (availableMoves.length === 0 && attempt.minConflicts <= 1) {
                     console.log(`queue exhausted for struct ${struct.id}`);
@@ -373,8 +386,11 @@ export function handleAllConflicts() { // TODO: Let either colliding structure m
  * @param struct The structure to check for matches.
  * @returns Whether or not the structure has already been moved or is in the blacklist.
  */
-function isAlreadyUsed(history: MoveQueueEntryHistoryEntry[], blacklist: number[],
-	struct: Structure) {
+function isAlreadyUsed(
+	history: MoveQueueEntryHistoryEntry[],
+	blacklist: number[],
+	struct: Structure,
+) {
 	for (let i = 0; i < history.length; i++) {
 		if (struct.id === history[i].struct.id) return true;
 	}

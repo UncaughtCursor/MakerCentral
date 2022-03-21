@@ -158,6 +158,7 @@ function BuildSettingsPage() {
 				subloopTargets.push({
 					y: note.pitch - KEY_C4,
 					frames: Math.round(60 * beatsToSeconds(newBeat, usedBpm)),
+					id: note.id,
 				});
 			});
 
@@ -189,6 +190,7 @@ function BuildSettingsPage() {
 			scrollMethod,
 		});
 		ctx.project.buildInstances[0].optResult = buildRes;
+		console.log(ctx.project.buildInstances[0]);
 	}
 
 	/**
@@ -207,6 +209,7 @@ function BuildSettingsPage() {
 					y: note.pitch - KEY_C4,
 					beats: note.beat,
 					entityType: entityTypeToId(tracks[i].instrument),
+					id: note.id,
 				});
 			}
 			optTargetGroups.push(targets);

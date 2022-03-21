@@ -1,5 +1,5 @@
 import { EntityType } from '@data/MakerConstants';
-import { ProjectNote } from './Project';
+import { BuildInstance, ProjectNote } from './Project';
 
 // TODO: Adding and removing notes, refreshing properties
 
@@ -61,10 +61,20 @@ export default class ProjectTrack {
 
 	/**
 	 * Creates a copy of this track.
+	 * @param buildInst The BuildInstance that this track belongs to.
 	 * @returns The copy of this track.
 	 */
-	getCopy(): ProjectTrack {
-		const notes = JSON.parse(JSON.stringify(this.notes)) as ProjectNote[];
+	getCopy(buildInst: BuildInstance): ProjectTrack {
+		const notes: ProjectNote[] = this.notes.map((note) => {
+			const id = buildInst.nextProjectNoteId;
+			// eslint-disable-next-line no-param-reassign
+			buildInst.nextProjectNoteId++;
+			return {
+				id,
+				beat: note.beat,
+				pitch: note.pitch,
+			};
+		});
 		const newTrack = new ProjectTrack(notes, this.instrument, this.duration);
 
 		newTrack.name = this.name;

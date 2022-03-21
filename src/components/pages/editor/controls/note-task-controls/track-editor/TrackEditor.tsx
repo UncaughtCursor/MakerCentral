@@ -400,7 +400,9 @@ function TrackEditor() {
 				pitch,
 				beat,
 				occupiedTiles: [{ x: beat, y: pitch }],
+				id: buildInst.nextProjectNoteId,
 			};
+			buildInst.nextProjectNoteId++;
 			buildInst.noteGrids[trkId].addEntity(noteEntity);
 		}
 

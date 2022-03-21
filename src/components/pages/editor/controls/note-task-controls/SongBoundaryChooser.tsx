@@ -55,10 +55,15 @@ function SongBoundaryChooser() {
 	useEffect(() => {
 		const noteGroups = midi.tracks.map((track, i) => ({
 			color: NoteColors[i % NoteColors.length],
-			notes: track.notes.map((midiNote) => ({
-				beat: midiNote.beat,
-				pitch: midiNote.pitch,
-			})),
+			notes: track.notes.map((midiNote) => {
+				const id = buildInstance.nextProjectNoteId;
+				buildInstance.nextProjectNoteId++;
+				return {
+					beat: midiNote.beat,
+					pitch: midiNote.pitch,
+					id,
+				};
+			}),
 			instrument: MidiInstruments[track.notes[0].instrument].mm2Instrument,
 		}));
 		setState({

@@ -29,16 +29,35 @@ export interface TrackOptimizerTargetGroup {
 export interface TrackOptimizerTarget {
 	y: number;
 	frames: number;
+	id: number;
 }
 
 export interface OptimizerMessage {
 	type: 'INFO' | 'WARN' | 'ERR';
 	text: string;
+	targetId: number | null;
+}
+
+const errorCodes = [
+	'OUTPUT_TOO_WIDE',
+	'LOOP_PATHFIND_FAIL',
+	'SYNC_FAIL',
+	'OUT_OF_BOUNDS_HORIZONTAL',
+	'OUT_OF_BOUNDS_VERTICAL',
+	'SETUP_NOT_FOUND',
+	'FIT_FAIL',
+	'LOOP_PERIOD_NOT_FOUND',
+] as const;
+
+export type DeltaOptimizerErrorCode = typeof errorCodes[number] | null;
+
+export interface DeltaOptimizerMessage extends OptimizerMessage {
+	error: DeltaOptimizerErrorCode;
 }
 
 export interface OptimizationResult {
 	succeeded: boolean,
-	messages: OptimizerMessage[],
+	messages: DeltaOptimizerMessage[],
 	entityGrid: GridEntityManager<MM2GameEntity>,
 }
 
@@ -106,7 +125,7 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 	console.log(config.targetGroups);
 
 	let succeeded = true;
-	let messages: OptimizerMessage[] = [];
+	let messages: DeltaOptimizerMessage[] = [];
 	let notePlacements: {
 		trk: Track,
 		nextAttachPointIdx: 0 | 1
@@ -185,7 +204,12 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 
 	if (trueTotalWidth > mapWidth + marginWidth) {
 		succeeded = false;
-		messages.push({ type: 'ERR', text: `Result is more than ${mapWidth} tiles wide.` });
+		messages.push({
+			type: 'ERR',
+			text: `Result is more than ${mapWidth} tiles wide.`,
+			error: 'OUTPUT_TOO_WIDE',
+			targetId: null,
+		});
 	}
 
 	return {
@@ -270,6 +294,8 @@ function buildSection(
 		messages.push({
 			type: 'ERR',
 			text: 'Failed to synchronize a music track.',
+			error: 'SYNC_FAIL',
+			targetId: null,
 		});
 	}
 
@@ -358,7 +384,7 @@ function buildColumnDeliverySection(
 	loadTime: number,
 	scrollMethod: MM2ScrollMethod,
 ): DeliveryBuildResult {
-	const messages: OptimizerMessage[] = [];
+	const messages: DeltaOptimizerMessage[] = [];
 
 	const maxHeight = 20;
 
@@ -423,12 +449,16 @@ function buildColumnDeliverySection(
 			if (targetGroup.targets[i].y < 2 || targetGroup.targets[i].y > 25) {
 				messages.push({
 					type: 'ERR',
-					text: `Note #${i + 1} is out of vertical bounds.`,
+					text: 'Note is out of vertical bounds.',
+					error: 'OUT_OF_BOUNDS_VERTICAL',
+					targetId: targetGroup.targets[i].id,
 				});
 			} else if (minX >= areaWidth) {
 				messages.push({
 					type: 'ERR',
-					text: `Note #${i + 1} is out of horizontal bounds.`,
+					text: 'Note is out of horizontal bounds.',
+					error: 'OUT_OF_BOUNDS_HORIZONTAL',
+					targetId: targetGroup.targets[i].id,
 				});
 			} else {
 				messages.push({
@@ -436,6 +466,8 @@ function buildColumnDeliverySection(
 					text: 'Failed to find a setup for one or more notes.'
 					+ ' Notes playing in quick succession and low-pitched notes are'
 					+ ' most likely to have this issue; try mitigating instances of these.',
+					error: 'SETUP_NOT_FOUND',
+					targetId: targetGroup.targets[i].id,
 				});
 			}
 			succeeded = false;
@@ -451,6 +483,8 @@ function buildColumnDeliverySection(
 				messages.push({
 					type: 'ERR',
 					text: 'Unable to fit one of more notes into a column. Try reducing the tempo or speed at which the notes play.',
+					error: 'FIT_FAIL',
+					targetId: targetGroup.targets[i].id,
 				});
 				succeeded = false;
 			}
@@ -511,7 +545,7 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 
 	// TODO: Try other loop options if one fails
 
-	const messages: OptimizerMessage[] = [];
+	const messages: DeltaOptimizerMessage[] = [];
 	let trkMap: TrackMap = new TrackMap(0, 0);
 
 	const buildTrackPeriod = getNearestLoopPeriod((period / 2) - (2 * straightTrkTime));
@@ -520,7 +554,9 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 		succeeded = false;
 		messages.push({
 			type: 'ERR',
-			text: `Loop of period ${period} frames is too short or long to be built.`,
+			text: `Loop of period ${period} frames is too short or long to be built. (Most likely, too short.)`,
+			error: 'LOOP_PERIOD_NOT_FOUND',
+			targetId: null,
 		});
 		return {
 			type: 'track',
@@ -569,6 +605,8 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 		messages.push({
 			type: 'ERR',
 			text: 'Loop construction pathfinding failed. Try changing the tempo or length of the loop.',
+			error: 'LOOP_PATHFIND_FAIL',
+			targetId: null,
 		});
 	}
 

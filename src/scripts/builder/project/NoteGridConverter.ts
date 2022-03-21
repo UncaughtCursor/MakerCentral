@@ -21,6 +21,7 @@ export function notesToGrid(notes: ProjectNote[]): UnboundedGridEntityManager<Pr
 			pitch: note.pitch,
 			beat: note.beat,
 			occupiedTiles: [{ x: note.beat, y: note.pitch }],
+			id: note.id,
 		};
 
 		grid.addEntity(noteEntity);
@@ -41,6 +42,7 @@ export function gridToNotes(grid: UnboundedGridEntityManager<ProjectNoteEntity>)
 		notes.push({
 			pitch: note.pitch,
 			beat: note.beat,
+			id: note.id,
 		});
 	});
 

@@ -10,7 +10,7 @@ import { ScrollBpbConfig, TraditionalOptimizationResult } from '../optimization/
 type TrackId = number;
 export type BuildMode = 'traditional' | 'looping' | 'prototype' | 'minecraft' | 'unspecified';
 
-const currentVersion = 1;
+const currentVersion = 2;
 
 export interface ProjectData {
 	version: number;
@@ -32,6 +32,7 @@ export interface BuildInstance {
 	maxHeight: number;
 	bpm: number;
 	scrollPref: ScrollPreference;
+	nextProjectNoteId: number;
 }
 
 export const scrollPreferences = [
@@ -49,6 +50,12 @@ export interface MusicSelection {
 export interface ProjectNote {
 	pitch: number;
 	beat: number;
+	id: number;
+}
+
+declare global {
+	// eslint-disable-next-line vars-on-top, no-var
+	var nextProjectNoteId: number;
 }
 
 /**
@@ -87,8 +94,13 @@ export default class Project {
 				maxHeight: 27,
 				bpm: 120,
 				scrollPref: 'Any Scroll Method',
+				nextProjectNoteId: 0,
 			};
 		} else {
+			if (data.version < currentVersion) {
+				console.log(`Converting from project data v${data.version} to v${currentVersion}`);
+				// FIXME: Conversion function array
+			}
 			this.version = data.version;
 			this.projectMidis = data.projectMidis;
 			this.buildInstances = data.buildInstances;
@@ -133,7 +145,9 @@ export default class Project {
 					projectNotes.push({
 						pitch: midiNote.pitch,
 						beat: midiNote.beat - selection.startBeat!,
+						id: this.buildInstances[0].nextProjectNoteId,
 					});
+					this.buildInstances[0].nextProjectNoteId++;
 				}
 			}
 
