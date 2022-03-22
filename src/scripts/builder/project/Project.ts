@@ -10,8 +10,6 @@ import { ScrollBpbConfig, TraditionalOptimizationResult } from '../optimization/
 type TrackId = number;
 export type BuildMode = 'traditional' | 'looping' | 'prototype' | 'minecraft' | 'unspecified';
 
-const currentVersion = 2;
-
 export interface ProjectData {
 	version: number;
 	projectMidis: ProjectMidi[];
@@ -58,6 +56,25 @@ declare global {
 	var nextProjectNoteId: number;
 }
 
+const currentVersion = 2;
+const saveDataConversionFns = {
+	1: (data: ProjectData) => { // 1: v1 to v2, 2: v2 to v3, etc
+		const buildInst = data.buildInstances[0];
+		let idCounter = 0;
+
+		const idFn = (trk: ProjectTrack) => {
+			trk.notes.forEach((note) => {
+				// eslint-disable-next-line no-param-reassign
+				note.id = idCounter;
+				idCounter++;
+			});
+		};
+		buildInst.baseTracks.forEach(idFn);
+		buildInst.tracks.forEach(idFn);
+		buildInst.nextProjectNoteId = idCounter;
+	},
+};
+
 /**
  * A level builder project.
  */
@@ -99,7 +116,8 @@ export default class Project {
 		} else {
 			if (data.version < currentVersion) {
 				console.log(`Converting from project data v${data.version} to v${currentVersion}`);
-				// FIXME: Conversion function array
+				// TODO: Conversion function ladder
+				saveDataConversionFns[data.version as 1](data);
 			}
 			this.version = data.version;
 			this.projectMidis = data.projectMidis;
