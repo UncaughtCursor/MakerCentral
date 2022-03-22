@@ -121,7 +121,7 @@ export async function buildMusic(
 			entityGrid: level.entityGrid,
 			messages: level.conflictingIds.map((confId) => ({
 				type: 'ERR',
-				text: 'Not enough space to place note.',
+				text: 'Not enough space to place one or more notes.',
 				targetId: confId,
 			})),
 		};

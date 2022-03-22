@@ -3,7 +3,9 @@ import { TrackOptimizerTarget } from '@scripts/builder/optimization/looping/Delt
 import createSubloops, { Subloop } from '@scripts/builder/project/LoopSplitter';
 import * as DeltaOptimizer from '@scripts/builder/optimization/looping/DeltaOptimizer';
 import { KEY_C4 } from '@scripts/builder/playback/PlaybackConstants';
-import React, { useState, useContext } from 'react';
+import React, {
+	useState, useContext, ReactNode, ReactElement,
+} from 'react';
 import { TraditionalOptimizerTarget } from '@scripts/builder/optimization/traditional/AlphaOptimizer';
 import * as AlphaOptimizer from '@scripts/builder/optimization/traditional/AlphaOptimizer';
 import { entityTypeToId } from '@scripts/builder/optimization/traditional/util';
@@ -65,7 +67,7 @@ function BuildSettingsPage() {
 	 */
 	function getBuildStatusInfo() {
 		if (state.buildStatus === 'unbuilt') {
-			return <></>;
+			return null;
 		}
 		if (buildInst.optResult!.succeeded) {
 			return (
@@ -73,7 +75,7 @@ function BuildSettingsPage() {
 			);
 		}
 
-		const listElements = buildInst.optResult!.messages.map((msg) => <p>{msg.text}</p>);
+		const listElements = getErrorListElements();
 
 		return (
 			<>
@@ -83,7 +85,7 @@ function BuildSettingsPage() {
 					{listElements}
 				</div>
 				<br />
-				<p>Edit your music accordingly and try again.</p>
+				<p>Please edit your music accordingly and try again.</p>
 			</>
 		);
 	}
@@ -223,6 +225,34 @@ function BuildSettingsPage() {
 		);
 		buildInst.optResult = buildRes.optResult;
 		buildInst.optResultConfig = buildRes.config;
+	}
+
+	/**
+	 * Obtains the list elements for error messages.
+	 * @returns The generated React elements.
+	 */
+	function getErrorListElements(): ReactNode {
+		const elements: ReactElement[] = [];
+		const msgs = buildInst.optResult!.messages;
+		const existingMsgs: string[] = [];
+		let hasSpecificNotes = false;
+
+		for (let i = 0; i < msgs.length; i++) {
+			const msg = msgs[i];
+			if (!existingMsgs.includes(msg.text)) {
+				elements.push(<p>{msg.text}</p>);
+				existingMsgs.push(msg.text);
+			}
+			if (msg.targetId !== null) hasSpecificNotes = true;
+		}
+
+		if (hasSpecificNotes) {
+			elements.push(
+				<p>(Notes with errors flash red and white on the track editing page.)</p>,
+			);
+		}
+
+		return elements;
 	}
 }
 

@@ -36,7 +36,7 @@ const PianoRollNotes = React.memo((props: {
 			const y = (noteRange - (note.pitch - props.minNote)) * props.gridTileLength;
 
 			const baseColor = new Color(noteGroup.color);
-			const fillColor = isFocused ? baseColor.string() : baseColor.fade(0.8).string();
+			const fillColor = baseColor.string();
 			const borderColor = new Color(fillColor).darken(0.3).string();
 
 			// Can't push for some reason
@@ -52,6 +52,7 @@ const PianoRollNotes = React.memo((props: {
 						backgroundColor: !hasMessage ? fillColor : 'red',
 						borderColor,
 						animation: !hasMessage ? '' : 'error-flash 2s infinite',
+						opacity: isFocused ? 1 : 0.4,
 					}}
 					key={`${i}-${j}`}
 				/>

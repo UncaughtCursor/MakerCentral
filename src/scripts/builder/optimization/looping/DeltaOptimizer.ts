@@ -464,9 +464,7 @@ function buildColumnDeliverySection(
 			} else {
 				messages.push({
 					type: 'ERR',
-					text: 'Failed to find a setup for one or more notes.'
-					+ ' Notes playing in quick succession and low-pitched notes are'
-					+ ' most likely to have this issue; try mitigating instances of these.',
+					text: 'Failed to find a setup for one or more notes. Try changing their pitch or location.',
 					error: 'SETUP_NOT_FOUND',
 					targetId: targetGroup.targets[i].id,
 				});
@@ -483,7 +481,7 @@ function buildColumnDeliverySection(
 			if (placement === -1) {
 				messages.push({
 					type: 'ERR',
-					text: 'Unable to fit one of more notes into a column. Try reducing the tempo or speed at which the notes play.',
+					text: 'Unable to fit one or more notes into a column. Try reducing the tempo or speed at which the notes play.',
 					error: 'FIT_FAIL',
 					targetId: targetGroup.targets[i].id,
 				});
