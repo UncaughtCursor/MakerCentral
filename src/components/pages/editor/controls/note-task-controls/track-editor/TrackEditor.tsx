@@ -7,6 +7,7 @@ import { previewInstrument } from '@scripts/builder/playback/MusicPlayer';
 import assert from 'assert';
 import { LevelBuildCheckResult, LoopingBuildChecks, TraditionalBuildChecks } from '@scripts/builder/optimization/LevelBuildChecks';
 import { LoopingNoteRange, TraditionalNoteRange } from '@data/MakerConstants';
+import { OptimizerMessage } from '@scripts/builder/optimization/looping/DeltaOptimizer';
 import TrackList from '../../track-list/TrackList';
 import EditorContext from '../../../EditorContext';
 import MusicPreviewer from '../../note-preview/MusicPreviewer';
@@ -160,10 +161,20 @@ function TrackEditor() {
 	 * @returns The piano roll note groups.
 	 */
 	function getNoteGroups(): PianoRollNoteGroup[] {
+		const optimizerMessages: {[key: number]: OptimizerMessage} = {};
+		if (buildInst.optResult !== null) {
+			for (let i = 0; i < buildInst.optResult.messages.length; i++) {
+				const msg = buildInst.optResult.messages[i];
+				if (msg.targetId === null) continue;
+				optimizerMessages[msg.targetId] = msg;
+			}
+		}
+
 		return buildInst.tracks.map((projectTrack) => ({
 			color: NoteColors[projectTrack.id % NoteColors.length],
 			notes: projectTrack.notes.sort((a, b) => a.beat - b.beat),
 			instrument: projectTrack.instrument,
+			optimizerMessages,
 		}));
 	}
 

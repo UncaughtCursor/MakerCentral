@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
 import { EntityType } from '@data/MakerConstants';
+import { OptimizerMessage } from '@scripts/builder/optimization/looping/DeltaOptimizer';
 import { ProjectNote } from '@scripts/builder/project/Project';
 import React from 'react';
 import { NoteBounds } from '../note-task-controls/SongBoundaryChooser';
@@ -11,6 +12,7 @@ import PianoRollNotes from './PianoRollNotes';
 export interface PianoRollNoteGroup {
 	color: string,
 	notes: ProjectNote[],
+	optimizerMessages: {[key: number]: OptimizerMessage},
 	instrument: EntityType,
 }
 

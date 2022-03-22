@@ -69,7 +69,8 @@ function TrackSettingsEditor(props: {
 						type="dark"
 						onClick={() => {
 							const thisTrk = buildInst.tracks[props.selectedTrackId];
-							const newTrk = thisTrk.getCopy(buildInst);
+							const newTrk = thisTrk.getCopy(buildInst.nextProjectNoteId);
+							buildInst.nextProjectNoteId += thisTrk.notes.length;
 							newTrk.name += ' Copy';
 							buildInst.tracks.push(newTrk);
 							props.onChange();

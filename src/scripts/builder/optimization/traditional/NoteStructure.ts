@@ -34,14 +34,14 @@ export default class NoteStructure extends Structure {
 
 	entityProperties!: {
         parachute: boolean;
-    }[]
+    }[];
 
 	hasFall!: boolean;
 
 	hasParachute!: boolean;
 
-	constructor(type: number, x: number, y: number, entityType: number) {
-		super(type, x, y);
+	constructor(type: number, x: number, y: number, entityType: number, id: number) {
+		super(type, x, y, id);
 
 		// https://stackoverflow.com/questions/54977979/object-assign-with-inheritance-not-working-in-typescript
 		Object.assign(this, getStructTemplate(type));

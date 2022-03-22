@@ -40,7 +40,7 @@ export default class TraditionalLevel {
 
 	limitLine: number | null;
 
-	conflictCount!: number;
+	conflictingIds: number[];
 
 	entityGrid: GridEntityManager<MM2GameEntity>;
 
@@ -52,8 +52,12 @@ export default class TraditionalLevel {
 	 * Initializes the level object.
 	 * @constructor
 	 */
-	constructor(targetGroups: TraditionalOptimizerTarget[][],
-		bpb: number, setups: Setup[], levelWidth: number) {
+	constructor(
+		targetGroups: TraditionalOptimizerTarget[][],
+		bpb: number,
+		setups: Setup[],
+		levelWidth: number,
+	) {
 		globalThis.levelWidth = levelWidth;
 		this.width = globalThis.levelWidth;
 		this.height = levelHeight;
@@ -66,6 +70,7 @@ export default class TraditionalLevel {
 		this.maxWidth = 0;
 		this.resolution = 1;
 		this.limitLine = null;
+		this.conflictingIds = [];
 		globalThis.structures = [];
 		globalThis.cells = [];
 		globalThis.chunks = [];
@@ -117,7 +122,7 @@ export default class TraditionalLevel {
 			globalThis.structures = [];
 			this.entityCount = 0;
 			this.powerupCount = 0;
-			this.conflictCount = 0;
+			this.conflictingIds = [];
 			this.entityGrid.clearEntities();
 			this.semisolidGrid.clearEntities();
 			// this.width = 0;
@@ -175,7 +180,7 @@ export default class TraditionalLevel {
 					}
 
 					if (isBuildMode) {
-						const newStruct = new NoteStructure(0, x, y, ins);
+						const newStruct = new NoteStructure(0, x, y, ins, target.id);
 						newStruct.entities[0] = ins + 2;
 						globalThis.structures.push(newStruct);
 					}
@@ -201,7 +206,7 @@ export default class TraditionalLevel {
 			// console.log(`Solver finished in ${new Date().getMilliseconds() - preSolveTime} ms`);
 
 			// resetSpatialData(false);
-			this.conflictCount = 0;
+			this.conflictingIds = [];
 			if (isBuildMode) {
 				let lowestX = 27;
 				// Second pass: Check for unhandled conflicts, etc after solver has finished
@@ -216,7 +221,9 @@ export default class TraditionalLevel {
 					struct.checkForCollisions();
 					if (struct.conflictingStructures.length > 0 || !struct.checkForLegality()) {
 						this.markTile(struct.x, struct.y, 1);
-						this.conflictCount++;
+						this.conflictingIds.push(...struct.conflictingStructures.map(
+							(confStruct) => confStruct.id,
+						));
 					}
 					lowestX = Math.min(lowestX, struct.x);
 				});
@@ -226,7 +233,9 @@ export default class TraditionalLevel {
 					struct.checkForCollisions();
 					if (struct.conflictingStructures.length > 0) {
 						this.markTile(struct.x, struct.y, 1);
-						this.conflictCount++;
+						this.conflictingIds.push(...struct.conflictingStructures.map(
+							(confStruct) => confStruct.id,
+						));
 					}
 				}));
 				// console.log(cells);

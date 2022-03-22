@@ -65,6 +65,7 @@ function SongBoundaryChooser() {
 				};
 			}),
 			instrument: MidiInstruments[track.notes[0].instrument].mm2Instrument,
+			optimizerMessages: {},
 		}));
 		setState({
 			...state,

@@ -14,6 +14,7 @@ import { determineNoteBounds } from './SongBoundaryChooser';
 function TrackChooser(props: {onInputChange: (arg0: boolean) => void}) {
 	const ctx = useContext(EditorContext);
 	const buildInst = ctx.project.buildInstances[0];
+	console.log(buildInst);
 
 	const categoryEntries = getEntries();
 
@@ -110,6 +111,7 @@ function TrackChooser(props: {onInputChange: (arg0: boolean) => void}) {
 			color: NoteColors[projectTrack.id % NoteColors.length],
 			notes: projectTrack.notes,
 			instrument: projectTrack.instrument,
+			optimizerMessages: {},
 		}));
 	}
 
@@ -120,7 +122,8 @@ function TrackChooser(props: {onInputChange: (arg0: boolean) => void}) {
 		switch (selectedTrackSet) {
 		case 'base': { // Copy track to project
 			const track = ctx.project.buildInstances[0].baseTracks[baseListSelectedIndex];
-			buildInst.tracks.push(track.getCopy(ctx.project.buildInstances[0]));
+			buildInst.tracks.push(track.getCopy(buildInst.nextProjectNoteId));
+			buildInst.nextProjectNoteId += track.notes.length;
 
 			buildInst.undoRedoManager.clear();
 

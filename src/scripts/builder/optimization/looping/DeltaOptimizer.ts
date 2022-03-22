@@ -57,13 +57,14 @@ export interface DeltaOptimizerMessage extends OptimizerMessage {
 
 export interface OptimizationResult {
 	succeeded: boolean,
-	messages: DeltaOptimizerMessage[],
+	messages: OptimizerMessage[],
 	entityGrid: GridEntityManager<MM2GameEntity>,
 }
 
 export interface TrackOptimizationResult extends OptimizationResult {
 	type: 'track',
 	trkMap: TrackMap,
+	messages: DeltaOptimizerMessage[],
 	// entityGrid: GridEntityManager<MM2GameEntity>,
 	notePlacements: {
 		trk: Track,

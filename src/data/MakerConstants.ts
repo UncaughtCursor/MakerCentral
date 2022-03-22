@@ -39,7 +39,7 @@ export interface MidiInstrument {
 export const MidiInstruments = MidiInstrumentsJson as MidiInstrument[];
 
 export const TraditionalNoteRange = { min: KEY_C4, max: KEY_C4 + 26 - 1 };
-export const LoopingNoteRange = { min: KEY_C4 + 4, max: KEY_C4 + 26 - 1 };
+export const LoopingNoteRange = { min: KEY_C4 + 5, max: KEY_C4 + 25 - 1 };
 
 export interface MM2ScrollMethod {
     name: string,

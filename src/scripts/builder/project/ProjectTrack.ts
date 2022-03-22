@@ -61,14 +61,12 @@ export default class ProjectTrack {
 
 	/**
 	 * Creates a copy of this track.
-	 * @param buildInst The BuildInstance that this track belongs to.
+	 * @param nextProjectNoteId The ID of the next project note.
 	 * @returns The copy of this track.
 	 */
-	getCopy(buildInst: BuildInstance): ProjectTrack {
-		const notes: ProjectNote[] = this.notes.map((note) => {
-			const id = buildInst.nextProjectNoteId;
-			// eslint-disable-next-line no-param-reassign
-			buildInst.nextProjectNoteId++;
+	getCopy(nextProjectNoteId: number): ProjectTrack {
+		const notes: ProjectNote[] = this.notes.map((note, i) => {
+			const id = nextProjectNoteId + i;
 			return {
 				id,
 				beat: note.beat,

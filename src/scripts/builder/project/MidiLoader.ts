@@ -47,7 +47,8 @@ interface RawMidiNote {
 
 const numMidiChannels = 16;
 const minNoteVelocity = 1; // Set to 20 for "It's me, Mario" sound midi
-export const appPPQN = 24; // Rounds everything to the nearest 24th of a beat
+// export const appPPQN = 24; // Rounds everything to the nearest 24th of a beat
+export const appPPQN = 4; // TODO: Proper quantization setting
 
 /**
  * Async function that loads and processes the MIDI file at the specified path server-side.

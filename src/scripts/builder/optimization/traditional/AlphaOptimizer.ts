@@ -110,21 +110,20 @@ export async function buildMusic(
 		const level = new TraditionalLevel(
 			targetGroups,
 			config.bpb,
-
 			setups,
-
 			levelWidth,
 		);
 		await level.build();
 		optResult = {
 			type: 'traditional',
-			succeeded: level.conflictCount === 0,
+			succeeded: level.conflictingIds.length === 0,
 			level,
 			entityGrid: level.entityGrid,
-			messages: level.conflictCount === 0 ? [] : [{
+			messages: level.conflictingIds.map((confId) => ({
 				type: 'ERR',
-				text: 'Some notes are too close together and are conflicting with one another. Try spreading them out and try again.',
-			}],
+				text: 'Not enough space to place note.',
+				targetId: confId,
+			})),
 		};
 		// Terminate and return a success when it happens
 		if (optResult.succeeded) return { optResult, config };
@@ -139,7 +138,8 @@ export async function buildMusic(
 			messages: [
 				{
 					type: 'ERR',
-					text: 'No valid combination of scroll speed and tile per beat values available. Your music is either too long or too precise.',
+					text: 'No valid combination of scroll speed and tile per beat values available.',
+					targetId: null,
 				},
 			],
 		};
@@ -271,6 +271,7 @@ function getPossibleBpbs(
 ): number[] {
 	const availableWidth = levelWidth - marginWidth;
 	const minBpb = getQuantizationLevel(targetGroups);
+	console.log(`Min BPB ${minBpb}`);
 	const beatDuration = getBeatDuration(targetGroups);
 	const possibleBpbs: number[] = [];
 

@@ -31,3 +31,12 @@
 	border: 1px solid white;
 	border-radius: 2px;
 }
+
+@keyframes error-flash {
+	0%, 100% {
+		background-color: red;
+	}
+	50% {
+		background-color: white;
+	}
+}

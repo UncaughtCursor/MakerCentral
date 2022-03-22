@@ -103,6 +103,7 @@ function BuildSettingsPage() {
 		default:
 			console.error('Optimizer unavailable.');
 		}
+		console.log(ctx.project.buildInstances[0]);
 	}
 
 	/**
@@ -190,7 +191,6 @@ function BuildSettingsPage() {
 			scrollMethod,
 		});
 		ctx.project.buildInstances[0].optResult = buildRes;
-		console.log(ctx.project.buildInstances[0]);
 	}
 
 	/**
