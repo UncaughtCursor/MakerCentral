@@ -57,6 +57,15 @@ function BuildSettingsPage() {
 			<div style={{ display: state.buildStatus === 'succeeded' ? '' : 'none' }}>
 				<ContinueButton />
 			</div>
+			<div style={{ display: state.buildStatus === 'failed' ? '' : 'none' }}>
+				<TriggerButton
+					text="Back"
+					type="blue"
+					onClick={() => {
+						ctx.func.setPage(ctx.currentPage - 1);
+					}}
+				/>
+			</div>
 			<br />
 			<br />
 		</>
