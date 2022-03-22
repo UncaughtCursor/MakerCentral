@@ -243,7 +243,10 @@ function BuildSettingsPage() {
 				elements.push(<p>{msg.text}</p>);
 				existingMsgs.push(msg.text);
 			}
-			if (msg.targetId !== null) hasSpecificNotes = true;
+			if (msg.targetId !== null) {
+				hasSpecificNotes = true;
+				break;
+			}
 		}
 
 		if (hasSpecificNotes) {
