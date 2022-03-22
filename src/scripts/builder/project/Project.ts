@@ -72,6 +72,8 @@ const saveDataConversionFns = {
 		buildInst.baseTracks.forEach(idFn);
 		buildInst.tracks.forEach(idFn);
 		buildInst.nextProjectNoteId = idCounter;
+		// eslint-disable-next-line no-param-reassign
+		data.version++;
 	},
 };
 
