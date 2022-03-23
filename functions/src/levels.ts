@@ -58,7 +58,9 @@ const userLevelTags = [
 	'Story',
 	'One Screen',
 	'Kaizo',
-	'Presentation',
+	'Link',
+	'Minigame',
+	'Meme',
 ] as const;
 
 type Difficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
@@ -80,7 +82,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const now = Date.now();
 	const levelId = randomString(24);
 
-	const popularQueueDays = getFutureEpochDays(5, now);
+	const popularQueueDays = getFutureEpochDays(4, now);
 	const monthQueueDays = getFutureEpochDays(30, now);
 
 	// Load Patron status to determine if the level gets featured in the Patrons section

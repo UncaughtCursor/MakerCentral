@@ -33,7 +33,9 @@ export const userLevelTags = [
 	'Story',
 	'One Screen',
 	'Kaizo',
-	'Presentation',
+	'Link',
+	'Minigame',
+	'Meme',
 ] as const;
 
 export interface UserLevel {
