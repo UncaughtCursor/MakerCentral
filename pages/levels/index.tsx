@@ -4,7 +4,7 @@ import {
 } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import AppFrame from '@components/AppFrame';
-import LevelCategoryPicker, { LevelCategory } from '@components/pages/browser/LevelCategoryPicker';
+import LevelSortPicker, { LevelSort } from '@components/pages/browser/LevelSortPicker';
 import HotIcon from '@mui/icons-material/Whatshot';
 import NewIcon from '@mui/icons-material/FiberNew';
 import WeekTopIcon from '@mui/icons-material/Star';
@@ -18,51 +18,9 @@ import {
 import { onAuthStateChanged, User } from 'firebase/auth';
 import { getPatronType } from '@scripts/site/UserDataScripts';
 import { getPatronStatus } from 'functions/src';
+import TriggerButton from '@components/pages/controls/TriggerButton';
+import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
-
-const levelCategories = [
-	{
-		name: 'Popular',
-		icon: <HotIcon />,
-		queryConstraints: [
-			orderBy('score', 'desc'),
-		],
-		queueType: 'Popular',
-	},
-	{
-		name: 'New',
-		icon: <NewIcon />,
-		queryConstraints: [
-			orderBy('uploadTime', 'desc'),
-		],
-		queueType: 'None',
-	},
-	{
-		name: 'Top This Month',
-		icon: <WeekTopIcon />,
-		queryConstraints: [
-			orderBy('score', 'desc'),
-		],
-		queueType: 'Month',
-	},
-	{
-		name: 'Top Ever',
-		icon: <AllTimeTopIcon />,
-		queryConstraints: [
-			orderBy('score', 'desc'),
-		],
-		queueType: 'None',
-	},
-	{
-		name: 'By Patrons',
-		icon: <LoyaltyIcon />,
-		queryConstraints: [
-			where('isByPatron', '==', true),
-			orderBy('uploadTime', 'desc'),
-		],
-		queueType: 'None',
-	},
-] as LevelCategory[];
 
 const normalUploadDelayHr = 4;
 const patronUploadDelayHr = 2;
@@ -71,9 +29,6 @@ const patronUploadDelayHr = 2;
  * The user level browsing view.
  */
 function LevelBrowser() {
-	const [categoryIdx, setCategoryIdx] = useState(0);
-	const category = levelCategories[categoryIdx];
-
 	const [timeUntilUpload, setTimeUntilUpload] = useState(Infinity);
 	const [user, setUser] = useState(null as User | null);
 
@@ -120,13 +75,33 @@ function LevelBrowser() {
 			title="Community Levels - Music Level Studio"
 			description="Browse and play levels made by the Music Level Studio community!"
 		>
+			<h1>Community Levels</h1>
 			<div style={{
 				display: 'flex',
 				flexDirection: 'column',
 			}}
 			>
-				<div style={{ marginTop: '20px', display: timeUntilUpload <= 0 ? '' : 'none' }}>
-					<ActionButton to="/levels/upload" text="Upload a Level" />
+				<div style={{
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					justifyContent: 'center',
+					gap: '15px',
+				}}
+				>
+					<ActionButton
+						text="Categories"
+						to="/levels/categories"
+						type="green"
+					/>
+					<ActionButton
+						text="Leaderboard"
+						to="/levels/leaderboards"
+						type="purple"
+					/>
+					<div style={{ display: timeUntilUpload <= 0 ? '' : 'none' }}>
+						<ActionButton to="/levels/upload" text="Upload a Level" />
+					</div>
 				</div>
 				<div style={{
 					display: timeUntilUpload <= 0
@@ -140,21 +115,7 @@ function LevelBrowser() {
 				<div style={{ display: user === null ? '' : 'none' }}>
 					<p>Want to add your own level? Log in or create an account in the upper right.</p>
 				</div>
-				<LevelCategoryPicker
-					categories={levelCategories}
-					selectedIndex={categoryIdx}
-					onChange={setCategoryIdx}
-				/>
-				<div>
-					<p style={{ display: (category.name === 'By Patrons' && getPatronType() !== 'Super Star') ? '' : 'none' }}>
-						You can have your level showcased here if you support me on <a href={patreonLink}>Patreon</a>!
-						New levels by Super Star tier patrons will show up here.
-					</p>
-				</div>
-				<LevelCategoryView
-					category={category}
-					batchSize={10}
-				/>
+				<LevelCategoryFeed extraQueryConstraints={[]} />
 			</div>
 		</AppFrame>
 	);

@@ -2,7 +2,7 @@ import useMediaQuery from '@components/hooks/useMediaQuery';
 import { QueryConstraint } from 'firebase/firestore/lite';
 import React from 'react';
 
-export interface LevelCategory {
+export interface LevelSort {
 	name: string;
 	icon: JSX.Element;
 	queryConstraints: QueryConstraint[];
@@ -16,8 +16,8 @@ export interface LevelCategory {
  * * selectedIndex: The index of the currently selected category.
  * * onChange: The function to execute when the category is changed.
  */
-function LevelCategoryPicker(props: {
-	categories: LevelCategory[],
+function LevelSortPicker(props: {
+	categories: LevelSort[],
 	selectedIndex: number,
 	onChange: (arg0: number) => void,
 }) {
@@ -69,4 +69,4 @@ function LevelCategoryPicker(props: {
 	}
 }
 
-export default LevelCategoryPicker;
+export default LevelSortPicker;

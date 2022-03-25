@@ -1,0 +1,27 @@
+.level-category-link-container {
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 10px;
+	max-width: 1000px;
+	margin: 0 auto;
+}
+
+.level-category-link {
+	padding: 20px;
+	background-color: var(--bg-dark);
+	color: var(--text-color);
+	width: 100px;
+	height: 20px;
+	text-align: center;
+	line-height: 20px;
+	user-select: none;
+	border-radius: 10px;
+	transition: transform 0.2s, background-color 0.2s;
+}
+
+.level-category-link:hover {
+	transform: scale(1.05);
+	background-color: var(--bg-lite);
+	cursor: pointer;
+}

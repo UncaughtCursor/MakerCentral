@@ -70,10 +70,23 @@ label {
 	font-size: 16px;
 	border-radius: 10px;
 	cursor: pointer;
+	transition: filter 0.1s;
 }
 
 .action-button:hover {
-	background-color: var(--hl-dark);
+	filter: brightness(0.9);
+}
+
+.action-button-normal {
+	background-color: var(--bg-dark);
+}
+
+.action-button-green {
+	background-color: var(--hl-green);
+}
+
+.action-button-purple {
+	background-color: var(--hl-purple);
 }
 
 .blue-trigger-button {

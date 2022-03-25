@@ -1,6 +1,6 @@
 import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
-import { LevelCategory } from '@components/pages/browser/LevelCategoryPicker';
+import { LevelSort } from '@components/pages/browser/LevelSortPicker';
 import LevelCategoryView from '@components/pages/browser/LevelCategoryView';
 import { auth, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -17,7 +17,7 @@ function YourLevelsPage() {
 		setUser(authUser);
 	});
 
-	const yourLevelsCategory: LevelCategory = {
+	const yourLevelsCategory: LevelSort = {
 		name: 'Yours',
 		// eslint-disable-next-line react/jsx-no-useless-fragment
 		icon: <></>,

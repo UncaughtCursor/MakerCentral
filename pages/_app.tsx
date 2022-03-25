@@ -40,11 +40,11 @@ import '../styles/component/TagSelector.css';
 import '../styles/component/FeedbackControl.css';
 import '../styles/component/BookmarkButton.css';
 import '../styles/component/Popup.css';
+import '../styles/component/LevelCategoryIndex.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
-import { useEffect } from 'react';
 
 TimeAgo.addDefaultLocale(en);
 
@@ -52,13 +52,14 @@ TimeAgo.addDefaultLocale(en);
  * The app.
  */
 function MyApp({ Component, pageProps }: AppProps) {
-	useEffect(() => {
+	// FIXME: UNCOMMENT IN PROD
+	/* useEffect(() => {
 		if ('serviceWorker' in navigator) {
 			window.addEventListener('load', () => {
 				navigator.serviceWorker.register('sw.js', { scope: '/' });
 			});
 		}
-	}, []);
+	}, []); */
 
 	return <Component {...pageProps} />;
 }

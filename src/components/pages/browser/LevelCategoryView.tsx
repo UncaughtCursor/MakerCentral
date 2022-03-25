@@ -1,15 +1,14 @@
 import {
 	queryLevels, UserLevel,
 } from '@scripts/browser/BrowserUtil';
-import { serverTimestamp, Timestamp, where } from 'firebase/firestore/lite';
+import { where } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
-import Spinner from '../controls/Spinner';
-import { LevelCategory } from './LevelCategoryPicker';
+import { LevelSort } from './LevelSortPicker';
 import LevelPreview from './LevelPreview';
 
 interface LevelCategoryViewProps {
-	category: LevelCategory;
+	category: LevelSort;
 	batchSize: number;
 	collectionPath?: string;
 	isLink?: boolean;
