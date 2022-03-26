@@ -5,6 +5,8 @@
 		"firebaseui",
 		"firestore",
 		"Gameplay",
+		"Leaderboard",
+		"leaderboards",
 		"millis",
 		"Navlink",
 		"nextjs",
