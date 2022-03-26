@@ -9,7 +9,9 @@ import {
 } from 'firebase/auth';
 import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { Analytics, getAnalytics } from 'firebase/analytics';
-import { connectStorageEmulator, getStorage } from 'firebase/storage';
+import {
+	connectStorageEmulator, getDownloadURL, getStorage, ref, uploadBytes,
+} from 'firebase/storage';
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
 import { initUser } from './UserDataScripts';
@@ -215,4 +217,41 @@ export function initAnalytics() {
  */
 export function getAppAnalytics() {
 	return analytics;
+}
+
+/**
+ * Uploads one of more files to cloud storage.
+ * @param localUrls The local blob urls of the files to upload.
+ * @param path The path to upload the files in. E.g. /folder/dir/
+ */
+export async function uploadFiles(localUrls: string[], path: string): Promise<string[]> {
+	const globalUrls = new Array<string>(localUrls.length).fill('');
+	await Promise.all(localUrls.map(
+		// eslint-disable-next-line no-async-promise-executor
+		(localUrl, i) => new Promise(async (resolve, reject) => {
+			// If the image is already uploaded, add the current URL to the list of global URLs
+			if (localUrl.substring(0, 4) !== 'blob') {
+				globalUrls[i] = localUrl;
+				resolve();
+			}
+
+			// Get blob to upload
+			const blob = await fetch(localUrl).then((r) => r.blob());
+
+			// Establish image reference in cloud storage
+			const fileId = randomString(24);
+			const fileRef = ref(storage, `${path}${fileId}`);
+
+			// Upload
+			try {
+				await uploadBytes(fileRef, blob);
+				globalUrls[i] = await getDownloadURL(fileRef);
+				resolve();
+			} catch (e) {
+				console.error(e);
+				reject(e);
+			}
+		}) as Promise<void>,
+	));
+	return globalUrls;
 }

@@ -1,5 +1,7 @@
 import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
+import AvatarUploader from '@components/pages/browser/AvatarUploader';
+import LevelImageUploader from '@components/pages/browser/LevelImageUploader';
 import TextArea from '@components/pages/controls/TextArea';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
@@ -55,6 +57,7 @@ function SettingsPage() {
 			const userData = userDataSnap.data();
 			setUsername(userData.name);
 			setBio(userData.bio);
+			setAvatarUrl(userData.avatarUrl);
 		})();
 	}, []);
 
@@ -79,6 +82,11 @@ function SettingsPage() {
 							heightPx={150}
 							onChange={(val) => { setBio(val); }}
 							maxLength={1000}
+						/>
+						<AvatarUploader
+							label="Profile Picture"
+							initialImageUrl={avatarUrl}
+							onUpload={(url) => { setAvatarUrl(url); }}
 						/>
 						<p>User ID: {user?.uid}</p>
 						<div>
