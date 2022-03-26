@@ -19,6 +19,7 @@ function YourLevelsPage() {
 
 	const yourLevelsCategory: LevelSort = {
 		name: 'Yours',
+		code: 'MISC',
 		// eslint-disable-next-line react/jsx-no-useless-fragment
 		icon: <></>,
 		queryConstraints: [

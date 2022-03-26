@@ -3,7 +3,7 @@ import {
 	getDoc, orderBy, QueryConstraint, Timestamp, where,
 } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
-import LevelSortPicker, { LevelSort } from '@components/pages/browser/LevelSortPicker';
+import LevelSortPicker, { LevelSort, SortCode } from '@components/pages/browser/LevelSortPicker';
 import HotIcon from '@mui/icons-material/Whatshot';
 import NewIcon from '@mui/icons-material/FiberNew';
 import WeekTopIcon from '@mui/icons-material/Star';
@@ -13,9 +13,10 @@ import { patreonLink } from '@scripts/site/FirebaseUtil';
 import { getPatronType } from '@scripts/site/UserDataScripts';
 import LevelCategoryView from './LevelCategoryView';
 
-const levelSorts = [
+const levelSorts: LevelSort[] = [
 	{
 		name: 'Popular',
+		code: 'POPULAR',
 		icon: <HotIcon />,
 		queryConstraints: [
 			orderBy('score', 'desc'),
@@ -24,6 +25,7 @@ const levelSorts = [
 	},
 	{
 		name: 'New',
+		code: 'NEW',
 		icon: <NewIcon />,
 		queryConstraints: [
 			orderBy('uploadTime', 'desc'),
@@ -32,6 +34,7 @@ const levelSorts = [
 	},
 	{
 		name: 'Top This Month',
+		code: 'TOP_THIS_MONTH',
 		icon: <WeekTopIcon />,
 		queryConstraints: [
 			orderBy('score', 'desc'),
@@ -40,6 +43,7 @@ const levelSorts = [
 	},
 	{
 		name: 'Top Ever',
+		code: 'TOP_EVER',
 		icon: <AllTimeTopIcon />,
 		queryConstraints: [
 			orderBy('score', 'desc'),
@@ -48,6 +52,7 @@ const levelSorts = [
 	},
 	{
 		name: 'By Patrons',
+		code: 'BY_PATRONS',
 		icon: <LoyaltyIcon />,
 		queryConstraints: [
 			where('isByPatron', '==', true),
@@ -55,7 +60,7 @@ const levelSorts = [
 		],
 		queueType: 'None',
 	},
-] as LevelSort[];
+];
 
 /**
  * A feed for a specific category of level.
@@ -65,9 +70,19 @@ const levelSorts = [
  */
 function LevelCategoryFeed(props: {
 	extraQueryConstraints: QueryConstraint[],
+	excludedSortCodes?: SortCode[],
+	usesArrayContains?: boolean,
 }) {
 	const [categoryIdx, setCategoryIdx] = useState(0);
-	const usedLevelSorts = props.extraQueryConstraints.length === 0 ? levelSorts : levelSorts.filter((sort) => sort.queueType === 'None');
+
+	const usedLevelSorts = levelSorts.filter((sort) => {
+		const sortUsesArrayContains = sort.queueType === 'Month' || sort.queueType === 'Popular';
+		if (sortUsesArrayContains && props.usesArrayContains!) return false;
+
+		if (props.excludedSortCodes!.includes(sort.code)) return false;
+
+		return true;
+	});
 
 	const category: LevelSort = {
 		...usedLevelSorts[categoryIdx],
@@ -96,5 +111,10 @@ function LevelCategoryFeed(props: {
 		</div>
 	);
 }
+
+LevelCategoryFeed.defaultProps = {
+	excludedSortCodes: [],
+	usesArrayContains: false,
+};
 
 export default LevelCategoryFeed;

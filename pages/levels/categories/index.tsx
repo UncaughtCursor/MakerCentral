@@ -26,9 +26,9 @@ function CategoryIndexPage() {
 	function getCategoryLinks(): ReactNode {
 		return userLevelTags.map((tag) => (
 			<Link href={`/levels/categories/${tag}`}>
-				<div className="level-category-link">
+				<a className="level-category-link">
 					{tag}
-				</div>
+				</a>
 			</Link>
 		));
 	}

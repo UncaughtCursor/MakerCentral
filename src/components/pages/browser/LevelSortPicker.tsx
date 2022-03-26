@@ -4,10 +4,22 @@ import React from 'react';
 
 export interface LevelSort {
 	name: string;
+	code: SortCode;
 	icon: JSX.Element;
 	queryConstraints: QueryConstraint[];
 	queueType: 'Popular' | 'Month' | 'None';
 }
+
+const sortCodes = [
+	'POPULAR',
+	'NEW',
+	'TOP_THIS_MONTH',
+	'TOP_EVER',
+	'BY_PATRONS',
+	'MISC',
+] as const;
+
+export type SortCode = typeof sortCodes[number];
 
 /**
  * A control that lets the user choose which level sort they want.

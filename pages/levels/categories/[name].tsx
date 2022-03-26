@@ -25,9 +25,11 @@ function CategoryPage(props: {
 			description={`Browse the latest ${tag.toLowerCase()} levels submitted to Music Level Studio's level gallery!`}
 		>
 			<h1>{tag} Levels</h1>
-			<LevelCategoryFeed extraQueryConstraints={[
-				where('tags', 'array-contains', props.categoryName),
-			]}
+			<LevelCategoryFeed
+				extraQueryConstraints={[
+					where('tags', 'array-contains', props.categoryName),
+				]}
+				usesArrayContains
 			/>
 		</AppFrame>
 	);

@@ -9,6 +9,7 @@ import { auth, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
+import Link from 'next/link';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -85,7 +86,7 @@ function LevelPage(props: {
 							{/* TODO: Maker profile embed */}
 							<tr>
 								<td>Maker</td>
-								<td>{level.makerName}</td>
+								<td><Link href={`/users/${level.makerUid}`}>{level.makerName}</Link></td>
 							</tr>
 							<tr>
 								<td>Upload Date</td>

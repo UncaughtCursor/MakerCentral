@@ -19,6 +19,7 @@ function BookmarksPage() {
 
 	const yourLevelsCategory: LevelSort = {
 		name: 'Bookmarks',
+		code: 'MISC',
 		// eslint-disable-next-line react/jsx-no-useless-fragment
 		icon: <></>,
 		queryConstraints: [

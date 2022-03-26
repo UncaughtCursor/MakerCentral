@@ -31,6 +31,7 @@
 	padding: 20px;
 	border-radius: 20px;
 	position: relative;
+	white-space: pre-wrap;
 }
 
 .level-page-info-container > p, .level-page-info-container > h4 {

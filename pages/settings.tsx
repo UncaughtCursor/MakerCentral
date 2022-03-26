@@ -1,5 +1,6 @@
 import AppFrame from '@components/AppFrame';
 import Gate from '@components/main/Gate';
+import TextArea from '@components/pages/controls/TextArea';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import { db, getUser, patreonLink } from '@scripts/site/FirebaseUtil';
@@ -15,6 +16,9 @@ import SettingsGroup from '../src/components/pages/controls/settings/SettingsGro
 function SettingsPage() {
 	const user = getUser();
 	const [username, setUsername] = useState('');
+	const [avatarUrl, setAvatarUrl] = useState(null as string | null);
+	const [bio, setBio] = useState('');
+	const [isSubmittingProfile, setIsSubmittingProfile] = useState(false);
 
 	const patronType = getPatronType();
 	const isPatron = patronType !== 'None' && patronType !== null;
@@ -50,6 +54,7 @@ function SettingsPage() {
 			if (!userDataSnap.exists()) return;
 			const userData = userDataSnap.data();
 			setUsername(userData.name);
+			setBio(userData.bio);
 		})();
 	}, []);
 
@@ -61,12 +66,19 @@ function SettingsPage() {
 				}}
 				>
 					<h1>Settings</h1>
-					<SettingsGroup name="Your Info">
+					<SettingsGroup name="Profile">
 						{/* <p>Email Address: {user?.email}</p> */}
 						<TextField
 							label="Display Name"
 							value={username}
 							onChange={(val) => { setUsername(val); }}
+						/>
+						<TextArea
+							label="Bio"
+							value={bio}
+							heightPx={150}
+							onChange={(val) => { setBio(val); }}
+							maxLength={1000}
 						/>
 						<p>User ID: {user?.uid}</p>
 						<div>
@@ -74,8 +86,15 @@ function SettingsPage() {
 								text="Submit"
 								type="blue"
 								onClick={async () => {
-									setDoc(userDocRef, { name: username }, { merge: true });
+									setIsSubmittingProfile(true);
+									await setDoc(userDocRef, {
+										name: username,
+										avatarUrl,
+										bio,
+									}, { merge: true });
+									setIsSubmittingProfile(false);
 								}}
+								isLoading={isSubmittingProfile}
 							/>
 						</div>
 					</SettingsGroup>

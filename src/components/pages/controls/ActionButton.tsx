@@ -13,12 +13,12 @@ function ActionButton(props: {to: string, type?: ActionButtonType,
 	text: string, onClick?: () => void}) {
 	return (
 		<Link href={props.to}>
-			<button
+			<a
 				className={props.type! === 'blue' ? 'action-button' : `action-button action-button-${props.type!}`}
 				type="button"
 				onClick={props.onClick!}
 			>{props.text}
-			</button>
+			</a>
 		</Link>
 	);
 }

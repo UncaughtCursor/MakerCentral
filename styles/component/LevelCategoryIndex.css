@@ -18,6 +18,7 @@
 	user-select: none;
 	border-radius: 10px;
 	transition: transform 0.2s, background-color 0.2s;
+	text-decoration: none;
 }
 
 .level-category-link:hover {
