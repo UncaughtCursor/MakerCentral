@@ -1,3 +1,4 @@
+import useUserInfo from '@components/hooks/useUserInfo';
 import ImageUploader from '@components/pages/browser/LevelImageUploader';
 import TagSelector from '@components/pages/browser/TagSelector';
 import ChecksWidget, { CheckResult } from '@components/pages/controls/ChecksWidget';
@@ -60,13 +61,10 @@ function LevelEditor(props: {
 	levelId: string | null,
 }) {
 	const [level, setLevel] = useState(defaultLevel);
-	const [user, setUser] = useState(getUser());
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 	const [hasAccess, setHasAccess] = useState(true);
 	const [isLoading, setIsLoading] = useState(false);
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
 
 	const router = useRouter();
 	const inputChecks = getValidationChecks();

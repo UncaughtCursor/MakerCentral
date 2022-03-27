@@ -11,6 +11,7 @@ import { useRouter } from 'next/router';
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import Link from 'next/link';
 import CommentsSection from '@components/pages/browser/comments/CommentsSection';
+import useUserInfo from '@components/hooks/useUserInfo';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -26,10 +27,8 @@ function LevelPage(props: {
 		return <Page404 />;
 	}
 
-	const [user, setUser] = useState(getUser());
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	const thumbnailIdx = props.level!.imageUrls.indexOf(props.level!.thumbnailUrl);
 

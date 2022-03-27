@@ -11,24 +11,23 @@ import {
 } from 'firebase/auth';
 import { auth, logout, promptLogin } from '@scripts/site/FirebaseUtil';
 import TriggerButton from '@components/pages/controls/TriggerButton';
+import useUserInfo from '@components/hooks/useUserInfo';
 
 /**
  * The user menu that displays on the site header.
  */
 function UserMenu() {
 	const [isOpen, setIsOpen] = useState(false);
-	const [user, setUser] = useState(null as User | null);
+
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 	const signedIn = user !== null;
 
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
-
-	const pfp = (user?.photoURL !== null
-		&& user?.photoURL !== '' && user?.photoURL !== undefined) ? (
+	const pfp = (userInfo?.avatarUrl !== null
+		&& userInfo?.avatarUrl !== '' && userInfo?.avatarUrl !== undefined) ? (
 			<img
-				src={user!.photoURL!}
-				alt={user!.displayName!}
+				src={userInfo?.avatarUrl}
+				alt={userInfo?.name}
 				height="40px"
 				className="user-icon"
 				style={{
@@ -68,7 +67,7 @@ function UserMenu() {
 					<UserMenuDropdown isVisible={isOpen}>
 						<p
 							style={{ color: 'gray', fontSize: '12px', margin: '4px' }}
-						>{!signedIn ? 'Logged out' : `Logged in as ${user!.displayName}`}
+						>{!signedIn ? 'Logged out' : `Logged in as ${userInfo?.name}`}
 						</p>
 						<UserMenuItem text="Your Music Projects" to="/projects" />
 						<UserMenuItem text="Your Levels" to="/your-levels" />

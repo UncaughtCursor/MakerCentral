@@ -8,6 +8,7 @@ import {
 	deleteDoc, doc, getDoc, serverTimestamp, setDoc,
 } from 'firebase/firestore/lite';
 import { UserLevel } from '@scripts/browser/BrowserUtil';
+import useUserInfo from '@components/hooks/useUserInfo';
 
 /**
  * A button used for bookmarking levels. Must be inside a relatively-positioned element.
@@ -22,16 +23,13 @@ function BookmarkButton(props: {
 	top: string,
 }) {
 	const [bookmarked, setBookmarked] = useState('Loading' as boolean | 'Loading');
-	const [user, setUser] = useState(getUser());
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	let icon: ReactNode;
 	if (bookmarked === 'Loading') icon = <MoreHorizIcon />;
 	else if (bookmarked) icon = <BookmarkIcon />;
 	else icon = <BookmarkBorderIcon />;
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
 
 	const bookmarkDoc = user !== null
 		? doc(db, `users/${user.uid}/bookmarks/${props.level.id}`) : null;

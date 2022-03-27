@@ -4,6 +4,7 @@ import { auth, getUser, randomString } from '@scripts/site/FirebaseUtil';
 import TimeAgo from 'javascript-time-ago';
 import useInterval from 'use-interval';
 import { onAuthStateChanged } from 'firebase/auth';
+import useUserInfo from '@components/hooks/useUserInfo';
 import TriggerButton from '../controls/TriggerButton';
 import TextField from '../controls/TextField';
 import EditorContext from './EditorContext';
@@ -30,10 +31,8 @@ function ProjectManagerTab() {
 		isSaving: false,
 		ago: 'never',
 	} as ProjectManagerTabState);
-	const [user, setUser] = useState(getUser());
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	let saveStatusText = '';
 	if (state.isSaving) saveStatusText = 'Saving...';

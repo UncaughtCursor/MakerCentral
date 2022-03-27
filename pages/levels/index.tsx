@@ -20,6 +20,7 @@ import { getPatronType } from '@scripts/site/UserDataScripts';
 import { getPatronStatus } from 'functions/src';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
+import useUserInfo from '@components/hooks/useUserInfo';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const normalUploadDelayHr = 4;
@@ -30,19 +31,15 @@ const patronUploadDelayHr = 2;
  */
 function LevelBrowser() {
 	const [timeUntilUpload, setTimeUntilUpload] = useState(Infinity);
-	const [user, setUser] = useState(null as User | null);
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	const getLevelUploadablityStatus = () => {
 		(async () => {
-			if (user === null) return;
+			if (userInfo === null || user === null) return;
 
-			const socialDocSnap = await getDoc(doc(db, `users/${user.uid}/priv/social`));
-			if (!socialDocSnap.exists()) return;
-			const lastUploadTimestamp = socialDocSnap.data()!.lastLevelUploadTime as Timestamp;
-
-			const lastUploadTime = lastUploadTimestamp.toDate().getTime();
-			const patronStatus = getPatronType();
-			if (patronStatus === null) return;
+			const lastUploadTime = userInfo.lastLevelUploadTime;
+			const patronStatus = userInfo.patronStatus;
 
 			const waitTimeMs = (patronStatus === 'None' ? normalUploadDelayHr
 				: patronUploadDelayHr) * 60 * 60 * 1000;
@@ -54,10 +51,6 @@ function LevelBrowser() {
 
 	useEffect(() => {
 		getLevelUploadablityStatus();
-
-		onAuthStateChanged(auth, (authUser) => {
-			setUser(authUser);
-		});
 
 		document.addEventListener('userinit', getLevelUploadablityStatus);
 

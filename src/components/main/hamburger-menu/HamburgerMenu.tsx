@@ -5,6 +5,7 @@ import {
 import { onAuthStateChanged } from 'firebase/auth';
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
+import useUserInfo from '@components/hooks/useUserInfo';
 import { Navlink } from '../Nav';
 import { UserMenuItem } from '../UserMenu';
 
@@ -21,12 +22,9 @@ function HamburgerMenu(props: {
 	onCloseEvent: () => void,
 }) {
 	const secondClassStr = props.isOpen ? '' : ' closed';
-	const [user, setUser] = useState(getUser());
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 	const router = useRouter();
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
 
 	return (
 		<div className={`hamburger-menu${secondClassStr}`}>

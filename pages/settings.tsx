@@ -1,4 +1,5 @@
 import AppFrame from '@components/AppFrame';
+import useUserInfo from '@components/hooks/useUserInfo';
 import Gate from '@components/main/Gate';
 import AvatarUploader from '@components/pages/browser/AvatarUploader';
 import LevelImageUploader from '@components/pages/browser/LevelImageUploader';
@@ -16,10 +17,13 @@ import SettingsGroup from '../src/components/pages/controls/settings/SettingsGro
  * The page that displays user settings.
  */
 function SettingsPage() {
-	const user = getUser();
-	const [username, setUsername] = useState('');
-	const [avatarUrl, setAvatarUrl] = useState(null as string | null);
-	const [bio, setBio] = useState('');
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
+
+	const [username, setUsername] = useState(userInfo !== null ? userInfo.name : '');
+	const [avatarUrl, setAvatarUrl] = useState(userInfo !== null
+		&& userInfo.avatarUrl !== undefined ? userInfo.avatarUrl : null);
+	const [bio, setBio] = useState(userInfo !== null ? userInfo.bio : '');
 	const [isSubmittingProfile, setIsSubmittingProfile] = useState(false);
 
 	const patronType = getPatronType();
@@ -60,6 +64,13 @@ function SettingsPage() {
 			setAvatarUrl(userData.avatarUrl);
 		})();
 	}, []);
+
+	useEffect(() => {
+		if (userInfo === null) return;
+		setUsername(userInfo.name);
+		setBio(userInfo.bio);
+		setAvatarUrl(userInfo.avatarUrl !== undefined ? userInfo.avatarUrl : null);
+	}, [userInfo]);
 
 	return (
 		<AppFrame title="Settings - Music Level Studio">

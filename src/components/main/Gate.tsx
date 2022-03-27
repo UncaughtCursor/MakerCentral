@@ -4,10 +4,11 @@ import {
 	auth, getUser, logout, patreonLink,
 } from '@scripts/site/FirebaseUtil';
 import { getPatronType, refreshUserData } from '@scripts/site/UserDataScripts';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import Spinner from '@components/pages/controls/Spinner';
+import useUserInfo from '@components/hooks/useUserInfo';
 import LoginPrompt from './LoginPrompt';
 
 type GateOpenState = 'login' | 'EA' | 'open' | 'closed';
@@ -23,31 +24,23 @@ function Gate(props: {
 	showLogout: boolean,
 	children: React.ReactNode
 }) {
-	const [user, setUser] = useState(getUser() as User | null);
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 	const [isLoading, setIsLoading] = useState(getUser() !== null && getPatronType() === null);
 
-	onAuthStateChanged(auth, (authUser: User | null) => {
-		setUser(authUser);
-		setOpenState(getOpenStateFromUser(authUser));
-	});
-
-	if (typeof document !== 'undefined') {
-		document.addEventListener('userinit', () => {
-			const newUser = getUser()!;
-			setOpenState(getOpenStateFromUser(newUser));
-			setUser(newUser);
-			setIsLoading(false);
-		});
-	}
-
-	const [openState, setOpenState] = useState(getOpenStateFromUser(user));
+	const [openState, setOpenState] = useState(getOpenState());
 	if (getUser() !== null && getPatronType() === null && !isLoading) setIsLoading(true);
+
+	useEffect(() => {
+		setOpenState(getOpenState());
+	}, [userInfo]);
 
 	const boldMsg = props.requireEA ? 'You\'ll be able to use this page with patron status.'
 		: 'You\'ll be able to use this page after logging in.';
 
 	switch (openState) {
 	case 'open': {
+		// eslint-disable-next-line react/jsx-no-useless-fragment
 		return <>{props.children}</>;
 	}
 	case 'login': {
@@ -107,9 +100,10 @@ function Gate(props: {
 	 * @param user The currently logged in user or null is none is logged in.
 	 * @returns The GateOpenState to render.
 	 */
-	function getOpenStateFromUser(user: User | null): GateOpenState {
-		const patronType = getPatronType();
+	function getOpenState(): GateOpenState {
+		const patronType = userInfo?.patronStatus;
 		const hasEA = patronType === 'Fire Flower' || patronType === 'Super Star';
+
 		let newOpenState: GateOpenState = 'closed';
 		if (user === null || hasEA === null) newOpenState = 'login';
 		else if (!hasEA && props.requireEA) newOpenState = 'EA';

@@ -1,3 +1,4 @@
+import useUserInfo from '@components/hooks/useUserInfo';
 import {
 	auth, db, functions, getUser,
 } from '@scripts/site/FirebaseUtil';
@@ -16,13 +17,10 @@ import TagSelector from './TagSelector';
 function FeedbackControl(props: {
 	levelId: string,
 }) {
-	const [user, setUser] = useState(getUser());
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 	const [loading, setLoading] = useState(true);
 	const [voteVal, setVoteVal] = useState(0 as 1 | 0 | -1);
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
 
 	useEffect(() => {
 		if (user === null) {

@@ -6,16 +6,14 @@ import { auth, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { orderBy, where } from 'firebase/firestore/lite';
 import React, { useState } from 'react';
+import useUserInfo from '@components/hooks/useUserInfo';
 
 /**
  * Page used for displaying the user's levels.
  */
 function BookmarksPage() {
-	const [user, setUser] = useState(getUser());
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	const yourLevelsCategory: LevelSort = {
 		name: 'Bookmarks',

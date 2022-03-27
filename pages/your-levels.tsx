@@ -5,17 +5,15 @@ import LevelCategoryView from '@components/pages/browser/LevelCategoryView';
 import { auth, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { orderBy, where } from 'firebase/firestore/lite';
-import React, { useState } from 'react';
+import React from 'react';
+import useUserInfo from '@components/hooks/useUserInfo';
 
 /**
  * Page used for displaying the user's levels.
  */
 function YourLevelsPage() {
-	const [user, setUser] = useState(getUser());
-
-	onAuthStateChanged(auth, (authUser) => {
-		setUser(authUser);
-	});
+	const userInfo = useUserInfo();
+	const user = userInfo !== null ? userInfo.user : null;
 
 	const yourLevelsCategory: LevelSort = {
 		name: 'Yours',
