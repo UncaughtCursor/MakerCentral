@@ -10,6 +10,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import Link from 'next/link';
+import CommentsSection from '@components/pages/browser/comments/CommentsSection';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -153,6 +154,10 @@ function LevelPage(props: {
 						/>
 					</div>
 				</div>
+				<CommentsSection
+					docId={level.id}
+					docPath="/levels/"
+				/>
 			</div>
 		</AppFrame>
 	);

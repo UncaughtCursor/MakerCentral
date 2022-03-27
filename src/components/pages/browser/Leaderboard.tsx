@@ -43,7 +43,6 @@ function Leaderboard(props: {
 			];
 
 			const docs = await getDocs(query(collectionGroup(db, 'priv'), ...queryConstraints));
-			console.log(docs);
 
 			const dataEntries: LeaderboardEntry[] = await Promise.all(
 				docs.docs.map(async (scoreDoc, i) => {

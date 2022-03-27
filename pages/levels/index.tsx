@@ -87,6 +87,7 @@ function LevelBrowser() {
 					alignItems: 'center',
 					justifyContent: 'center',
 					gap: '15px',
+					flexWrap: 'wrap',
 				}}
 				>
 					<ActionButton
