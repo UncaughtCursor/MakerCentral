@@ -11,6 +11,10 @@ label {
 	font-size: 14px;
 }
 
+span {
+	color: var(--text-color);
+}
+
 .page-renderer {
 	text-align: center;
 	width: 80%;

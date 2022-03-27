@@ -1,0 +1,82 @@
+import { db } from '@scripts/site/FirebaseUtil';
+import { doc, getDoc } from 'firebase/firestore/lite';
+import TimeAgo from 'javascript-time-ago';
+import React, { useEffect, useState } from 'react';
+
+export interface UserLevelMessage {
+	uid: string;
+	text: string;
+	timestamp: number;
+	points: number;
+}
+
+export interface UserLevelComment extends UserLevelMessage {
+	replies: UserLevelMessage[];
+}
+
+interface CommentUserData {
+	name: string,
+	avatarUrl: string,
+}
+
+const timeAgo = new TimeAgo('en-us');
+
+/**
+ * Displays a comment.
+ * @param props The props:
+ * * comment: The comment data.
+ * * isSignedIn: Whether or not the user is signed in.
+ */
+function Comment(props: {
+	comment: UserLevelMessage | UserLevelComment,
+	isSignedIn: boolean,
+}) {
+	const isHeadComment = typeof (props.comment as any).replies !== 'undefined';
+
+	const [userData, setUserData] = useState(null as CommentUserData | null);
+
+	useEffect(() => {
+		(async () => {
+			const fetchedUserData = (await getDoc(doc(db, `/users/${props.comment.uid}`))).data();
+			if (fetchedUserData === undefined) {
+				setUserData({
+					name: 'Deleted',
+					avatarUrl: '',
+				});
+			} else {
+				setUserData({
+					name: fetchedUserData.name,
+					avatarUrl: fetchedUserData.avatarUrl,
+				});
+			}
+		})();
+	}, [props.comment]);
+
+	if (userData === null) {
+		return (
+			<div>
+				<span>Loading...</span>
+			</div>
+		);
+	}
+
+	return (
+		<div className="comment-container">
+			<div className="comment-head">
+				<img src={userData.avatarUrl} alt={userData.name} />
+				<div className="comment-name-container">
+					<span>{userData.name}</span>
+					<span>{timeAgo.format(new Date(props.comment.timestamp))}</span>
+				</div>
+			</div>
+			<div className="comment-content">
+				<p>{props.comment.text}</p>
+			</div>
+			<div className="comment-controls">
+				{/* Buttons */}
+			</div>
+		</div>
+	);
+}
+
+export default Comment;

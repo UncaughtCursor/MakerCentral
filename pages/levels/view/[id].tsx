@@ -156,6 +156,7 @@ function LevelPage(props: {
 				<CommentsSection
 					docId={level.id}
 					docPath="/levels/"
+					numComments={0}
 				/>
 			</div>
 		</AppFrame>
