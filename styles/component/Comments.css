@@ -1,3 +1,19 @@
+.comment-thread {
+	display: flex;
+	flex-direction: column;
+	gap: 5px;
+}
+
+.comment-thread:not(:first-child) {
+	margin-left: 100px;
+}
+
+.comment-thread:not(:first-child) > div {
+	border-left: 4px solid var(--bg-lite);
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
 .comment-container {
 	display: flex;
 	flex-direction: column;

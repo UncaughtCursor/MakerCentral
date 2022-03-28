@@ -1,7 +1,7 @@
 import { db } from '@scripts/site/FirebaseUtil';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import TimeAgo from 'javascript-time-ago';
-import React, { useEffect, useState } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 
 export interface UserLevelMessage {
 	uid: string;
@@ -31,12 +31,14 @@ function Comment(props: {
 	comment: UserLevelMessage | UserLevelComment,
 	isSignedIn: boolean,
 }) {
-	const isHeadComment = typeof (props.comment as any).replies !== 'undefined';
+	const isTopLevel = typeof (props.comment as any).replies !== 'undefined';
 
 	const [userData, setUserData] = useState(null as CommentUserData | null);
+	const [replyElements, setReplyElements] = useState([] as ReactElement[]);
 
 	useEffect(() => {
 		(async () => {
+			// Load and set user data
 			const fetchedUserData = (await getDoc(doc(db, `/users/${props.comment.uid}`))).data();
 			if (fetchedUserData === undefined) {
 				setUserData({
@@ -48,6 +50,13 @@ function Comment(props: {
 					name: fetchedUserData.name,
 					avatarUrl: fetchedUserData.avatarUrl,
 				});
+			}
+
+			// Load replies
+			if (isTopLevel) {
+				setReplyElements((props.comment as UserLevelComment).replies.map((reply) => (
+					<Comment comment={reply} isSignedIn={props.isSignedIn} />
+				)));
 			}
 		})();
 	}, [props.comment]);
@@ -61,22 +70,29 @@ function Comment(props: {
 	}
 
 	return (
-		<div className="comment-container">
-			<div className="comment-head">
-				<img src={userData.avatarUrl} alt={userData.name} />
-				<div className="comment-name-container">
-					<span>{userData.name}</span>
-					<span>{timeAgo.format(new Date(props.comment.timestamp))}</span>
+		<div className="comment-thread">
+			<div className="comment-container">
+				<div className="comment-head">
+					<img src={userData.avatarUrl} alt={userData.name} />
+					<div className="comment-name-container">
+						<span>{userData.name}</span>
+						<span>{timeAgo.format(new Date(props.comment.timestamp))}</span>
+					</div>
+				</div>
+				<div className="comment-content">
+					<p>{props.comment.text}</p>
+				</div>
+				<div className="comment-controls">
+					{/* Buttons */}
 				</div>
 			</div>
-			<div className="comment-content">
-				<p>{props.comment.text}</p>
-			</div>
-			<div className="comment-controls">
-				{/* Buttons */}
-			</div>
+			{replyElements}
 		</div>
 	);
 }
+
+Comment.defaultProps = {
+	docIdPath: '',
+};
 
 export default Comment;

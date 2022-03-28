@@ -44,6 +44,7 @@ function CommentsSection(props: {
 						onChange={(val) => { setUserComment(val); }}
 						widthPx={400}
 						heightPx={80}
+						maxLength={400}
 					/>
 				</div>
 				<TriggerButton

@@ -4,7 +4,7 @@ import {
 	collection, getDocs, orderBy, query,
 } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
-import Comment, { UserLevelComment } from './Comment';
+import Comment, { UserLevelComment, UserLevelMessage } from './Comment';
 import { CommentableDocPath } from './CommentsSection';
 
 /**
@@ -26,13 +26,21 @@ function CommentsFeed(props: {
 	useEffect(() => {
 		(async () => {
 			const colRef = collection(db, `${props.docPath}${props.docId}/comments`);
-			const commentDocs = (await getDocs(query(colRef, orderBy('points', 'desc')))).docs;
-			const queriedComments: UserLevelComment[] = commentDocs.map((commentDoc) => {
-				const docData = commentDoc.data();
-				return {
-					...(docData as UserLevelComment),
-				};
-			});
+			const commentDocs = (await getDocs(query(colRef, orderBy('timestamp', 'asc')))).docs;
+
+			const queriedComments: UserLevelComment[] = await Promise.all(
+				commentDocs.map(async (commentDoc) => {
+					const repliesRef = collection(db, `${commentDoc.ref.path}/replies`);
+					const replyDocs = (await getDocs(query(repliesRef, orderBy('timestamp', 'asc')))).docs;
+					const replies = replyDocs.map((replyDoc) => replyDoc.data() as UserLevelMessage);
+
+					const docData = commentDoc.data();
+					return {
+						...(docData as UserLevelMessage),
+						replies,
+					};
+				}),
+			);
 
 			setLoading(false);
 			setComments(queriedComments);
