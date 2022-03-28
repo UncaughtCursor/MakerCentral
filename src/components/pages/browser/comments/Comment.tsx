@@ -1,6 +1,7 @@
 import { db } from '@scripts/site/FirebaseUtil';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import TimeAgo from 'javascript-time-ago';
+import Link from 'next/link';
 import React, { ReactElement, useEffect, useState } from 'react';
 
 export interface UserLevelMessage {
@@ -16,7 +17,7 @@ export interface UserLevelComment extends UserLevelMessage {
 
 interface CommentUserData {
 	name: string,
-	avatarUrl: string,
+	avatarUrl: string | undefined,
 }
 
 const timeAgo = new TimeAgo('en-us');
@@ -73,9 +74,19 @@ function Comment(props: {
 		<>
 			<div className="comment-container">
 				<div className="comment-head">
-					<img src={userData.avatarUrl} alt={userData.name} />
+					<Link href={`/users/${props.comment.uid}`}>
+						<img
+							src={userData.avatarUrl}
+							alt={userData.name}
+							style={{
+								display: userData.avatarUrl !== '' && userData.avatarUrl !== undefined ? '' : 'none',
+							}}
+						/>
+					</Link>
 					<div className="comment-name-container">
-						<span>{userData.name}</span>
+						<span>
+							<Link href={`/users/${props.comment.uid}`}>{userData.name}</Link>
+						</span>
 						<span>{timeAgo.format(new Date(props.comment.timestamp))}</span>
 					</div>
 				</div>

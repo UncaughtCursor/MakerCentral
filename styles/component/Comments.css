@@ -42,6 +42,7 @@
 	width: 75px;
 	border-radius: 10px;
 	border: 2px solid var(--bg-lite);
+	cursor: pointer;
 }
 
 .comment-name-container {
@@ -52,6 +53,12 @@
 
 .comment-name-container > span:first-child {
 	font-size: 20px;
+	cursor: pointer;
+}
+
+.comment-name-container > span:first-child > a {
+	text-decoration: none;
+	color: var(--text-color);
 }
 
 .comment-name-container > span:last-child {
