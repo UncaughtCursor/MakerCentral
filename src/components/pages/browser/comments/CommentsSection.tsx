@@ -1,8 +1,9 @@
 import useUserInfo from '@components/hooks/useUserInfo';
 import TextArea from '@components/pages/controls/TextArea';
 import TriggerButton from '@components/pages/controls/TriggerButton';
-import { auth, getUser } from '@scripts/site/FirebaseUtil';
+import { auth, functions, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
+import { httpsCallable } from 'firebase/functions';
 import React, { useState } from 'react';
 import CommentsFeed from './CommentsFeed';
 
@@ -58,8 +59,25 @@ function CommentsSection(props: {
 		</div>
 	);
 
+	/**
+	 * Submits the comment typed by the user.
+	 */
 	async function sendComment() {
 		setIsSendingComment(true);
+		try {
+			const submitCommentFn = httpsCallable(functions, 'submitComment');
+			await submitCommentFn({
+				location: 'levels',
+				docId: props.docId,
+				text: userComment,
+			});
+			setIsSendingComment(false);
+		} catch (e) {
+			// eslint-disable-next-line no-alert
+			alert('An error occurred while attempting to submit the comment.');
+			console.error(e);
+			setIsSendingComment(false);
+		}
 	}
 }
 

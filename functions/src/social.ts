@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
 import { firestore } from 'firebase-admin';
-import { UserLevelDocData } from './levels';
+import { randomString, UserLevelDocData } from './levels';
 
 type VoteValue = 1 | 0 | -1;
 
@@ -16,7 +16,6 @@ interface VoteData {
 	score: number,
 } */
 
-// eslint-disable-next-line import/prefer-default-export
 export const voteOnLevel = functions.https.onCall(async (data: {
 	levelId: string, voteVal: VoteValue,
 }, context) => {
@@ -59,5 +58,22 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 		t.set(authorSocialRef, {
 			points: firestore.FieldValue.increment(scoreChange),
 		}, { merge: true });
+	});
+});
+
+export type CommentLocation = 'levels';
+
+export const submitComment = functions.https.onCall(async (data: {
+	location: CommentLocation, docId: string, /* commentId?: string, */ text: string,
+}, context) => {
+	if (context.auth === undefined) throw new Error('User is not logged in.');
+	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
+	const docRef = admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`);
+
+	await docRef.set({
+		uid: context.auth.uid,
+		text: data.text,
+		timestamp: Date.now(),
+		points: 0,
 	});
 });

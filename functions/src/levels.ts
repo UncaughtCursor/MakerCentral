@@ -179,7 +179,7 @@ export const publishLevelEdits = functions.https.onCall(async (data: {
  * @param length The length of the string.
  * @returns The generated string.
  */
-function randomString(length: number) {
+export function randomString(length: number) {
 	let result = '';
 	const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 	const charactersLength = characters.length;

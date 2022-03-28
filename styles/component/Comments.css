@@ -1,17 +1,13 @@
+.comment-feed {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
 .comment-thread {
 	display: flex;
 	flex-direction: column;
 	gap: 5px;
-}
-
-.comment-thread:not(:first-child) {
-	margin-left: 100px;
-}
-
-.comment-thread:not(:first-child) > div {
-	border-left: 4px solid var(--bg-lite);
-	border-top-left-radius: 0;
-	border-bottom-left-radius: 0;
 }
 
 .comment-container {
@@ -23,6 +19,16 @@
 	width: 80vw;
 	max-width: 500px;
 	margin: 0 auto;
+}
+
+.comment-reply-container {
+	margin-left: 50px;
+}
+
+.comment-reply-container > div {
+	border-left: 4px solid var(--bg-lite);
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }
 
 .comment-head {

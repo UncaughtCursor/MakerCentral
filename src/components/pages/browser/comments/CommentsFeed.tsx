@@ -53,7 +53,7 @@ function CommentsFeed(props: {
 		);
 	}
 	return (
-		<div>
+		<div className="comment-feed">
 			{getCommentComponents()}
 		</div>
 	);

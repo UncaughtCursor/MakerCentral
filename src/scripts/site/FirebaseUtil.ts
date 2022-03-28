@@ -91,14 +91,14 @@ export const storage = getStorage(app);
 let analytics: Analytics | null = null;
 
 // FIXME: COMMENT OUT IN PROD
-/* try {
+try {
 	connectFirestoreEmulator(db, '192.168.1.190', 8080);
 	connectAuthEmulator(auth, 'http://192.168.1.190:9099');
 	connectFunctionsEmulator(functions, '192.168.1.190', 5001);
 	connectStorageEmulator(storage, '192.168.1.190', 9199);
 } catch (e) {
 	console.error(e);
-} */
+}
 
 let user: User | null = null;
 onAuthStateChanged(auth, (authUser) => {

@@ -69,8 +69,8 @@ function Comment(props: {
 		);
 	}
 
-	return (
-		<div className="comment-thread">
+	const commentContent = (
+		<>
 			<div className="comment-container">
 				<div className="comment-head">
 					<img src={userData.avatarUrl} alt={userData.name} />
@@ -87,6 +87,20 @@ function Comment(props: {
 				</div>
 			</div>
 			{replyElements}
+		</>
+	);
+
+	if (isTopLevel) {
+		return (
+			<div className="comment-thread">
+				{commentContent}
+			</div>
+		);
+	}
+
+	return (
+		<div className="comment-reply-container">
+			{commentContent}
 		</div>
 	);
 }
