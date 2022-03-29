@@ -13,6 +13,7 @@
 	height: 40px;
 	border-radius: 50%;
 	display: block;
+	aspect-ratio: 1 / 1;
 }
 
 .user-icon:hover {
