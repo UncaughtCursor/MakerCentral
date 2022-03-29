@@ -71,6 +71,8 @@ function CommentsSection(props: {
 				docId: props.docId,
 				text: userComment,
 			});
+			// eslint-disable-next-line no-restricted-globals
+			if (typeof location !== 'undefined') location.reload();
 			setIsSendingComment(false);
 		} catch (e) {
 			// eslint-disable-next-line no-alert

@@ -7,6 +7,13 @@ import React, { useEffect, useState } from 'react';
 import Comment, { UserLevelComment, UserLevelMessage } from './Comment';
 import { CommentableDocPath } from './CommentsSection';
 
+interface ReplyDocData {
+	uid: string;
+	text: string;
+	timestamp: number;
+	points: number;
+}
+
 /**
  * A feed to display comments on any document.
  * @param props The props:
@@ -32,11 +39,15 @@ function CommentsFeed(props: {
 				commentDocs.map(async (commentDoc) => {
 					const repliesRef = collection(db, `${commentDoc.ref.path}/replies`);
 					const replyDocs = (await getDocs(query(repliesRef, orderBy('timestamp', 'asc')))).docs;
-					const replies = replyDocs.map((replyDoc) => replyDoc.data() as UserLevelMessage);
+					const replies: UserLevelMessage[] = replyDocs.map((replyDoc) => ({
+						...(replyDoc.data() as ReplyDocData),
+						id: replyDoc.id,
+					}));
 
 					const docData = commentDoc.data();
 					return {
 						...(docData as UserLevelMessage),
+						id: commentDoc.id,
 						replies,
 					};
 				}),
@@ -67,7 +78,10 @@ function CommentsFeed(props: {
 			<Comment
 				key={comment.timestamp}
 				comment={comment}
-				isSignedIn={isLoggedIn}
+				commentId={comment.id}
+				topCommentId={comment.id}
+				pageId={props.docId}
+				uid={userInfo?.user.uid !== undefined ? userInfo.user.uid : null}
 			/>
 		));
 	}

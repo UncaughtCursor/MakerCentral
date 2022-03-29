@@ -25,7 +25,7 @@
 	margin-left: 50px;
 }
 
-.comment-reply-container > div {
+.comment-reply-container > .comment-container {
 	border-left: 4px solid var(--bg-lite);
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
@@ -69,4 +69,11 @@
 	text-align: left;
 	white-space: pre-wrap;
 	margin: 10px 0px;
+}
+
+.comment-controls {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: right;
 }

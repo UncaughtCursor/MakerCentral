@@ -12,6 +12,7 @@ import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
 import Link from 'next/link';
 import CommentsSection from '@components/pages/browser/comments/CommentsSection';
 import useUserInfo from '@components/hooks/useUserInfo';
+import ReportDialog from '@components/main/dialogs/ReportDialog';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -20,6 +21,8 @@ import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 function LevelPage(props: {
 	level: UserLevel | null
 }) {
+	const [showReportDialog, setShowReportDialog] = useState(false);
+
 	const router = useRouter();
 
 	const level = props.level;
@@ -117,6 +120,22 @@ function LevelPage(props: {
 					<br />
 					<h4>Tags</h4>
 					<TagDisplay tags={level.tags} />
+					<div style={{
+						display: 'flex',
+						justifyContent: 'right',
+					}}
+					>
+						<TriggerButton
+							text="Report"
+							type="flush"
+							onClick={() => { setShowReportDialog(true); }}
+						/>
+						<ReportDialog
+							open={showReportDialog}
+							onCloseEvent={() => { setShowReportDialog(false); }}
+							documentPath={`/levels/${props.level?.id}`}
+						/>
+					</div>
 				</div>
 				<div
 					className="level-page-info-container"
@@ -156,7 +175,7 @@ function LevelPage(props: {
 				<CommentsSection
 					docId={level.id}
 					docPath="/levels/"
-					numComments={0}
+					numComments={level.numComments}
 				/>
 			</div>
 		</AppFrame>

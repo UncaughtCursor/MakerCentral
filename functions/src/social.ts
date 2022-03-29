@@ -22,7 +22,7 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<VoteValue>(data.voteVal)) throw new Error('Invalid vote value.');
 
-	admin.firestore().runTransaction(async (t) => {
+	await admin.firestore().runTransaction(async (t) => {
 		const levelRef = admin.firestore().doc(`levels/${data.levelId}`);
 		const voteRef = admin.firestore().doc(`users/${context.auth!.uid}/engagements/${data.levelId}`);
 
@@ -64,16 +64,40 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 export type CommentLocation = 'levels';
 
 export const submitComment = functions.https.onCall(async (data: {
-	location: CommentLocation, docId: string, /* commentId?: string, */ text: string,
+	location: CommentLocation, docId: string, commentId?: string, text: string,
 }, context) => {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
-	const docRef = admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`);
+	const docRef = data.commentId === undefined
+		? admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`)
+		: admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId}/replies/${randomString(24)}`);
 
-	await docRef.set({
-		uid: context.auth.uid,
-		text: data.text,
-		timestamp: Date.now(),
-		points: 0,
+	await admin.firestore().runTransaction(async (t) => {
+		t.set(docRef, {
+			uid: context.auth!.uid,
+			text: data.text,
+			timestamp: Date.now(),
+			points: 0,
+		});
+
+		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
+			numComments: admin.firestore.FieldValue.increment(1),
+		}, { merge: true });
+	});
+});
+
+export const deleteComment = functions.https.onCall(async (data: {
+	location: CommentLocation, docId: string, commentId: string,
+}, context) => {
+	if (context.auth === undefined) throw new Error('User is not logged in.');
+	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
+	const docRef = admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId}`);
+
+	await admin.firestore().runTransaction(async (t) => {
+		t.delete(docRef);
+
+		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
+			numComments: admin.firestore.FieldValue.increment(-1),
+		}, { merge: true });
 	});
 });
