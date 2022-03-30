@@ -5,6 +5,7 @@ import UserMenu from './UserMenu';
 import HamburgerMenuButton from './hamburger-menu/HamburgerMenuButton';
 import HamburgerMenu from './hamburger-menu/HamburgerMenu';
 import EventPopup from './EventPopup';
+import NotificationWidget from './NotificationWidget';
 
 /**
  * The header of the webpage, containing the logo and navigation buttons.
@@ -64,6 +65,7 @@ function Header() {
 					</div>
 				</Link>
 				<Navbar />
+				<NotificationWidget />
 				<UserMenu />
 				<HamburgerMenuButton
 					isMenuOpen={isHamburgerMenuOpen}

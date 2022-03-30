@@ -1,0 +1,75 @@
+.notification-icon-container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	position: relative;
+	cursor: pointer;
+}
+
+.notification-icon-container > svg {
+	color: var(--text-color);
+}
+
+.notification-badge {
+	position: absolute;
+	left: 14px;
+	top: 8px;
+	border-radius: 16px;
+	background-color: var(--hl-green);
+	min-width: 16px;
+	height: 16px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 4px;
+}
+
+.notification-badge > span {
+	font-size: 16px;
+	font-weight: bold;
+	user-select: none;
+	position: relative;
+	top: -1px;
+}
+
+.notification-listing-container {
+	display: flex;
+	flex-direction: column;
+	width: 90vw;
+	max-width: 700px;
+	margin: 0 auto;
+}
+
+.notification-listing {
+	background-color: var(--bg-dark);
+	border-bottom: 1px solid var(--inactive-white);
+	display: flex;
+	flex-direction: row;
+	gap: 20px;
+	padding-left: 20px;
+	cursor: pointer;
+}
+
+.notification-listing:hover {
+	background-color: var(--bg-norm);
+}
+
+.notification-listing.hl {
+	background-color: var(--bg-lite);
+}
+
+.notification-listing-text-container {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+}
+
+.notification-listing-text-container > span:first-child {
+	font-size: 20px;
+	font-weight: bold;
+}
+
+.notification--text-container > span:last-child {
+	color: var(--inactive-white);
+}
