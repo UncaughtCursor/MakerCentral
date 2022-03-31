@@ -3,10 +3,6 @@ import {
 	getFirestore, connectFirestoreEmulator,
 } from 'firebase/firestore/lite';
 import {
-	getFirestore as getFirestoreHeavy,
-	connectFirestoreEmulator as connectFirestoreEmulatorHeavy,
-} from 'firebase/firestore';
-import {
 	getAuth, connectAuthEmulator, onAuthStateChanged, User,
 	signOut, GoogleAuthProvider,
 	EmailAuthProvider,
@@ -90,7 +86,6 @@ const firebaseUiConfig: firebaseui.auth.Config = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const dbHeavy = getFirestoreHeavy(app);
 export const functions = getFunctions(app);
 export const storage = getStorage(app);
 let analytics: Analytics | null = null;
@@ -98,7 +93,6 @@ let analytics: Analytics | null = null;
 // FIXME: COMMENT OUT IN PROD
 try {
 	connectFirestoreEmulator(db, '192.168.1.190', 8080);
-	connectFirestoreEmulatorHeavy(dbHeavy, '192.168.1.190', 8080);
 	connectAuthEmulator(auth, 'http://192.168.1.190:9099');
 	connectFunctionsEmulator(functions, '192.168.1.190', 5001);
 	connectStorageEmulator(storage, '192.168.1.190', 9199);

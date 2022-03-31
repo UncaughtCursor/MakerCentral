@@ -1,7 +1,9 @@
 import AppFrame from '@components/AppFrame';
 import React, { useEffect, useState } from 'react';
 import { Notification } from '@components/main/NotificationWidget';
-import { collection, getDocs, query } from 'firebase/firestore/lite';
+import {
+	collection, getDocs, orderBy, query, setDoc,
+} from 'firebase/firestore/lite';
 import { db } from '@scripts/site/FirebaseUtil';
 import useUserInfo from '@components/hooks/useUserInfo';
 import NotificationListing from './levels/notifications/NotificationListing';
@@ -17,11 +19,22 @@ function NotificationPage() {
 	useEffect(() => {
 		if (user === null) return;
 		(async () => {
-			const notifQuery = query(collection(db, `/users/${user.uid}/notifications`));
-			const loadedNotifs = (await getDocs(notifQuery)).docs.map(
+			const notifQuery = query(collection(
+				db,
+				`/users/${user.uid}/notifications`,
+			), orderBy('timestamp', 'desc'));
+			const notifDocs = (await getDocs(notifQuery)).docs;
+			const loadedNotifs = notifDocs.map(
 				(doc) => doc.data() as Notification,
 			);
 			setNotifs(loadedNotifs);
+			await Promise.all(notifDocs.map(async (doc) => {
+				if (!doc.data().read) {
+					await setDoc(doc.ref, {
+						read: true,
+					}, { merge: true });
+				}
+			}));
 		})();
 	}, [user]);
 

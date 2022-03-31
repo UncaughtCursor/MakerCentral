@@ -42,20 +42,25 @@
 
 .notification-listing {
 	background-color: var(--bg-dark);
-	border-bottom: 1px solid var(--inactive-white);
+	border-bottom: 1px solid var(--bg-lite);
 	display: flex;
 	flex-direction: row;
 	gap: 20px;
 	padding-left: 20px;
 	cursor: pointer;
+	padding-bottom: 4px;
+}
+
+.notification-listing:first-child {
+	border-top: 1px solid var(--bg-lite);
 }
 
 .notification-listing:hover {
-	background-color: var(--bg-norm);
+	filter: brightness(1.2);
 }
 
 .notification-listing.hl {
-	background-color: var(--bg-lite);
+	background-color: var(--bg-litish);
 }
 
 .notification-listing-text-container {

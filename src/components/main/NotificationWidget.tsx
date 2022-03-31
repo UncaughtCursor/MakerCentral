@@ -15,7 +15,7 @@ export interface Notification {
 	read: boolean,
 }
 
-const refreshPeriodSec = 5;
+const refreshPeriodSec = 3;
 
 /**
  * The notification icon and menu that displays next to the user or hamburger menu.
@@ -34,7 +34,8 @@ function NotificationWidget() {
 
 	const fetchNotifs = async () => {
 		if (notifQuery === null) return;
-		const notifications = (await getDocs(notifQuery)).docs.map((doc) => doc.data() as Notification);
+		const notifDocs = (await getDocs(notifQuery)).docs;
+		const notifications = notifDocs.map((doc) => doc.data() as Notification);
 		setNotifs(notifications);
 	};
 
@@ -49,7 +50,7 @@ function NotificationWidget() {
 
 	return (
 		<Link href="/notifications">
-			<div className="notification-icon-container">
+			<div className="notification-icon-container" style={{ display: user !== null ? '' : 'none' }}>
 				<div
 					className="notification-badge"
 					style={{
