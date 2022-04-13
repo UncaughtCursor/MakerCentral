@@ -61,10 +61,13 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 	});
 });
 
+// TODO: Notification function and follower list structure
+// Pings everyone in the list when there is new activity
+
 export type CommentLocation = 'levels';
 
 export const submitComment = functions.https.onCall(async (data: {
-	location: CommentLocation, docId: string, commentId?: string, text: string,
+	location: CommentLocation, docId: string, commentId?: string, text: string, makerUid: string,
 }, context) => {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
@@ -83,6 +86,17 @@ export const submitComment = functions.https.onCall(async (data: {
 		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
 			numComments: admin.firestore.FieldValue.increment(1),
 		}, { merge: true });
+
+		// TODO: Good notification sending system
+		/* if (context.auth!.uid !== data.makerUid) {
+			t.set(admin.firestore().doc(`users/${data.makerUid}/notification/${randomString(24)}`, {
+				text: ``,
+				timestamp: number,
+				type: 'likes' | 'comments' | 'ranks' | 'admin' | 'misc',
+				link: string,
+				read: boolean,
+			}));
+		} */
 	});
 });
 
