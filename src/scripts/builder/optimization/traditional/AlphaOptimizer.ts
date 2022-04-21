@@ -277,6 +277,7 @@ function getPossibleBpbs(
 
 	for (let i = 1; i <= Math.floor(appPPQN / minBpb); i++) {
 		const thisBpb = minBpb * i;
+		console.log(`${thisBpb}: ${beatDuration * thisBpb}/${availableWidth} tiles`);
 		const canFit = beatDuration * thisBpb <= availableWidth;
 		if (canFit) possibleBpbs.push(thisBpb);
 	}

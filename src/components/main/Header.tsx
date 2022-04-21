@@ -12,7 +12,7 @@ import NotificationWidget from './NotificationWidget';
  */
 function Header() {
 	const [isHamburgerMenuOpen, setIsHamburgerMenuOpen] = useState(false);
-	const isMakerCentral = false; // FIXME: SET TO FALSE IN PROD
+	const isMakerCentral = true;
 	const titleContents = !isMakerCentral ? (
 		<>
 			<div style={{
@@ -51,8 +51,6 @@ function Header() {
 			<img
 				src="/logo.png"
 				alt="MakerCentral"
-				width={228}
-				height={25}
 			/>
 		</div>
 	);
