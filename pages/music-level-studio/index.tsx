@@ -14,7 +14,7 @@ function Builder() {
 	const ctx = useContext(EditorContext);
 	return (
 		<AppFrame
-			title="Music Editor - Music Level Studio"
+			title="Music Level Studio - MakerCentral"
 			description="Automatically generate music levels, even global looping music!"
 		>
 			<h1>Music Level Studio</h1>

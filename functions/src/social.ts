@@ -3,11 +3,20 @@ import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
 import { firestore } from 'firebase-admin';
 import { randomString, UserLevelDocData } from './levels';
+import { sendNotification } from './util';
 
 type VoteValue = 1 | 0 | -1;
 
 interface VoteData {
-	voteVal: VoteValue,
+	voteVal: VoteValue;
+}
+
+interface CommentData {
+	uid: string;
+	text: string;
+	timestamp: number;
+	points: number;
+	subscriberUids: string[] | null;
 }
 
 /* interface VotableDocument {
@@ -67,36 +76,73 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 export type CommentLocation = 'levels';
 
 export const submitComment = functions.https.onCall(async (data: {
-	location: CommentLocation, docId: string, commentId?: string, text: string, makerUid: string,
+	location: CommentLocation, docId: string, commentId?: string, text: string,
 }, context) => {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
-	const docRef = data.commentId === undefined
+
+	const isReply = data.commentId !== undefined;
+
+	const docRef = !isReply
 		? admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`)
 		: admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId}/replies/${randomString(24)}`);
 
 	await admin.firestore().runTransaction(async (t) => {
-		t.set(docRef, {
+		// Get level data
+		const levelData = (await t.get(admin.firestore().doc(`${data.location}/${data.docId}`))).data() as UserLevelDocData | undefined;
+		if (levelData === undefined) throw new Error('Level data does not exist.');
+
+		// Get top-level comment data holding the subscriber UID list if this is a reply
+		const topLevelCommentData = isReply ? (await t.get(admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId!}`))).data() as CommentData : null;
+
+		const makerUid = levelData.makerUid;
+		// TODO: If a reply, download parent comment and
+		// 1. Add the user to the subscriber UID list
+		// 2. Send a notification to everyone except for the replier
+
+		// If a top-level comment, initialize the subscriber UID list
+
+		const commentData: CommentData = {
 			uid: context.auth!.uid,
 			text: data.text,
 			timestamp: Date.now(),
 			points: 0,
-		});
+			subscriberUids: isReply ? null : [context.auth!.uid, makerUid],
+		};
 
+		console.log(isReply ? null : [context.auth!.uid, makerUid]);
+
+		// Send comment
+		t.set(docRef, commentData);
+
+		// If this is a reply, notify everyone subscribed to the top-level comment
+		// If this is a new top-level comment, only notify the maker
+		const notifUids: string[] = (topLevelCommentData !== null
+			? topLevelCommentData.subscriberUids!
+			: [makerUid]).filter((uid) => uid !== context.auth!.uid);
+
+		// Add the user's uid to the top-level comment's subscriber list if they are not
+		// already subscribed and this is a reply
+		if (isReply) {
+			console.log(context.auth!.uid);
+			t.set(admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId!}`), {
+				subscriberUids: admin.firestore.FieldValue.arrayUnion(context.auth!.uid),
+			}, { merge: true });
+		}
+
+		// Update level's comment count
 		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
 			numComments: admin.firestore.FieldValue.increment(1),
 		}, { merge: true });
 
-		// TODO: Good notification sending system
-		/* if (context.auth!.uid !== data.makerUid) {
-			t.set(admin.firestore().doc(`users/${data.makerUid}/notification/${randomString(24)}`, {
-				text: ``,
-				timestamp: number,
-				type: 'likes' | 'comments' | 'ranks' | 'admin' | 'misc',
-				link: string,
-				read: boolean,
-			}));
-		} */
+		// Notify everyone of the reply
+		notifUids.forEach((uid) => {
+			sendNotification(uid, {
+				type: 'comments',
+				text: `U-${context.auth!.uid} ${isReply ? 'replied to a comment on' : 'commented on'} ${levelData.name}`,
+				link: `/levels/view/${data.docId}`,
+			});
+		});
 	});
 });
 

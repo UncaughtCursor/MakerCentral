@@ -73,7 +73,7 @@ function SettingsPage() {
 	}, [userInfo]);
 
 	return (
-		<AppFrame title="Settings - Music Level Studio">
+		<AppFrame title="Settings - MakerCentral">
 			<Gate requireEA={false} showLogout={false}>
 				<div style={{
 					display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px',

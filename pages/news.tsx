@@ -8,8 +8,8 @@ import React from 'react';
 function News() {
 	return (
 		<AppFrame
-			title="News - Music Level Studio"
-			description="The latest news regarding Music Level Studio, the automatic music level generator!"
+			title="News - MakerCentral"
+			description="The latest news regarding MakerCentral, the automatic music level generator!"
 		>
 			<h1>News</h1>
 			<p>News feed for site updates coming soon!</p>

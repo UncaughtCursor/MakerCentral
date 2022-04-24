@@ -9,7 +9,7 @@ import React, { ReactNode } from 'react';
 function CategoryIndexPage() {
 	return (
 		<AppFrame
-			title="Categories - Music Level Studio Levels"
+			title="Categories - MakerCentral Levels"
 			description="Browse different categories of user-submitted Mario Maker 2 levels!"
 		>
 			<h1>Level Categories</h1>

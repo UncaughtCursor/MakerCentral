@@ -65,8 +65,8 @@ function LevelBrowser() {
 
 	return (
 		<AppFrame
-			title="Community Levels - Music Level Studio"
-			description="Browse and play levels made by the Music Level Studio community!"
+			title="Community Levels - MakerCentral"
+			description="Browse and play levels made by the MakerCentral community!"
 		>
 			<h1>Community Levels</h1>
 			<div style={{

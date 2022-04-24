@@ -39,7 +39,7 @@ function NotificationPage() {
 	}, [user]);
 
 	return (
-		<AppFrame title="Notifications - Music Level Studio">
+		<AppFrame title="Notifications - MakerCentral">
 			<h1>Notifications</h1>
 			<div className="notification-listing-container">
 				{getNotifElements()}

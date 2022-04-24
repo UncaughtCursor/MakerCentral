@@ -8,8 +8,8 @@ import React from 'react';
 function LeaderboardPage() {
 	return (
 		<AppFrame
-			title="Leaderboards - Music Level Studio"
-			description="View the top level creators on Music Level Studio."
+			title="Leaderboards - MakerCentral"
+			description="View the top level creators on MakerCentral."
 		>
 			<Leaderboard title="All Levels Leaderboard" repFieldName="All" />
 		</AppFrame>

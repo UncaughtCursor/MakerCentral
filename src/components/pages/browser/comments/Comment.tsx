@@ -132,7 +132,6 @@ function Comment(props: {
 						<TriggerButton text="Delete" type="flush" onClick={() => { deleteComment(); }} />
 					</div>
 					<div style={{ display: !isOwnComment ? '' : 'none' }}>
-						{ /* TODO: Report */ }
 						<TriggerButton text="Report" type="flush" onClick={() => { setShowReportDialog(true); }} />
 					</div>
 					<TriggerButton text="Reply" type="flush" onClick={() => { setShowReplyBox(true); }} />
@@ -180,6 +179,7 @@ function Comment(props: {
 			docId: props.pageId,
 			commentId: props.topCommentId!,
 			text: reply,
+			makerUid: '',
 		});
 		// eslint-disable-next-line no-restricted-globals
 		if (typeof location !== 'undefined') location.reload();

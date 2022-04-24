@@ -8,7 +8,7 @@ import React from 'react';
  */
 function LevelUploadPage() {
 	return (
-		<AppFrame title="Upload Level - Music Level Studio">
+		<AppFrame title="Upload Level - MakerCentral">
 			<Gate requireEA={false} showLogout={false}>
 				<div>
 					<h1>Upload a Level</h1>

@@ -92,10 +92,10 @@ let analytics: Analytics | null = null;
 
 // FIXME: COMMENT OUT IN PROD
 try {
-	connectFirestoreEmulator(db, '192.168.1.190', 8080);
-	connectAuthEmulator(auth, 'http://192.168.1.190:9099');
-	connectFunctionsEmulator(functions, '192.168.1.190', 5001);
-	connectStorageEmulator(storage, '192.168.1.190', 9199);
+	connectFirestoreEmulator(db, '192.168.1.212', 8080);
+	connectAuthEmulator(auth, 'http://192.168.1.212:9099');
+	connectFunctionsEmulator(functions, '192.168.1.212', 5001);
+	connectStorageEmulator(storage, '192.168.1.212', 9199);
 } catch (e) {
 	console.error(e);
 }

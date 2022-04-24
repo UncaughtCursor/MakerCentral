@@ -28,7 +28,7 @@ function YourLevelsPage() {
 	};
 
 	return (
-		<AppFrame title="Your Levels - Music Level Studio">
+		<AppFrame title="Your Levels - MakerCentral">
 			<Gate requireEA={false} showLogout={false}>
 				<h1>Your Levels</h1>
 				<LevelCategoryView

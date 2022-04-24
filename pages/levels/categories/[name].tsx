@@ -21,8 +21,8 @@ function CategoryPage(props: {
 
 	return (
 		<AppFrame
-			title={`${tag} Levels - Music Level Studio`}
-			description={`Browse the latest ${tag.toLowerCase()} levels submitted to Music Level Studio's level gallery!`}
+			title={`${tag} Levels - MakerCentral`}
+			description={`Browse the latest ${tag.toLowerCase()} levels submitted to MakerCentral's level gallery!`}
 		>
 			<h1>{tag} Levels</h1>
 			<LevelCategoryFeed

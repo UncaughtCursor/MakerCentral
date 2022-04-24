@@ -45,8 +45,8 @@ function LevelPage(props: {
 		: 100;
 	return (
 		<AppFrame
-			title={`${props.level!.name} - Music Level Studio`}
-			description={`"${props.level!.shortDescription}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on Music Level Studio.`}
+			title={`${props.level!.name} - MakerCentral Levels`}
+			description={`"${props.level!.shortDescription}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on MakerCentral.`}
 			imageUrl={props.level!.thumbnailUrl}
 		>
 			<div className="level-page-content">

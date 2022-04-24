@@ -35,7 +35,7 @@ function PageHead(props: {
 }
 
 PageHead.defaultProps = {
-	title: 'Music Level Studio',
+	title: 'MakerCentral',
 	description: 'Easily generate traditional and looping music contraptions in Mario Maker 2!',
 	imageUrl: '', // TODO: Banner image
 };

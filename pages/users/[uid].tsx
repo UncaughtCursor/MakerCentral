@@ -30,8 +30,8 @@ function UserPage(props: UserPageProps) {
 
 	return (
 		<AppFrame
-			title={`${props.userInfo.name}'s Profile - Music Level Studio`}
-			description={`${props.userInfo.name}'s profile on Music Level Studio. ${props.userInfo.creatorRep} creator rep.`}
+			title={`${props.userInfo.name}'s Profile - MakerCentral`}
+			description={`${props.userInfo.name}'s profile on MakerCentral. ${props.userInfo.creatorRep} creator rep.`}
 		>
 			<div className="user-profile-container-upper">
 				<div className={props.userInfo.avatarUrl !== null ? 'user-profile-img-container'

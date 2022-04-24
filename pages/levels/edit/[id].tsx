@@ -11,7 +11,7 @@ function LevelEditPage() {
 	const router = useRouter();
 	const levelId = router.query.id as string;
 	return (
-		<AppFrame title="Edit Level - Music Level Studio">
+		<AppFrame title="Edit Level - MakerCentral">
 			<Gate requireEA={false} showLogout={false}>
 				<h1>Edit Level</h1>
 				<LevelEditor levelId={levelId} />
