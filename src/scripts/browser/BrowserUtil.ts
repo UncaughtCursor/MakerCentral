@@ -114,7 +114,7 @@ export async function queryLevels(
 		async (levelDoc): Promise<UserLevel | null> => {
 			const mainDocData = levelDoc.data();
 
-			const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid}`));
+			const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid !== '' ? mainDocData.makerUid : 'deleted'}`));
 			const makerName: string = makerDoc.exists()
 				? makerDoc.data().name as string : 'Deleted User';
 
@@ -152,7 +152,7 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 	if (!levelDoc.exists()) return null;
 	const mainDocData = levelDoc.data();
 
-	const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid}`));
+	const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid !== '' ? mainDocData.makerUid : 'deleted'}`));
 	const makerName: string = makerDoc.exists()
 		? makerDoc.data().name as string : 'Deleted User';
 

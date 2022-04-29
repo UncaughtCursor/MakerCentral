@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import {
-	getFirestore, connectFirestoreEmulator,
+	getFirestore, connectFirestoreEmulator, setDoc, doc,
 } from 'firebase/firestore/lite';
 import {
 	getAuth, connectAuthEmulator, onAuthStateChanged, User,
@@ -14,6 +14,7 @@ import {
 } from 'firebase/storage';
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
+import TestLevels from '../../data/TestData.json';
 import { initUser } from './UserDataScripts';
 
 // Non-EAP prod
@@ -90,14 +91,31 @@ export const functions = getFunctions(app);
 export const storage = getStorage(app);
 let analytics: Analytics | null = null;
 
-// FIXME: COMMENT OUT IN PROD
-try {
-	connectFirestoreEmulator(db, '192.168.1.212', 8080);
-	connectAuthEmulator(auth, 'http://192.168.1.212:9099');
-	connectFunctionsEmulator(functions, '192.168.1.212', 5001);
-	connectStorageEmulator(storage, '192.168.1.212', 9199);
-} catch (e) {
-	console.error(e);
+// FIXME: SET TO TRUE IN PROD
+export const usingProdServer = false;
+
+if (!usingProdServer) {
+	try {
+		connectFirestoreEmulator(db, '192.168.1.212', 8080);
+		connectAuthEmulator(auth, 'http://192.168.1.212:9099');
+		connectFunctionsEmulator(functions, '192.168.1.212', 5001);
+		connectStorageEmulator(storage, '192.168.1.212', 9199);
+
+		// Upload test data
+		(async () => {
+			const { levels, users, comments } = TestLevels;
+			await uploadLocalDocs(levels, 'levels');
+			await uploadLocalDocs(users, 'users');
+			Object.keys(comments).forEach(async (levelDocId) => {
+				await uploadLocalDocs(
+					(comments as {[key: string]: any})[levelDocId],
+					`levels/${levelDocId}/comments`,
+				);
+			});
+		})();
+	} catch (e) {
+		console.error(e);
+	}
 }
 
 export const ownerUid = 'Ub4MU2XOkrV1vhhBmKmc414qfgs2';
@@ -256,4 +274,17 @@ export async function uploadFiles(localUrls: string[], path: string): Promise<st
 		}) as Promise<void>,
 	));
 	return globalUrls;
+}
+
+interface LocalDocumentData {
+	id: string;
+}
+
+/**
+ * Uploads an array of data objects with IDs to the specified collection in Firestore.
+ * @param docs The objects to upload.
+ * @param collectionPath The path of the collection.
+ */
+async function uploadLocalDocs(docs: LocalDocumentData[], collectionPath: string) {
+	await Promise.all(docs.map((localDoc) => setDoc(doc(db, `${collectionPath}/${localDoc.id}`), localDoc)));
 }

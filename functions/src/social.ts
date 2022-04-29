@@ -3,7 +3,7 @@ import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
 import { firestore } from 'firebase-admin';
 import { randomString, UserLevelDocData } from './levels';
-import { sendNotification } from './util';
+import { getUserDoc, sendNotification } from './util';
 
 type VoteValue = 1 | 0 | -1;
 
@@ -82,6 +82,8 @@ export const submitComment = functions.https.onCall(async (data: {
 	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
 
 	const isReply = data.commentId !== undefined;
+	const userDoc = await getUserDoc(context.auth!.uid);
+	if (userDoc === null) throw new Error('User document does not exist.');
 
 	const docRef = !isReply
 		? admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`)
@@ -139,7 +141,7 @@ export const submitComment = functions.https.onCall(async (data: {
 		notifUids.forEach((uid) => {
 			sendNotification(uid, {
 				type: 'comments',
-				text: `U-${context.auth!.uid} ${isReply ? 'replied to a comment on' : 'commented on'} ${levelData.name}`,
+				text: `${userDoc.name} ${isReply ? 'replied to a comment on' : 'commented on'} ${levelData.name}`,
 				link: `/levels/view/${data.docId}`,
 			});
 		});

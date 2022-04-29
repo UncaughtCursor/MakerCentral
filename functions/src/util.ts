@@ -9,6 +9,12 @@ interface NotificationData {
 	link: string,
 }
 
+interface UserDocData {
+	name: string,
+	avatarUrl: string,
+	bio: string,
+}
+
 /**
  * Sends a notification to a user.
  * @param uid The user to send the notification to.
@@ -26,4 +32,14 @@ export async function sendNotification(uid: string, data: NotificationData) {
 			read: false,
 		});
 	});
+}
+
+/**
+ * Retrieves the user document data of a user.
+ * @param uid The user's uid.
+ * @returns The data or null if the user document does not exist.
+ */
+export async function getUserDoc(uid: string): Promise<UserDocData | null> {
+	const userData: UserDocData | undefined = (await admin.firestore().doc(`/users/${uid}`).get()).data() as UserDocData | undefined;
+	return userData !== undefined ? userData : null;
 }

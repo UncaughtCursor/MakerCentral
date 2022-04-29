@@ -45,8 +45,8 @@ function LevelPreview(props: {
 				<div className="view-like-count">
 					<LikeIcon style={{ color: 'var(--text-color)' }} />
 					<p>{props.level.numLikes}</p>
-					{/* <CommentIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.level.numComments}</p> */}
+					<CommentIcon style={{ color: 'var(--text-color)' }} />
+					<p>{props.level.numComments}</p>
 				</div>
 			</div>
 			<TagDisplay tags={props.level.tags} />
@@ -63,8 +63,8 @@ function LevelPreview(props: {
 				<div className="view-like-count">
 					<LikeIcon style={{ color: 'var(--text-color)' }} />
 					<p>{props.level.numLikes}</p>
-					{/* <CommentIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.level.numComments}</p> */ }
+					<CommentIcon style={{ color: 'var(--text-color)' }} />
+					<p>{props.level.numComments}</p>
 				</div>
 				<TagDisplay tags={props.level.tags} />
 				<p style={{ overflowWrap: 'anywhere' }}>{props.level.shortDescription}</p>
