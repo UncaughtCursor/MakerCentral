@@ -38,7 +38,7 @@ function CommentsSection(props: {
 			}}
 			>
 				<h2>Comments ({props.numComments})</h2>
-				<div style={{ margin: '0 auto', width: 'fit-content', marginBottom: '10px' }}>
+				{/*<div style={{ margin: '0 auto', width: 'fit-content', marginBottom: '10px' }}>
 					<TextArea
 						label="Leave a Comment"
 						value={userComment}
@@ -53,7 +53,7 @@ function CommentsSection(props: {
 					type="blue"
 					isLoading={isSendingComment}
 					onClick={() => { sendComment(); }}
-				/>
+				/>*/}
 			</div>
 			<CommentsFeed docId={props.docId} docPath={props.docPath} />
 		</div>

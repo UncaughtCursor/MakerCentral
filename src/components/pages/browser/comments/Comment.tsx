@@ -127,7 +127,7 @@ function Comment(props: {
 				<div className="comment-content">
 					<p>{props.comment.text}</p>
 				</div>
-				<div className="comment-controls" style={{ display: isSignedIn && !showReplyBox ? '' : 'none' }}>
+				{/*<div className="comment-controls" style={{ display: isSignedIn && !showReplyBox ? '' : 'none' }}>
 					<div style={{ display: isOwnComment ? '' : 'none' }}>
 						<TriggerButton text="Delete" type="flush" onClick={() => { deleteComment(); }} />
 					</div>
@@ -149,7 +149,7 @@ function Comment(props: {
 					</div>
 					<TriggerButton text="Send" type="blue" onClick={() => { sendReply(); }} />
 					<TriggerButton text="Cancel" type="flush" onClick={() => { setShowReplyBox(false); }} />
-				</div>
+				</div>*/}
 			</div>
 			{replyElements}
 		</>

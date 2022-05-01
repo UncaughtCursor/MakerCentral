@@ -65,10 +65,10 @@ function LevelBrowser() {
 
 	return (
 		<AppFrame
-			title="Community Levels - MakerCentral"
-			description="Browse and play levels made by the MakerCentral community!"
+			title="Levels - MakerCentral"
+			description="Browse and play levels over 26 million Mario Maker 2 levels!"
 		>
-			<h1>Community Levels</h1>
+			<h1>Browse Levels</h1>
 			<div style={{
 				display: 'flex',
 				flexDirection: 'column',
@@ -93,9 +93,9 @@ function LevelBrowser() {
 						to="/levels/leaderboards"
 						type="purple"
 					/>
-					<div style={{ display: timeUntilUpload <= 0 ? '' : 'none' }}>
+					{/*<div style={{ display: timeUntilUpload <= 0 ? '' : 'none' }}>
 						<ActionButton to="/levels/upload" text="Upload a Level" />
-					</div>
+					</div>*/}
 				</div>
 				<div style={{
 					display: timeUntilUpload <= 0

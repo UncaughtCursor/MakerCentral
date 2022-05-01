@@ -12,7 +12,7 @@ function Navbar() {
 	return (
 		<div className="navbar">
 			<Navlink to="/" text="Home" />
-			<Navlink to="/levels" text="Community Levels" />
+			<Navlink to="/levels" text="Browse Levels" />
 			<Navlink to="/music-level-studio" text="Music Level Studio" />
 			<Navlink to="/news" text="News" />
 			<Navlink to="/about" text="About" />

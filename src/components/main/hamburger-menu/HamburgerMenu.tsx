@@ -29,7 +29,7 @@ function HamburgerMenu(props: {
 	return (
 		<div className={`hamburger-menu${secondClassStr}`}>
 			<Navlink to="/" text="Home" onClick={requestMenuClose} />
-			<Navlink to="/levels" text="Community Levels" onClick={requestMenuClose} />
+			<Navlink to="/levels" text="Browse Levels" onClick={requestMenuClose} />
 			<Navlink to="/music-level-studio" text="Music Level Studio" onClick={requestMenuClose} />
 			<Navlink to="/news" text="News" onClick={requestMenuClose} />
 			<Navlink to="/about" text="About" onClick={requestMenuClose} />

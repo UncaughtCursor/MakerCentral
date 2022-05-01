@@ -73,7 +73,7 @@ function LevelPage(props: {
 							</div>
 							<p><i>{level.shortDescription}</i></p>
 						</div>
-						<FeedbackControl levelId={level.id} />
+						{/*<FeedbackControl levelId={level.id} />*/}
 					</div>
 					<div
 						className="level-page-info-container"
@@ -120,7 +120,7 @@ function LevelPage(props: {
 					<br />
 					<h4>Tags</h4>
 					<TagDisplay tags={level.tags} />
-					<div style={{
+					{/*<div style={{
 						display: 'flex',
 						justifyContent: 'right',
 					}}
@@ -135,7 +135,7 @@ function LevelPage(props: {
 							onCloseEvent={() => { setShowReportDialog(false); }}
 							documentPath={`/levels/${props.level?.id}`}
 						/>
-					</div>
+					</div>*/}
 				</div>
 				<div
 					className="level-page-info-container"
