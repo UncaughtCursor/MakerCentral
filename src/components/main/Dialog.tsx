@@ -19,10 +19,7 @@ function Dialog(props: {
 	};
 
 	return (
-		<div
-			className="popup"
-			style={{ display: props.open ? '' : 'none' }}
-		>
+		<div className={`popup${props.open ? '' : ' closed'}`}>
 			<div
 				className="popup-x"
 				onClick={closeFn}

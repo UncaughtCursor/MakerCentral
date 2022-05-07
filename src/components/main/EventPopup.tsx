@@ -41,9 +41,8 @@ function EventPopup(props: {
 
 	return (
 		<div
-			className="popup"
+			className={`popup${open ? '' : ' closed'}`}
 			id={props.id!}
-			style={{ display: open ? '' : 'none' }}
 		>
 			<div
 				className="popup-x"

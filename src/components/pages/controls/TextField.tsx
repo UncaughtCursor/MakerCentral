@@ -1,5 +1,7 @@
 import React from 'react';
 
+export type TextFieldType = 'Normal' | 'Big';
+
 /**
  * A text field input.
  * @param props.label The text to display.
@@ -7,9 +9,9 @@ import React from 'react';
  */
 function TextField(props: {label: string,
 	onChange: (value: string) => void, value?: string,
-	widthPx?: number, password?: boolean, maxLength?: number}) {
+	widthPx?: number, password?: boolean, maxLength?: number, type?: TextFieldType}) {
 	return (
-		<div className="text-field-container">
+		<div className={props.type! === 'Normal' ? 'text-field-container' : 'text-field-container big'}>
 			<div>
 				<label htmlFor={props.label}>{props.label}</label>
 			</div>
@@ -39,6 +41,7 @@ TextField.defaultProps = {
 	widthPx: 250,
 	password: false,
 	maxLength: Infinity,
+	type: 'Normal',
 };
 
 export default TextField;

@@ -21,6 +21,7 @@ import { getPatronStatus } from 'functions/src';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
 import useUserInfo from '@components/hooks/useUserInfo';
+import LevelSearchBar from '@components/pages/search/LevelSearchBar';
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const normalUploadDelayHr = 4;
@@ -74,41 +75,7 @@ function LevelBrowser() {
 				flexDirection: 'column',
 			}}
 			>
-				<div style={{
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					justifyContent: 'center',
-					gap: '15px',
-					flexWrap: 'wrap',
-				}}
-				>
-					<ActionButton
-						text="Categories"
-						to="/levels/categories"
-						type="green"
-					/>
-					<ActionButton
-						text="Leaderboard"
-						to="/levels/leaderboards"
-						type="purple"
-					/>
-					{/*<div style={{ display: timeUntilUpload <= 0 ? '' : 'none' }}>
-						<ActionButton to="/levels/upload" text="Upload a Level" />
-					</div>*/}
-				</div>
-				<div style={{
-					display: timeUntilUpload <= 0
-					|| timeUntilUpload === Infinity ? 'none' : '',
-				}}
-				>
-					<p>You can upload your next level in&nbsp;
-						<b>{hrsUntilNextUpload} hr {minsUntilNextUpload} min</b>.
-					</p>
-				</div>
-				<div style={{ display: user === null ? '' : 'none' }}>
-					<p>Want to add your own level? Log in or create an account in the upper right.</p>
-				</div>
+				<LevelSearchBar onSubmit={(query) => { console.log(`Search for '${query}'`); }} />
 				<LevelCategoryFeed extraQueryConstraints={[]} />
 			</div>
 		</AppFrame>

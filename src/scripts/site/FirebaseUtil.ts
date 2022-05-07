@@ -14,7 +14,7 @@ import {
 } from 'firebase/storage';
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
-import TestLevels from '../../data/TestData.json';
+import TestData from '../../data/TestData.json';
 import { initUser } from './UserDataScripts';
 
 // Non-EAP prod
@@ -103,11 +103,15 @@ if (!usingProdServer) {
 
 		// Upload test data
 		(async () => {
-			const { levels, users, comments } = TestLevels;
-			await uploadLocalDocs(levels, 'levels');
-			await uploadLocalDocs(users, 'users');
+			const { levels, users, comments } = TestData as unknown as {
+				levels: any[],
+				users: any[],
+				comments: {[key: string]: any[]}[],
+			};
+			uploadLocalDocs(levels, 'levels');
+			uploadLocalDocs(users, 'users');
 			Object.keys(comments).forEach(async (levelDocId) => {
-				await uploadLocalDocs(
+				uploadLocalDocs(
 					(comments as {[key: string]: any})[levelDocId],
 					`levels/${levelDocId}/comments`,
 				);
@@ -286,5 +290,10 @@ interface LocalDocumentData {
  * @param collectionPath The path of the collection.
  */
 async function uploadLocalDocs(docs: LocalDocumentData[], collectionPath: string) {
-	await Promise.all(docs.map((localDoc) => setDoc(doc(db, `${collectionPath}/${localDoc.id}`), localDoc)));
+	for (let i = 0; i < docs.length; i++) {
+		const localDoc = docs[i];
+		console.log(`Uploading local doc ${collectionPath}/${localDoc.id}`);
+		await setDoc(doc(db, `${collectionPath}/${localDoc.id}`), localDoc);
+		console.log(`+ Uploaded local doc ${collectionPath}/${localDoc.id}`);
+	}
 }

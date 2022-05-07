@@ -53,6 +53,19 @@ span {
 	font-size: 14px;
 }
 
+.text-field-container.big label {
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+}
+
+.text-field-container.big input {
+	height: 40px;
+	border-radius: 20px;
+	font-size: 18px;
+	padding: 0 15px;
+}
+
 .project-manager-tab-container {
 	display: flex;
 	flex-direction: column;
@@ -222,4 +235,40 @@ span {
 	border: 2px solid var(--bg-norm);
 	border-radius: 4px;
 	padding: 5px 10px;
+}
+
+.search-bar {
+	border-radius: 24px;
+	background-color: var(--bg-darker);
+	border: 2px solid var(--bg-norm);
+	color: var(--text-color);
+	height: 40px;
+	font-size: 18px;
+	padding: 0 5px 0 15px;
+	width: 90vw;
+	max-width: 500px;
+	display: flex;
+	align-items: center;
+}
+
+.search-bar > input {
+	background-color: transparent;
+	border: none;
+	color: var(--text-color);
+	height: 30px;
+	font-size: 18px;
+	flex-grow: 1;
+	outline: none
+}
+
+.search-bar-icon {
+	padding: 5px;
+	border-radius: 50%;
+	transition: background-color 0.2s;
+	margin: 0 2px;
+}
+
+.search-bar-icon:hover {
+	background-color: var(--bg-lite);
+	cursor: pointer;
 }
