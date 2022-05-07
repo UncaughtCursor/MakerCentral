@@ -10,7 +10,7 @@
 	box-shadow: 4px 4px 4px black;
 	max-width: 400px;
 	width: 80vw;
-	transition: transform 0.2s;
+	transition: transform 0.15s;
 }
 
 .popup-x {

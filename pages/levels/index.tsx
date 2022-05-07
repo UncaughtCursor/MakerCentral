@@ -22,6 +22,7 @@ import TriggerButton from '@components/pages/controls/TriggerButton';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
 import useUserInfo from '@components/hooks/useUserInfo';
 import LevelSearchBar from '@components/pages/search/LevelSearchBar';
+
 import LevelCategoryView from '../../src/components/pages/browser/LevelCategoryView';
 
 const normalUploadDelayHr = 4;
@@ -32,6 +33,7 @@ const patronUploadDelayHr = 2;
  */
 function LevelBrowser() {
 	const [timeUntilUpload, setTimeUntilUpload] = useState(Infinity);
+	const [searchString, setSearchString] = useState('');
 	const userInfo = useUserInfo();
 	const user = userInfo !== null ? userInfo.user : null;
 
@@ -69,14 +71,48 @@ function LevelBrowser() {
 			title="Levels - MakerCentral"
 			description="Browse and play levels over 26 million Mario Maker 2 levels!"
 		>
-			<h1>Browse Levels</h1>
 			<div style={{
 				display: 'flex',
 				flexDirection: 'column',
+				marginTop: '100px',
 			}}
 			>
-				<LevelSearchBar onSubmit={(query) => { console.log(`Search for '${query}'`); }} />
-				<LevelCategoryFeed extraQueryConstraints={[]} />
+				<div style={{
+					margin: '0 auto',
+				}}
+				>
+					<img
+						src="/logo.png"
+						alt="MakerCentral Search"
+						style={{
+							width: '90vw',
+							maxWidth: '400px',
+						}}
+					/>
+					<h4 style={{
+						marginTop: '4px',
+						fontSize: '20px',
+					}}
+					>Search
+					</h4>
+					<br />
+					<h4 style={{
+						margin: '0',
+						textAlign: 'left',
+						marginLeft: '20px',
+						marginBottom: '2px',
+					}}
+					>Search over 26 million levels...
+					</h4>
+					<LevelSearchBar
+						onChange={(val) => {
+							setSearchString(val);
+						}}
+						onSubmit={(query, filterSettings) => { console.log(query); }}
+						value={searchString}
+					/>
+				</div>
+				{/* <LevelCategoryFeed extraQueryConstraints={[]} /> */}
 			</div>
 		</AppFrame>
 	);

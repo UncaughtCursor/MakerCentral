@@ -240,7 +240,7 @@ span {
 .search-bar {
 	border-radius: 24px;
 	background-color: var(--bg-darker);
-	border: 2px solid var(--bg-norm);
+	border: 2px solid var(--bg-darker);
 	color: var(--text-color);
 	height: 40px;
 	font-size: 18px;
@@ -249,6 +249,7 @@ span {
 	max-width: 500px;
 	display: flex;
 	align-items: center;
+	transition: box-shadow 0.2s;
 }
 
 .search-bar > input {
@@ -271,4 +272,8 @@ span {
 .search-bar-icon:hover {
 	background-color: var(--bg-lite);
 	cursor: pointer;
+}
+
+.search-bar:focus-within, .search-bar:hover {
+	box-shadow: 3px 3px 5px black;
 }
