@@ -1,4 +1,4 @@
-import { UserLevelTag } from '@scripts/browser/BrowserUtil';
+import { MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import React from 'react';
 
 /**
@@ -7,7 +7,7 @@ import React from 'react';
  * * tags: The tags to display.
  */
 function TagDisplay(props: {
-	tags: UserLevelTag[]
+	tags: MakerCentralTag[]
 }) {
 	return (
 		<div className="user-level-tag-container">
@@ -18,7 +18,7 @@ function TagDisplay(props: {
 	/**
 	 * Generates elements for each tag for a level.
 	 */
-	function getTagElements(tags: UserLevelTag[]) {
+	function getTagElements(tags: MakerCentralTag[]) {
 		return tags.map((tag) => <div className="user-level-tag" key={tag}>{tag}</div>);
 	}
 }

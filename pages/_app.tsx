@@ -45,6 +45,7 @@ import '../styles/component/UserProfile.css';
 import '../styles/component/DisplayTable.css';
 import '../styles/component/Comments.css';
 import '../styles/component/Notifications.css';
+import '../styles/component/SearchBar.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';

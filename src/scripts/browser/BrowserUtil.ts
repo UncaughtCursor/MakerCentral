@@ -15,7 +15,7 @@ export interface QueryOrder {
 	order: OrderByDirection;
 }
 
-export const userLevelTags = [
+export const makerCentralTags = [
 	'Standard',
 	'Puzzle',
 	'Music',
@@ -36,45 +36,52 @@ export const userLevelTags = [
 	'Link',
 	'Minigame',
 	'Meme',
+	'Pixel Art',
+	'Shooter',
+	'Short',
+	'One Player Only',
 ] as const;
 
-export interface UserLevel {
+export interface MakerCentralLevel {
 	name: string;
 	id: string;
 	uploadTime: number;
-	editedTime: number;
-	thumbnailUrl: string;
-	imageUrls: string[];
-	levelCode: string;
+	addedTime: number;
 	makerName: string;
-	makerUid: string;
+	makerId: string;
 	difficulty: Difficulty;
-	gameStyle: GameStyle;
+	clearRate: number;
+	gameStyle: SMM2GameStyle;
+	theme: SMM2Theme;
 	numLikes: number;
-	numDislikes: number;
-	score: number;
+	numPlays: number;
+	likeToPlayRatio: number;
 	numComments: number;
-	shortDescription: string;
 	description: string;
-	tags: UserLevelTag[];
-	publicationStatus: 'Private' | 'Public' | 'Removed';
-	removalMessage: string | undefined;
-	epochDaysInPopularQueue: number[],
-	epochDaysInMonthQueue: number[],
-	isByPatron: boolean,
+	tags: MakerCentralTag[];
+	isPromotedByPatron: boolean;
 }
 
-export type UserLevelTag = typeof userLevelTags[number];
+export type MakerCentralTag = typeof makerCentralTags[number];
 
 export const gameStyles = [
 	'SMB1', 'SMB3', 'SMW', 'NSMBU', 'SM3DW',
 ] as const;
-export type GameStyle = typeof gameStyles[number];
+export type SMM2GameStyle = typeof gameStyles[number];
 
 export const difficulties = [
 	'Easy', 'Normal', 'Expert', 'Super Expert',
 ] as const;
 export type Difficulty = typeof difficulties[number];
+
+const SMM2Themes = [
+	'Overworld', 'Underground',
+	'Castle', 'Airship',
+	'Underwater', 'Ghost house',
+	'Snow', 'Desert',
+	'Sky', 'Forest',
+] as const;
+export type SMM2Theme = typeof SMM2Themes[number];
 
 /**
  * Runs a query through the set of levels.
@@ -92,7 +99,7 @@ export async function queryLevels(
 	lastLevelId: string | null = null,
 	collectionPath: string = 'levels',
 	isLink = false,
-): Promise<UserLevel[]> {
+): Promise<MakerCentralLevel[]> {
 	const levelsRef = collection(db, collectionPath);
 	const constraints = [
 		...queryConstraints,
@@ -111,7 +118,7 @@ export async function queryLevels(
 	const queryDocs = await getDocs(q);
 
 	const rawLevelData = await Promise.all(queryDocs.docs.map(
-		async (levelDoc): Promise<UserLevel | null> => {
+		async (levelDoc): Promise<MakerCentralLevel | null> => {
 			const mainDocData = levelDoc.data();
 
 			const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid !== '' ? mainDocData.makerUid : 'deleted'}`));
@@ -123,7 +130,7 @@ export async function queryLevels(
 					...mainDocData,
 					id: levelDoc.id,
 					makerName,
-				} as UserLevel;
+				} as MakerCentralLevel;
 			}
 			const levelDataDoc = await getDoc(doc(db, `levels/${levelDoc.id}`));
 			if (!levelDataDoc.exists()) {
@@ -134,11 +141,11 @@ export async function queryLevels(
 			return {
 				...levelDataDoc.data(),
 				id: levelDoc.id,
-			} as UserLevel;
+			} as MakerCentralLevel;
 		},
 	));
 
-	return rawLevelData.filter((levelData) => levelData !== null) as UserLevel[];
+	return rawLevelData.filter((levelData) => levelData !== null) as MakerCentralLevel[];
 }
 
 /**
@@ -146,7 +153,7 @@ export async function queryLevels(
  * @param id The ID of the level.
  * @returns A UserLevel object containing level data or null if no data was found.
  */
-export async function getLevel(id: string): Promise<UserLevel | null> {
+export async function getLevel(id: string): Promise<MakerCentralLevel | null> {
 	const levelRef = doc(db, `levels/${id}`);
 	const levelDoc = await getDoc(levelRef);
 	if (!levelDoc.exists()) return null;
@@ -160,7 +167,7 @@ export async function getLevel(id: string): Promise<UserLevel | null> {
 		...mainDocData,
 		id: levelDoc.id,
 		makerName,
-	} as UserLevel;
+	} as MakerCentralLevel;
 }
 
 /**

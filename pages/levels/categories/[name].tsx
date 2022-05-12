@@ -1,6 +1,6 @@
 import AppFrame from '@components/AppFrame';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
-import { UserLevelTag, userLevelTags } from '@scripts/browser/BrowserUtil';
+import { MakerCentralTag, userLevelTags } from '@scripts/browser/BrowserUtil';
 import { where } from 'firebase/firestore/lite';
 import Page404 from 'pages/404';
 import React from 'react';
@@ -13,11 +13,11 @@ import React from 'react';
 function CategoryPage(props: {
 	categoryName: string,
 }) {
-	if (!userLevelTags.includes(props.categoryName as UserLevelTag)) {
+	if (!userLevelTags.includes(props.categoryName as MakerCentralTag)) {
 		return <Page404 />;
 	}
 
-	const tag = props.categoryName as UserLevelTag;
+	const tag = props.categoryName as MakerCentralTag;
 
 	return (
 		<AppFrame

@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { UserLevel } from '@scripts/browser/BrowserUtil';
+import { MakerCentralLevel } from '@scripts/browser/BrowserUtil';
 import React from 'react';
 import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
@@ -17,7 +17,7 @@ const timeAgo = new TimeAgo('en-us');
  * * level: The level to display a preview of.
  */
 function LevelPreview(props: {
-	level: UserLevel,
+	level: MakerCentralLevel,
 }) {
 	// eslint-disable-next-line no-param-reassign
 	props.level.uploadTime = props.level.uploadTime as number;
@@ -50,7 +50,7 @@ function LevelPreview(props: {
 				</div>
 			</div>
 			<TagDisplay tags={props.level.tags} />
-			<p style={{ overflowWrap: 'anywhere' }}>{props.level.shortDescription}</p>
+			<p style={{ overflowWrap: 'anywhere' }}>{props.level.description}</p>
 		</div>
 	) : (
 		<>
@@ -67,7 +67,7 @@ function LevelPreview(props: {
 					<p>{props.level.numComments}</p>
 				</div>
 				<TagDisplay tags={props.level.tags} />
-				<p style={{ overflowWrap: 'anywhere' }}>{props.level.shortDescription}</p>
+				<p style={{ overflowWrap: 'anywhere' }}>{props.level.description}</p>
 			</div>
 		</>
 	);

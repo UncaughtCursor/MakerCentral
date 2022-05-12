@@ -21,6 +21,7 @@
 /.VSCodeCounter/
 /firebase-export*
 /emulator-data
+/src/data/private
 
 # debug
 npm-debug.log*

@@ -7,7 +7,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import {
 	deleteDoc, doc, getDoc, serverTimestamp, setDoc,
 } from 'firebase/firestore/lite';
-import { UserLevel } from '@scripts/browser/BrowserUtil';
+import { MakerCentralLevel } from '@scripts/browser/BrowserUtil';
 import useUserInfo from '@components/hooks/useUserInfo';
 
 /**
@@ -18,7 +18,7 @@ import useUserInfo from '@components/hooks/useUserInfo';
  * * top: The top CSS property.
  */
 function BookmarkButton(props: {
-	level: UserLevel,
+	level: MakerCentralLevel,
 	left: string,
 	top: string,
 }) {

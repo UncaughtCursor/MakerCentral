@@ -7,7 +7,7 @@ import TextArea from '@components/pages/controls/TextArea';
 import TextField from '@components/pages/controls/TextField';
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import {
-	difficulties, Difficulty, GameStyle, gameStyles, UserLevel, UserLevelTag, userLevelTags,
+	difficulties, Difficulty, SMM2GameStyle, gameStyles, MakerCentralLevel, MakerCentralTag, userLevelTags,
 } from '@scripts/browser/BrowserUtil';
 import {
 	auth,
@@ -31,8 +31,8 @@ interface UserLevelInformation {
 	shortDescription: string;
 	description: string;
 	difficulty: Difficulty;
-	gameStyle: GameStyle;
-	tags: UserLevelTag[];
+	gameStyle: SMM2GameStyle;
+	tags: MakerCentralTag[];
 }
 
 const defaultLevel: UserLevelInformation = {
@@ -75,7 +75,7 @@ function LevelEditor(props: {
 		(async () => {
 			const levelDoc = await getDoc(doc(db, `levels/${props.levelId}`));
 			if (!levelDoc.exists) return;
-			const data = levelDoc.data() as UserLevel;
+			const data = levelDoc.data() as MakerCentralLevel;
 			if (user?.uid !== data.makerUid) {
 				setHasAccess(false);
 				return;
@@ -203,7 +203,7 @@ function LevelEditor(props: {
 						onSelect={(_, val) => {
 							setLevel({
 								...level,
-								gameStyle: val as GameStyle,
+								gameStyle: val as SMM2GameStyle,
 							});
 						}}
 					/>
@@ -218,7 +218,7 @@ function LevelEditor(props: {
 						onChange={(tags: string[]) => {
 							setLevel({
 								...level,
-								tags: tags as UserLevelTag[],
+								tags: tags as MakerCentralTag[],
 							});
 						}}
 					/>

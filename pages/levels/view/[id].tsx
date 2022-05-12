@@ -1,4 +1,4 @@
-import { deleteLevel, getLevel, UserLevel } from '@scripts/browser/BrowserUtil';
+import { deleteLevel, getLevel, MakerCentralLevel } from '@scripts/browser/BrowserUtil';
 import React, { useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
@@ -19,7 +19,7 @@ import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
  */
 function LevelPage(props: {
-	level: UserLevel | null
+	level: MakerCentralLevel | null
 }) {
 	const [showReportDialog, setShowReportDialog] = useState(false);
 

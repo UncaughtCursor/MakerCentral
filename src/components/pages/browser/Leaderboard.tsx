@@ -1,4 +1,4 @@
-import { UserLevelTag } from '@scripts/browser/BrowserUtil';
+import { MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import { db } from '@scripts/site/FirebaseUtil';
 import {
 	collectionGroup, getDoc, getDocs, limit, orderBy, query, QueryConstraint, where,

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { UserLevelTag } from '@scripts/browser/BrowserUtil';
+import { MakerCentralLevel, MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import Dialog from '@components/main/Dialog';
+import { searchLevels } from '@scripts/browser/MeilisearchUtil';
 import LevelSearchOptions from './LevelSearchOptions';
 
 const SMM2GameStyles = [
@@ -34,7 +35,7 @@ export interface SearchFilterSettings {
 	sortOrder: 'Ascending' | 'Descending';
 	difficulty: SMM2Difficulty | null;
 	theme: SMM2Theme | null;
-	tags: UserLevelTag[];
+	tags: MakerCentralTag[];
 }
 
 interface SearchBarProps {
@@ -68,6 +69,7 @@ function LevelSearchBar(props: SearchBarProps) {
 	filterSettingsRef.current = filterSettings;
 
 	const [open, setOpen] = useState(false);
+	const [suggestions, setSuggestions] = useState([] as MakerCentralLevel[]);
 
 	const keyDownFn = (evt: KeyboardEvent) => {
 		if (evt.key === 'Enter') props.onSubmit(valueRef.current, filterSettingsRef.current);
@@ -114,6 +116,12 @@ function LevelSearchBar(props: SearchBarProps) {
 	function handleChange(e: any) {
 		const str = e.target.value;
 		props.onChange(str);
+		searchLevels({
+			query: str,
+		}).then((results) => {
+			console.log(results);
+			setSuggestions(results.results);
+		});
 	}
 }
 
