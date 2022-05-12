@@ -24,6 +24,7 @@ export type LevelSearchFilterOperator = '==' | '!=' | '>' | '>=' | '<' | '<=' | 
 export interface LevelSearchResults {
 	results: MakerCentralLevel[];
 	numResults: number;
+	isNumResultsExact: boolean;
 	computeTimeMs: number;
 	searchData: LevelSearch;
 }
@@ -35,12 +36,13 @@ const client = new MeiliSearch(MeiliCredentials);
  * @param searchData The data to search based off of.
  * @returns A promise that resolves with a search results object.
  */
-export async function searchLevels(searchData: LevelSearch) {
+export async function searchLevels(searchData: LevelSearch): Promise<LevelSearchResults> {
 	const res = await client.index('levels').search(searchData.query);
 	return {
 		results: res.hits as MakerCentralLevel[],
 		numResults: res.nbHits,
-		computeTime: res.processingTimeMs,
+		isNumResultsExact: res.exhaustiveNbHits,
+		computeTimeMs: res.processingTimeMs,
 		searchData,
 	};
 }

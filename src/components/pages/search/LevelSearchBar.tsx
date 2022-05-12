@@ -39,8 +39,7 @@ export interface SearchFilterSettings {
 }
 
 interface SearchBarProps {
-	value: string;
-	onChange: (value: string) => void;
+	initialVal: string;
 	onSubmit: (value: string, filterSettings: SearchFilterSettings) => void;
 }
 
@@ -59,8 +58,10 @@ export const defaultFilterSettings: SearchFilterSettings = {
  */
 function LevelSearchBar(props: SearchBarProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
+
 	const valueRef = useRef<string>('');
-	valueRef.current = props.value;
+	const [value, setValue] = useState(props.initialVal);
+	valueRef.current = value;
 
 	const filterSettingsRef = useRef<SearchFilterSettings>(defaultFilterSettings);
 	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
@@ -69,7 +70,6 @@ function LevelSearchBar(props: SearchBarProps) {
 	filterSettingsRef.current = filterSettings;
 
 	const [open, setOpen] = useState(false);
-	const [suggestions, setSuggestions] = useState([] as MakerCentralLevel[]);
 
 	const keyDownFn = (evt: KeyboardEvent) => {
 		if (evt.key === 'Enter') props.onSubmit(valueRef.current, filterSettingsRef.current);
@@ -96,7 +96,7 @@ function LevelSearchBar(props: SearchBarProps) {
 			<div className="search-bar">
 				<input
 					type="text"
-					value={props.value!}
+					value={value}
 					onChange={handleChange}
 					ref={inputRef}
 				/>
@@ -115,13 +115,7 @@ function LevelSearchBar(props: SearchBarProps) {
 	 */
 	function handleChange(e: any) {
 		const str = e.target.value;
-		props.onChange(str);
-		searchLevels({
-			query: str,
-		}).then((results) => {
-			console.log(results);
-			setSuggestions(results.results);
-		});
+		setValue(str);
 	}
 }
 

@@ -1,7 +1,9 @@
 import AppFrame from '@components/AppFrame';
 import LevelPreview from '@components/pages/browser/LevelPreview';
+import LevelSearchBar from '@components/pages/search/LevelSearchBar';
 import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
-import React from 'react';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
 /**
  * The search page.
@@ -11,9 +13,21 @@ import React from 'react';
 function SearchResultsPage(props: {
 	results: LevelSearchResults
 }) {
+	const history = useRouter();
+
 	return (
 		<AppFrame title={`'${props.results.searchData.query}' - MakerCentral Levels`}>
-			<h1>Search Results</h1>
+			<div style={{
+				margin: '24px auto',
+				width: 'max-content',
+				marginTop: '36px',
+			}}
+			>
+				<LevelSearchBar
+					initialVal={props.results.searchData.query}
+					onSubmit={(val) => { history.push(`/levels/search/${val}`); }}
+				/>
+			</div>
 			<div style={{
 				minHeight: '100px',
 				display: 'flex',
@@ -22,6 +36,7 @@ function SearchResultsPage(props: {
 				gap: '20px',
 			}}
 			>
+				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
 				{props.results.results.map((level) => <LevelPreview level={level} key={level.id} />)}
 			</div>
 		</AppFrame>
