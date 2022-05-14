@@ -1,9 +1,11 @@
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React, { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { MakerCentralLevel, MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import Dialog from '@components/main/Dialog';
-import { searchLevels } from '@scripts/browser/MeilisearchUtil';
+import { getSuggestions, searchLevels } from '@scripts/browser/MeilisearchUtil';
 import LevelSearchOptions from './LevelSearchOptions';
 
 const SMM2GameStyles = [
@@ -69,7 +71,9 @@ function LevelSearchBar(props: SearchBarProps) {
 	);
 	filterSettingsRef.current = filterSettings;
 
-	const [open, setOpen] = useState(false);
+	const [isDialogOpen, setDialogOpen] = useState(false);
+	const [suggestions, setSuggestions] = useState<string[]>([]);
+	const [isFocused, setIsFocused] = useState(false);
 
 	const keyDownFn = (evt: KeyboardEvent) => {
 		if (evt.key === 'Enter') props.onSubmit(valueRef.current, filterSettingsRef.current);
@@ -88,23 +92,49 @@ function LevelSearchBar(props: SearchBarProps) {
 		<>
 			<Dialog
 				title="Search Options"
-				open={open}
-				onCloseEvent={() => { setOpen(false); }}
+				open={isDialogOpen}
+				onCloseEvent={() => { setDialogOpen(false); }}
 			>
 				<LevelSearchOptions onChange={(settings) => { setFilterSettings(settings); }} />
 			</Dialog>
-			<div className="search-bar">
-				<input
-					type="text"
-					value={value}
-					onChange={handleChange}
-					ref={inputRef}
-				/>
-				<FilterListIcon className="search-bar-icon" onClick={() => { setOpen(true); }} />
-				<SearchIcon
-					className="search-bar-icon"
-					onClick={() => { props.onSubmit(valueRef.current, filterSettingsRef.current); }}
-				/>
+			<div className="search-bar-wrapper">
+				<div className={`search-bar${suggestions.length > 0 && isFocused ? ' open' : ''}`}>
+					<input
+						type="text"
+						value={value}
+						onChange={handleChange}
+						ref={inputRef}
+						onFocus={() => { setIsFocused(true); }}
+						onBlur={() => {
+							setTimeout(() => {
+								setIsFocused(false);
+							}, 100);
+						}}
+					/>
+					<FilterListIcon className="search-bar-icon" onClick={() => { setDialogOpen(true); }} />
+					<SearchIcon
+						className="search-bar-icon"
+						onClick={() => { props.onSubmit(valueRef.current, filterSettingsRef.current); }}
+					/>
+				</div>
+				<div
+					className="search-suggestion-container"
+					style={{
+						display: suggestions.length > 0 && isFocused ? '' : 'none',
+					}}
+				>
+					{suggestions.map((suggestion, i) => (
+						<span
+							onClick={() => {
+								console.log('e');
+								props.onSubmit(suggestion, filterSettingsRef.current);
+							}}
+							role="search"
+							tabIndex={i}
+						>{suggestion}
+						</span>
+					))}
+				</div>
 			</div>
 		</>
 	);
@@ -116,6 +146,11 @@ function LevelSearchBar(props: SearchBarProps) {
 	function handleChange(e: any) {
 		const str = e.target.value;
 		setValue(str);
+		if (str !== '') {
+			getSuggestions(str).then((foundSuggestions) => {
+				setSuggestions(foundSuggestions);
+			});
+		} else setSuggestions([]);
 	}
 }
 

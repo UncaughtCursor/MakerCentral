@@ -102,7 +102,7 @@ if (!usingProdServer) {
 		connectStorageEmulator(storage, '192.168.1.212', 9199);
 
 		// Upload test data
-		(async () => {
+		/* (async () => {
 			const { levels, users, comments } = TestData as unknown as {
 				levels: any[],
 				users: any[],
@@ -116,7 +116,7 @@ if (!usingProdServer) {
 					`levels/${levelDocId}/comments`,
 				);
 			});
-		})();
+		})(); */
 	} catch (e) {
 		console.error(e);
 	}

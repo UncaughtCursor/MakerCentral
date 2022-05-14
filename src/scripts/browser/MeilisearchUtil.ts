@@ -46,3 +46,13 @@ export async function searchLevels(searchData: LevelSearch): Promise<LevelSearch
 		searchData,
 	};
 }
+
+/**
+ * Searches for levels based on the provided search data.
+ * @param searchData The data to search based off of.
+ * @returns A promise that resolves with a search results object.
+ */
+export async function getSuggestions(text: string): Promise<string[]> {
+	const res = await client.index('level-suggestions').search(text);
+	return res.hits.slice(0, 6).map((suggestion) => suggestion.word);
+}
