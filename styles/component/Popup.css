@@ -69,5 +69,7 @@
 }
 
 .popup-content {
-	padding: 35px;
+	padding: 0 35px;
+	overflow-y: auto;
+	max-height: 60vh;
 }

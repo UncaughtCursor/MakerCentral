@@ -50,7 +50,7 @@ function FeedbackControl(props: {
 	if (user === null) {
 		return (
 			<div>
-				<p>Please log in to leave feedback.</p>
+				<p>Please sign in to leave feedback.</p>
 			</div>
 		);
 	}

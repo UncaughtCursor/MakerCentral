@@ -201,7 +201,7 @@ if (typeof window !== 'undefined' && firebaseAuthUi === undefined) {
 }
 
 /**
- * Prompts the user to log in or register.
+ * Prompts the user to sign in or register.
  * Ideally, the page they were just on.
  */
 export async function promptLogin() {

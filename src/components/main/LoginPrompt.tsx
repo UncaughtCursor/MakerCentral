@@ -4,7 +4,7 @@ import { promptLogin } from '@scripts/site/FirebaseUtil';
 import React, { useState } from 'react';
 
 /**
- * Prompts the user to log in or create a new account.
+ * Prompts the user to sign in or create a new account.
  */
 function LoginPrompt() {
 	const [emailInput, setEmailInput] = useState('');
@@ -14,7 +14,7 @@ function LoginPrompt() {
 		<div className="login-prompt-container">
 			<br />
 			<TriggerButton
-				text="Log In or Register"
+				text="Sign In or Register"
 				type="blue"
 				onClick={promptLogin}
 			/>

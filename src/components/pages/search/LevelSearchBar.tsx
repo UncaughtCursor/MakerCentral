@@ -3,9 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { MakerCentralLevel, MakerCentralTag } from '@scripts/browser/BrowserUtil';
+import { Difficulty, MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import Dialog from '@components/main/Dialog';
-import { getSuggestions, searchLevels } from '@scripts/browser/MeilisearchUtil';
+import { getSuggestions } from '@scripts/browser/MeilisearchUtil';
 import LevelSearchOptions from './LevelSearchOptions';
 
 export const SMM2GameStyles = [
@@ -22,11 +22,6 @@ export const SMM2Themes = [
 ] as const;
 export type SMM2Theme = typeof SMM2Themes[number];
 
-export const SMM2Difficulties = [
-	'Easy', 'Normal', 'Expert', 'Super expert',
-] as const;
-export type SMM2Difficulty = typeof SMM2Difficulties[number];
-
 export const sortTypes = [
 	'By Likes', 'By Date', 'By Clear Rate',
 ] as const;
@@ -35,10 +30,10 @@ type SortType = typeof sortTypes[number];
 export interface SearchFilterSettings {
 	sortType: SortType;
 	sortOrder: 'Ascending' | 'Descending';
-	difficulty: SMM2Difficulty | 'Any';
+	difficulty: Difficulty | 'Any';
 	theme: SMM2Theme | 'Any';
 	gameStyle: SMM2GameStyle | 'Any';
-	tags: MakerCentralTag[];
+	tag: MakerCentralTag | 'Any';
 }
 
 interface SearchBarProps {
@@ -52,7 +47,7 @@ export const defaultFilterSettings: SearchFilterSettings = {
 	difficulty: 'Any',
 	theme: 'Any',
 	gameStyle: 'Any',
-	tags: [],
+	tag: 'Any',
 };
 
 /**

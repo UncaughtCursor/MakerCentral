@@ -81,7 +81,7 @@ function ProjectManagerTab() {
 				/>
 			</div>
 			<div style={{ display: user === null ? '' : 'none' }}>
-				<p>Log in to save your project.</p>
+				<p>Sign in to save your project.</p>
 			</div>
 		</div>
 	);

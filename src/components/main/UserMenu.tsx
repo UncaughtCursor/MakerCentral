@@ -40,7 +40,7 @@ function UserMenu() {
 		<div className="usermenu-container">
 			<div className="login-container" style={{ display: !signedIn ? 'flex' : 'none' }}>
 				<TriggerButton
-					text="Log In"
+					text="Sign In"
 					type="blue"
 					onClick={promptLogin}
 				/>

@@ -57,7 +57,7 @@ function HamburgerMenu(props: {
 			</div>
 			<div style={{ display: user === null ? '' : 'none', padding: '10px' }}>
 				<TriggerButton
-					text="Log In"
+					text="Sign In"
 					type="blue"
 					onClick={() => {
 						requestMenuClose();

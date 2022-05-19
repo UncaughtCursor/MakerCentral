@@ -14,7 +14,7 @@ import LoginPrompt from './LoginPrompt';
 type GateOpenState = 'login' | 'EA' | 'open' | 'closed';
 
 /**
- * A component to force the user to log in and, optionally, to also have patron status.
+ * A component to force the user to sign in and, optionally, to also have patron status.
  * @param props The props:
  * * requireEA: Whether or not patron status is required.
  * * showLogout: Whether or not to show a button to allow the user to log out on key entry.
@@ -47,10 +47,10 @@ function Gate(props: {
 		return (
 			<div className="gate-background">
 				<div style={{ display: isLoading ? 'none' : '' }}>
-					<SettingsGroup name="Log in to Continue">
+					<SettingsGroup name="Sign in to Continue">
 						<p><b>{boldMsg}</b></p>
 						<br />
-						<p>Log into your account or create a new one below.</p>
+						<p>Sign into your account or create a new one below.</p>
 						<LoginPrompt />
 					</SettingsGroup>
 				</div>

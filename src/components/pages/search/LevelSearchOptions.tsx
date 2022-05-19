@@ -1,8 +1,9 @@
+import { difficulties, makerCentralTags } from '@scripts/browser/BrowserUtil';
 import React, { useState } from 'react';
 import SelectInput from '../controls/SelectInput';
 import TriggerButton from '../controls/TriggerButton';
 import {
-	SearchFilterSettings, SMM2Difficulties, SMM2GameStyles, SMM2Themes, sortTypes,
+	SearchFilterSettings, SMM2GameStyles, SMM2Themes, sortTypes,
 } from './LevelSearchBar';
 
 /**
@@ -21,11 +22,12 @@ function LevelSearchOptions(props: {
 
 	const sortOrders = ['Ascending', 'Descending'] as const;
 	const themeOptions = ['Any', ...SMM2Themes] as const;
-	const difficultyOptions = ['Any', ...SMM2Difficulties] as const;
+	const difficultyOptions = ['Any', ...difficulties] as const;
 	const gameStyleOptions = ['Any', ...SMM2GameStyles] as const;
+	const tagOptions = ['Any', ...makerCentralTags] as const;
 
 	return (
-		<div>
+		<div className="search-settings">
 			<h3>Filters</h3>
 			<div className="search-settings-dropdown-container">
 				<SelectInput
@@ -67,6 +69,19 @@ function LevelSearchOptions(props: {
 						props.onChange(newSettings);
 					}}
 				/>
+				<SelectInput
+					label="Tag"
+					choices={tagOptions}
+					initSelectedIndex={tagOptions.indexOf(props.initSettings.tag)}
+					onSelect={(idx) => {
+						const newSettings: SearchFilterSettings = {
+							...settings,
+							tag: tagOptions[idx],
+						};
+						setSettings(newSettings);
+						props.onChange(newSettings);
+					}}
+				/>
 			</div>
 			<h3>Sort</h3>
 			<div className="search-settings-dropdown-container">
@@ -97,7 +112,7 @@ function LevelSearchOptions(props: {
 					}}
 				/>
 			</div>
-			<div style={{ marginTop: '30px' }}>
+			<div style={{ margin: '30px 0' }}>
 				<TriggerButton
 					text="Submit"
 					type="blue"
