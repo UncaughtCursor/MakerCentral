@@ -8,12 +8,14 @@ import OutsideClickHandler from 'react-outside-click-handler';
 /**
  * A popup window that activates when an event is emitted in the window.
  * @param props The props:
+ * * title: The dialog title.
  * * eventName: The name of the event to listen for.
  * * hideEventName: The name of the event to listen for that hides the popup.
- * * id: (Optional) The id of the popup element.
+ * * id: (Optional) The id of the popup element's content container.
  * @returns
  */
 function EventPopup(props: {
+	title: string,
 	eventName: string,
 	hideEventName?: string | null,
 	children?: ReactNode,
@@ -58,19 +60,26 @@ function EventPopup(props: {
 			<OutsideClickHandler onOutsideClick={closeFn}>
 				<div
 					className={`popup${open ? '' : ' closed'}`}
-					id={props.id!}
 					ref={modalRef}
 				>
-					<div
-						className="popup-x"
-						onClick={closeFn}
-						onKeyPress={closeFn}
-						tabIndex={0}
-						role="button"
-					>
-						<CloseIcon />
+					<div className="popup-header">
+						<div
+							className="popup-x"
+							onClick={closeFn}
+							onKeyPress={closeFn}
+							tabIndex={0}
+							role="button"
+						>
+							<CloseIcon />
+						</div>
+						{props.title}
 					</div>
-					{props.children}
+					<div
+						className="popup-content"
+						id={props.id!}
+					>
+						{props.children}
+					</div>
 				</div>
 			</OutsideClickHandler>
 		</>

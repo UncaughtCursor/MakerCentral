@@ -50,6 +50,7 @@ function Header() {
 			/>
 			<EventPopup
 				id="firebaseui-auth-container"
+				title="Log In"
 				eventName="login-request"
 				hideEventName="login-end"
 			/>

@@ -38,17 +38,21 @@ function Dialog(props: {
 					className={`popup${props.open ? '' : ' closed'}`}
 					ref={modalRef}
 				>
-					<div
-						className="popup-x"
-						onClick={closeFn}
-						onKeyPress={closeFn}
-						tabIndex={0}
-						role="button"
-					>
-						<CloseIcon />
+					<div className="popup-header">
+						{props.title}
+						<div
+							className="popup-x"
+							onClick={closeFn}
+							onKeyPress={closeFn}
+							tabIndex={0}
+							role="button"
+						>
+							<CloseIcon />
+						</div>
 					</div>
-					<h2>{props.title}</h2>
-					{props.children}
+					<div className="popup-content">
+						{props.children}
+					</div>
 				</div>
 			</OutsideClickHandler>
 		</>

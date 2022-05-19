@@ -5,7 +5,6 @@
 	top: 50%;
 	transform: translateX(-50%) translateY(-50%) scale(1);
 	z-index: 10;
-	padding: 35px;
 	border-radius: 20px;
 	box-shadow: 4px 4px 4px black;
 	max-width: max-content;
@@ -15,13 +14,21 @@
 
 .popup-x {
 	position: absolute;
-	left: calc(100% - 35px);
-	top: 10px;
+	left: calc(100% - 43px);
+	top: 8px;
 	cursor: pointer;
 }
 
 .popup-x > svg {
 	color: var(--text-color);
+	background-color: var(--bg-dark);
+	border-radius: 50%;
+	padding: 5px;
+	transition: filter 0.1s;
+}
+
+.popup-x > svg:hover {
+	filter: brightness(50%);
 }
 
 .popup.closed {
@@ -46,4 +53,21 @@
 	opacity: 40%;
 	pointer-events: all;
 
+}
+
+.popup-header {
+	background-color: var(--bg-litish);
+	height: 50px;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	color: var(--text-color);
+	font-weight: bold;
+	font-size: 20px;
+	text-align: left;
+	padding-left: 20px;
+	line-height: 50px;
+}
+
+.popup-content {
+	padding: 35px;
 }
