@@ -1,5 +1,7 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useRef } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 /**
  * A popup dialog window that holds elements.
@@ -14,24 +16,42 @@ function Dialog(props: {
 	onCloseEvent: () => void,
 	children?: ReactNode,
 }) {
+	const modalRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		const modalEl = modalRef.current;
+		if (modalEl !== null) {
+			if (props.open) disableBodyScroll(modalEl);
+			else enableBodyScroll(modalEl);
+		}
+	}, [props.open]);
+
 	const closeFn = () => {
 		props.onCloseEvent();
 	};
 
 	return (
-		<div className={`popup${props.open ? '' : ' closed'}`}>
-			<div
-				className="popup-x"
-				onClick={closeFn}
-				onKeyPress={closeFn}
-				tabIndex={0}
-				role="button"
-			>
-				<CloseIcon />
-			</div>
-			<h2>{props.title}</h2>
-			{props.children}
-		</div>
+		<>
+			<div className={`dark-overlay${props.open ? ' open' : ''}`} />
+			<OutsideClickHandler onOutsideClick={closeFn}>
+				<div
+					className={`popup${props.open ? '' : ' closed'}`}
+					ref={modalRef}
+				>
+					<div
+						className="popup-x"
+						onClick={closeFn}
+						onKeyPress={closeFn}
+						tabIndex={0}
+						role="button"
+					>
+						<CloseIcon />
+					</div>
+					<h2>{props.title}</h2>
+					{props.children}
+				</div>
+			</OutsideClickHandler>
+		</>
 	);
 }
 

@@ -8,12 +8,12 @@ import Dialog from '@components/main/Dialog';
 import { getSuggestions, searchLevels } from '@scripts/browser/MeilisearchUtil';
 import LevelSearchOptions from './LevelSearchOptions';
 
-const SMM2GameStyles = [
+export const SMM2GameStyles = [
 	'SMB1', 'SMB3', 'SMW', 'NSMBU', 'SM3DW',
 ] as const;
 export type SMM2GameStyle = typeof SMM2GameStyles[number];
 
-const SMM2Themes = [
+export const SMM2Themes = [
 	'Overworld', 'Underground',
 	'Castle', 'Airship',
 	'Underwater', 'Ghost house',
@@ -22,21 +22,22 @@ const SMM2Themes = [
 ] as const;
 export type SMM2Theme = typeof SMM2Themes[number];
 
-const SMM2Difficulties = [
+export const SMM2Difficulties = [
 	'Easy', 'Normal', 'Expert', 'Super expert',
 ] as const;
 export type SMM2Difficulty = typeof SMM2Difficulties[number];
 
-const sortSettings = [
+export const sortTypes = [
 	'By Likes', 'By Date', 'By Clear Rate',
 ] as const;
-type SortSetting = typeof sortSettings[number];
+type SortType = typeof sortTypes[number];
 
 export interface SearchFilterSettings {
-	sortType: SortSetting;
+	sortType: SortType;
 	sortOrder: 'Ascending' | 'Descending';
-	difficulty: SMM2Difficulty | null;
-	theme: SMM2Theme | null;
+	difficulty: SMM2Difficulty | 'Any';
+	theme: SMM2Theme | 'Any';
+	gameStyle: SMM2GameStyle | 'Any';
 	tags: MakerCentralTag[];
 }
 
@@ -48,8 +49,9 @@ interface SearchBarProps {
 export const defaultFilterSettings: SearchFilterSettings = {
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
-	difficulty: null,
-	theme: null,
+	difficulty: 'Any',
+	theme: 'Any',
+	gameStyle: 'Any',
 	tags: [],
 };
 
@@ -76,7 +78,10 @@ function LevelSearchBar(props: SearchBarProps) {
 	const [isFocused, setIsFocused] = useState(false);
 
 	const keyDownFn = (evt: KeyboardEvent) => {
-		if (evt.key === 'Enter') props.onSubmit(valueRef.current, filterSettingsRef.current);
+		if (evt.key === 'Enter') {
+			props.onSubmit(valueRef.current, filterSettingsRef.current);
+			inputRef.current?.blur();
+		}
 	};
 
 	useEffect(() => {
@@ -95,7 +100,11 @@ function LevelSearchBar(props: SearchBarProps) {
 				open={isDialogOpen}
 				onCloseEvent={() => { setDialogOpen(false); }}
 			>
-				<LevelSearchOptions onChange={(settings) => { setFilterSettings(settings); }} />
+				<LevelSearchOptions
+					initSettings={defaultFilterSettings}
+					onChange={(settings) => { setFilterSettings(settings); }}
+					onClose={() => { setDialogOpen(false); }}
+				/>
 			</Dialog>
 			<div className="search-bar-wrapper">
 				<div className={`search-bar${suggestions.length > 0 && isFocused ? ' open' : ''}`}>
@@ -105,11 +114,7 @@ function LevelSearchBar(props: SearchBarProps) {
 						onChange={handleChange}
 						ref={inputRef}
 						onFocus={() => { setIsFocused(true); }}
-						onBlur={() => {
-							setTimeout(() => {
-								setIsFocused(false);
-							}, 100);
-						}}
+						onBlur={() => { setIsFocused(false); }}
 					/>
 					<FilterListIcon className="search-bar-icon" onClick={() => { setDialogOpen(true); }} />
 					<SearchIcon
@@ -125,9 +130,13 @@ function LevelSearchBar(props: SearchBarProps) {
 				>
 					{suggestions.map((suggestion, i) => (
 						<span
+							onMouseDown={(evt) => {
+								evt.preventDefault();
+							}}
 							onClick={() => {
-								console.log('e');
 								props.onSubmit(suggestion, filterSettingsRef.current);
+								inputRef.current?.blur();
+								setValue(suggestion);
 							}}
 							role="search"
 							tabIndex={i}

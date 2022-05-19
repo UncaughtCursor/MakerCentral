@@ -233,6 +233,12 @@ span {
 	background-color: var(--bg-darker);
 	color: var(--text-color);
 	border: 2px solid var(--bg-norm);
-	border-radius: 4px;
-	padding: 5px 10px;
+	border-radius: 8px;
+	padding: 10px 20px;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.select-input:hover {
+	background-color: var(--bg-dark);
 }

@@ -1,5 +1,9 @@
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, {
+	ReactNode, useEffect, useRef, useState,
+} from 'react';
 import CloseIcon from '@mui/icons-material/Close';
+import { disableBodyScroll, enableBodyScroll } from 'body-scroll-lock';
+import OutsideClickHandler from 'react-outside-click-handler';
 
 /**
  * A popup window that activates when an event is emitted in the window.
@@ -16,6 +20,7 @@ function EventPopup(props: {
 	id?: string;
 }) {
 	const [open, setOpen] = useState(false);
+	const modalRef = useRef<HTMLDivElement>(null);
 
 	const openFn = () => {
 		setOpen(true);
@@ -39,22 +44,36 @@ function EventPopup(props: {
 		};
 	}, []);
 
+	useEffect(() => {
+		const modalEl = modalRef.current;
+		if (modalEl !== null) {
+			if (open) disableBodyScroll(modalEl);
+			else enableBodyScroll(modalEl);
+		}
+	}, [open]);
+
 	return (
-		<div
-			className={`popup${open ? '' : ' closed'}`}
-			id={props.id!}
-		>
-			<div
-				className="popup-x"
-				onClick={closeFn}
-				onKeyPress={closeFn}
-				tabIndex={0}
-				role="button"
-			>
-				<CloseIcon />
-			</div>
-			{props.children}
-		</div>
+		<>
+			<div className={`dark-overlay${open ? ' open' : ''}`} />
+			<OutsideClickHandler onOutsideClick={closeFn}>
+				<div
+					className={`popup${open ? '' : ' closed'}`}
+					id={props.id!}
+					ref={modalRef}
+				>
+					<div
+						className="popup-x"
+						onClick={closeFn}
+						onKeyPress={closeFn}
+						tabIndex={0}
+						role="button"
+					>
+						<CloseIcon />
+					</div>
+					{props.children}
+				</div>
+			</OutsideClickHandler>
+		</>
 	);
 }
 
