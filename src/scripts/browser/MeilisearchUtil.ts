@@ -1,11 +1,11 @@
 import { MeiliSearch } from 'meilisearch';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
+import { LevelSearchParams } from 'pages/levels/search/[q]';
+import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { MakerCentralLevel } from './BrowserUtil';
 
 export interface LevelSearch {
 	query: string;
-	sort?: LevelSearchSort;
-	filters?: LevelSearchFilter[];
 }
 
 export interface LevelSearchSort {
@@ -26,24 +26,59 @@ export interface LevelSearchResults {
 	numResults: number;
 	isNumResultsExact: boolean;
 	computeTimeMs: number;
-	searchData: LevelSearch;
+	searchParams: LevelSearchParams;
 }
 
 const client = new MeiliSearch(MeiliCredentials);
+
+const sortParamNames = [
+	'sortType',
+	'sortOrder',
+];
+
+const filterParamNames = [
+	'difficulty',
+	'theme',
+	'gameStyle',
+	'tag',
+];
 
 /**
  * Searches for levels based on the provided search data.
  * @param searchData The data to search based off of.
  * @returns A promise that resolves with a search results object.
  */
-export async function searchLevels(searchData: LevelSearch): Promise<LevelSearchResults> {
-	const res = await client.index('levels').search(searchData.query);
+export async function searchLevels(searchData: LevelSearchParams): Promise<LevelSearchResults> {
+	const filter = Object.keys(searchData).filter(
+		(paramName) => filterParamNames.includes(paramName)
+			&& searchData[paramName as keyof LevelSearchParams]
+			!== defaultFilterSettings[paramName as keyof typeof defaultFilterSettings],
+	).map(
+		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof LevelSearchParams]}"`,
+	);
+
+	// eslint-disable-next-line consistent-return
+	const sortTypePropertyName = (() => {
+		switch (searchData.sortType) {
+		case 'By Clear Rate': return 'clearRate';
+		case 'By Date': return 'uploadTime';
+		case 'By Likes': return 'numLikes';
+		}
+	})();
+	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
+
+	const sort = [`${sortTypePropertyName}:${sortOrderAbbr}`];
+
+	const res = await client.index('levels').search(searchData.q, {
+		filter,
+		sort,
+	});
 	return {
 		results: res.hits as MakerCentralLevel[],
 		numResults: res.nbHits,
 		isNumResultsExact: res.exhaustiveNbHits,
 		computeTimeMs: res.processingTimeMs,
-		searchData,
+		searchParams: searchData,
 	};
 }
 

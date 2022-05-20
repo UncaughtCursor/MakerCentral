@@ -1,9 +1,13 @@
 import AppFrame from '@components/AppFrame';
 import LevelPreview from '@components/pages/browser/LevelPreview';
-import LevelSearchBar from '@components/pages/search/LevelSearchBar';
+import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React from 'react';
+
+export interface LevelSearchParams extends SearchFilterSettings {
+	q: string;
+}
 
 /**
  * The search page.
@@ -16,7 +20,7 @@ function SearchResultsPage(props: {
 	const history = useRouter();
 
 	return (
-		<AppFrame title={`'${props.results.searchData.query}' - MakerCentral Levels`}>
+		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
 			<div style={{
 				margin: '24px auto',
 				width: 'max-content',
@@ -24,8 +28,11 @@ function SearchResultsPage(props: {
 			}}
 			>
 				<LevelSearchBar
-					initialVal={props.results.searchData.query}
-					onSubmit={(val) => { history.push(`/levels/search/${val}`); }}
+					initialVal={props.results.searchParams.q}
+					initialSettings={props.results.searchParams}
+					onSubmit={(query, filterSettings) => {
+						history.push(getSearchUrl(query, filterSettings));
+					}}
 				/>
 			</div>
 			<div style={{
@@ -50,13 +57,11 @@ export default SearchResultsPage;
  * @param context The context of the request. Includes the URL parameters.
  * @returns The props to render at request time.
  */
-export async function getServerSideProps(context: { params: {
-	q: string,
-}}) {
-	const query = context.params.q;
+export async function getServerSideProps(context: { query: any }) {
+	const queryData = { ...defaultFilterSettings, ...context.query } as LevelSearchParams;
 	return {
 		props: {
-			results: await searchLevels({ query }),
+			results: await searchLevels(queryData),
 		},
 	};
 }

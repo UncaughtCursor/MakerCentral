@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import AppFrame from '@components/AppFrame';
-import LevelSearchBar from '@components/pages/search/LevelSearchBar';
+import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { useRouter } from 'next/router';
 
 /**
  * The user level browsing view.
  */
 function LevelBrowser() {
-	const [searchString, setSearchString] = useState('');
 	const history = useRouter();
 
 	return (
@@ -50,9 +49,10 @@ function LevelBrowser() {
 					</h4>
 					<LevelSearchBar
 						onSubmit={(query, filterSettings) => {
-							history.push(`/levels/search/${query}`);
+							history.push(getSearchUrl(query, filterSettings));
 						}}
-						initialVal={searchString}
+						initialVal=""
+						initialSettings={defaultFilterSettings}
 					/>
 				</div>
 				{/* <LevelCategoryFeed extraQueryConstraints={[]} /> */}

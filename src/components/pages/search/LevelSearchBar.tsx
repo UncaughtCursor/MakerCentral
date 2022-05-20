@@ -38,6 +38,7 @@ export interface SearchFilterSettings {
 
 interface SearchBarProps {
 	initialVal: string;
+	initialSettings: SearchFilterSettings;
 	onSubmit: (value: string, filterSettings: SearchFilterSettings) => void;
 }
 
@@ -62,9 +63,9 @@ function LevelSearchBar(props: SearchBarProps) {
 	const [value, setValue] = useState(props.initialVal);
 	valueRef.current = value;
 
-	const filterSettingsRef = useRef<SearchFilterSettings>(defaultFilterSettings);
+	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
 	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
-		defaultFilterSettings,
+		props.initialSettings,
 	);
 	filterSettingsRef.current = filterSettings;
 
@@ -96,8 +97,11 @@ function LevelSearchBar(props: SearchBarProps) {
 				onCloseEvent={() => { setDialogOpen(false); }}
 			>
 				<LevelSearchOptions
-					initSettings={defaultFilterSettings}
-					onChange={(settings) => { setFilterSettings(settings); }}
+					initSettings={props.initialSettings}
+					onChange={(settings) => {
+						setFilterSettings(settings);
+						props.onSubmit(valueRef.current, settings);
+					}}
 					onClose={() => { setDialogOpen(false); }}
 				/>
 			</Dialog>
@@ -156,6 +160,25 @@ function LevelSearchBar(props: SearchBarProps) {
 			});
 		} else setSuggestions([]);
 	}
+}
+
+/**
+ * Generates the search URL based on the query and the filter settings.
+ * @param query The search query.
+ * @param filterSettings The filter settings.
+ * @returns The generated URL.
+ */
+export function getSearchUrl(query: string, filterSettings: SearchFilterSettings) {
+	const root = `/levels/search/${query}`;
+
+	const segments = Object.keys(filterSettings)
+		.filter((filterName) => {
+			const name = filterName as keyof typeof filterSettings;
+			return filterSettings[name] !== defaultFilterSettings[name];
+		})
+		.map((filterName) => `${filterName}=${filterSettings[filterName as keyof typeof filterSettings]}`);
+
+	return `${root}${segments.length > 0 ? '?' : ''}${segments.join('&')}`;
 }
 
 export default LevelSearchBar;

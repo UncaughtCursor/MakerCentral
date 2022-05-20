@@ -112,9 +112,9 @@ function LevelSearchOptions(props: {
 					}}
 				/>
 			</div>
-			<div style={{ margin: '30px 0' }}>
+			<div style={{ margin: '25px 0' }}>
 				<TriggerButton
-					text="Submit"
+					text="Done"
 					type="blue"
 					onClick={props.onClose}
 				/>
