@@ -18,6 +18,15 @@ function SearchResultsPage(props: {
 	results: LevelSearchResults
 }) {
 	const history = useRouter();
+	const initSettings = (() => {
+		const validKeys = Object.keys(props.results.searchParams).filter((key) => key !== 'q');
+		return validKeys.reduce((obj, key) => {
+			// eslint-disable-next-line no-param-reassign
+			obj[key] = props
+				.results.searchParams[key as keyof typeof props.results.searchParams];
+			return obj;
+		}, {} as {[key: string]: any});
+	})() as SearchFilterSettings;
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
@@ -29,7 +38,7 @@ function SearchResultsPage(props: {
 			>
 				<LevelSearchBar
 					initialVal={props.results.searchParams.q}
-					initialSettings={props.results.searchParams}
+					initialSettings={initSettings}
 					onSubmit={(query, filterSettings) => {
 						history.push(getSearchUrl(query, filterSettings));
 					}}
