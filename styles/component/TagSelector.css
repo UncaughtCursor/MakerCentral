@@ -28,9 +28,3 @@
 	flex-wrap: wrap;
 	gap: 4px;
 }
-
-@media (max-width: 850px) {
-	.user-level-tag-container {
-		justify-content: center;
-	}
-}

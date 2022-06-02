@@ -1,11 +1,11 @@
 import { deleteLevel, getLevel, MakerCentralLevel } from '@scripts/browser/BrowserUtil';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import FeedbackControl from '@components/pages/browser/FeedbackControl';
 import BookmarkButton from '@components/pages/browser/BookmarkButton';
 import TriggerButton from '@components/pages/controls/TriggerButton';
-import { auth, getUser } from '@scripts/site/FirebaseUtil';
+import { auth, getUser, storage } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { useRouter } from 'next/router';
 import ImageGallery, { ReactImageGalleryItem } from 'react-image-gallery';
@@ -13,6 +13,8 @@ import Link from 'next/link';
 import CommentsSection from '@components/pages/browser/comments/CommentsSection';
 import useUserInfo from '@components/hooks/useUserInfo';
 import ReportDialog from '@components/main/dialogs/ReportDialog';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { ImageLoadState, thumbnailDir, thumbnailSuffix } from '@components/pages/browser/LevelPreview';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 const clearRateSignificantDigits = 5;
@@ -43,8 +45,29 @@ function LevelPage(props: {
 		originalClass: 'level-page-img-container',
 	})); */
 
-	const displayedClearRate = 100
-		* (Math.ceil(level.clearRate * clearRateMultiplier) / clearRateMultiplier);
+	const thumbnailStorageUrl = props.level !== null
+		? `${thumbnailDir}/${props.level.id}${thumbnailSuffix}.png`
+		: '';
+
+	const [imgState, setImgState] = useState<ImageLoadState>({
+		status: 'Loading',
+		url: null,
+	});
+
+	useEffect(() => {
+		getDownloadURL(ref(storage, thumbnailStorageUrl)).then((url) => {
+			setImgState({
+				status: 'Loaded',
+				url,
+			});
+		}).catch(() => {
+			setImgState({
+				status: 'Error',
+				url: null,
+			});
+			console.error(`Failed to load thumbnail for level ${props.level.id}`);
+		});
+	}, [props.level]);
 
 	return (
 		<AppFrame
@@ -66,13 +89,7 @@ function LevelPage(props: {
 						</div>
 						<div className="level-page-img-container">
 							<div>
-								<ImageGallery
-									items={/* images */ []}
-									showThumbnails={false}
-									showPlayButton={false}
-									showFullscreenButton={false}
-									startIndex={0}
-								/>
+								<img src={imgState.url!} alt={level.name} />
 							</div>
 						</div>
 						{/* <FeedbackControl levelId={level.id} /> */}
@@ -115,7 +132,7 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Clear Rate</td>
-								<td>{displayedClearRate}%</td>
+								<td>{(level.clearRate * 100).toFixed(3)}%</td>
 							</tr>
 						</table>
 					</div>

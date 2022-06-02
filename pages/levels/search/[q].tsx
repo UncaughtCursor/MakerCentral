@@ -53,7 +53,19 @@ function SearchResultsPage(props: {
 			}}
 			>
 				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
-				{props.results.results.map((level) => <LevelPreview level={level} key={level.id} />)}
+				<div style={{
+					minHeight: '100px',
+					display: 'flex',
+					flexDirection: 'row',
+					alignItems: 'center',
+					gap: '20px',
+					flexWrap: 'wrap',
+					width: '90vw',
+					maxWidth: '1000px',
+					justifyContent: 'center',
+				}}
+				>{props.results.results.map((level) => <LevelPreview level={level} key={level.id} />)}
+				</div>
 			</div>
 		</AppFrame>
 	);
