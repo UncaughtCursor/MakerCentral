@@ -19,6 +19,7 @@
     "color": "^4.2.1",
     "compute-lcm": "^1.1.2",
     "cross-env": "^7.0.3",
+    "eslint-plugin-jsdoc": "^39.3.2",
     "firebase": "^9.6.8",
     "firebaseui": "^6.0.1",
     "javascript-time-ago": "^2.3.13",

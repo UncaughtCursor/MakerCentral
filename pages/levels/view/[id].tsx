@@ -15,6 +15,9 @@ import useUserInfo from '@components/hooks/useUserInfo';
 import ReportDialog from '@components/main/dialogs/ReportDialog';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
+const clearRateSignificantDigits = 5;
+const clearRateMultiplier = 10 ** clearRateSignificantDigits;
+
 /**
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
  */
@@ -33,21 +36,21 @@ function LevelPage(props: {
 	const userInfo = useUserInfo();
 	const user = userInfo !== null ? userInfo.user : null;
 
-	const thumbnailIdx = props.level!.imageUrls.indexOf(props.level!.thumbnailUrl);
+	/* const thumbnailIdx = props.level!.imageUrls.indexOf(props.level!.thumbnailUrl);
 
 	const images: ReactImageGalleryItem[] = props.level!.imageUrls.map((imageUrl) => ({
 		original: imageUrl,
 		originalClass: 'level-page-img-container',
-	}));
+	})); */
 
-	const levelRating = level.numLikes + level.numDislikes > 0
-		? Math.round((100 * level.numLikes) / (level.numLikes + level.numDislikes))
-		: 100;
+	const displayedClearRate = 100
+		* (Math.ceil(level.clearRate * clearRateMultiplier) / clearRateMultiplier);
+
 	return (
 		<AppFrame
 			title={`${props.level!.name} - MakerCentral Levels`}
-			description={`"${props.level!.shortDescription}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on MakerCentral.`}
-			imageUrl={props.level!.thumbnailUrl}
+			description={`"${props.level!.description}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on MakerCentral.`}
+			imageUrl=""
 		>
 			<div className="level-page-content">
 				<div className="level-page-top">
@@ -59,21 +62,20 @@ function LevelPage(props: {
 						/>
 						<div style={{ marginBottom: '10px' }}>
 							<h3 className="level-page-title">{level.name}</h3>
-							<p className="level-code">{level.levelCode}</p>
+							<p className="level-code">{level.id}</p>
 						</div>
 						<div className="level-page-img-container">
 							<div>
 								<ImageGallery
-									items={images}
+									items={/* images */ []}
 									showThumbnails={false}
 									showPlayButton={false}
 									showFullscreenButton={false}
-									startIndex={thumbnailIdx}
+									startIndex={0}
 								/>
 							</div>
-							<p><i>{level.shortDescription}</i></p>
 						</div>
-						{/*<FeedbackControl levelId={level.id} />*/}
+						{/* <FeedbackControl levelId={level.id} /> */}
 					</div>
 					<div
 						className="level-page-info-container"
@@ -84,32 +86,36 @@ function LevelPage(props: {
 						<table className="info-table">
 							<tr>
 								<td>Course ID</td>
-								<td>{level.levelCode}</td>
+								<td>{level.id}</td>
 							</tr>
 							{/* TODO: Maker profile embed */}
 							<tr>
 								<td>Maker</td>
-								<td><Link href={`/users/${level.makerUid}`}>{level.makerName}</Link></td>
+								<td><Link href={`/users/${level.makerId}`}>{level.makerName}</Link></td>
 							</tr>
 							<tr>
 								<td>Upload Date</td>
 								<td>{new Date(level.uploadTime).toLocaleDateString()}</td>
 							</tr>
 							<tr>
-								<td>Difficulty</td>
-								<td>{level.difficulty}</td>
+								<td>Likes</td>
+								<td>{level.numLikes}</td>
+							</tr>
+							<tr>
+								<td>Plays</td>
+								<td>{level.numPlays}</td>
 							</tr>
 							<tr>
 								<td>Game Style</td>
 								<td>{level.gameStyle}</td>
 							</tr>
 							<tr>
-								<td>Likes</td>
-								<td>{level.numLikes}</td>
+								<td>Theme</td>
+								<td>{level.theme}</td>
 							</tr>
 							<tr>
-								<td>Rating</td>
-								<td>{levelRating}%</td>
+								<td>Clear Rate</td>
+								<td>{displayedClearRate}%</td>
 							</tr>
 						</table>
 					</div>
@@ -120,7 +126,7 @@ function LevelPage(props: {
 					<br />
 					<h4>Tags</h4>
 					<TagDisplay tags={level.tags} />
-					{/*<div style={{
+					{/* <div style={{
 						display: 'flex',
 						justifyContent: 'right',
 					}}
@@ -135,11 +141,11 @@ function LevelPage(props: {
 							onCloseEvent={() => { setShowReportDialog(false); }}
 							documentPath={`/levels/${props.level?.id}`}
 						/>
-					</div>*/}
+					</div> */}
 				</div>
 				<div
 					className="level-page-info-container"
-					style={{ display: user?.uid === level.makerUid ? '' : 'none' }}
+					style={{ display: user?.uid === level.makerId ? '' : 'none' }}
 				>
 					<h4>Actions</h4>
 					<div style={{ display: 'flex' }}>
@@ -172,11 +178,6 @@ function LevelPage(props: {
 						/>
 					</div>
 				</div>
-				<CommentsSection
-					docId={level.id}
-					docPath="/levels/"
-					numComments={level.numComments}
-				/>
 			</div>
 		</AppFrame>
 	);

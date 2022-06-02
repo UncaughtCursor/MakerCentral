@@ -45,7 +45,7 @@ function LevelBrowser() {
 						marginLeft: '20px',
 						marginBottom: '2px',
 					}}
-					>Search over 26 million levels...
+					>Search over 800,000 popular levels...
 					</h4>
 					<LevelSearchBar
 						onSubmit={(query, filterSettings) => {

@@ -92,7 +92,7 @@ export const storage = getStorage(app);
 let analytics: Analytics | null = null;
 
 // FIXME: SET TO TRUE IN PROD
-export const usingProdServer = false;
+export const usingProdServer = true;
 
 if (!usingProdServer) {
 	try {

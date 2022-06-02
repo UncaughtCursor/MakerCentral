@@ -1,15 +1,24 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 import { MakerCentralLevel } from '@scripts/browser/BrowserUtil';
-import React from 'react';
+import React, { useState } from 'react';
 import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import CommentIcon from '@mui/icons-material/Comment';
 import { useRouter } from 'next/router';
 import useMediaQuery from '@components/hooks/useMediaQuery';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { storage } from '@scripts/site/FirebaseUtil';
 import TagDisplay from './TagDisplay';
 
 const timeAgo = new TimeAgo('en-us');
+const thumbnailDir = 'gs://music-level-studio-dev.appspot.com/game-level-thumb/small';
+const thumbnailSuffix = '_64x36';
+
+interface ImageLoadState {
+	status: 'Loading' | 'Loaded' | 'Error';
+	url: string | null;
+}
 
 /**
  * Displays a clickable preview of a user-created level.
@@ -24,6 +33,24 @@ function LevelPreview(props: {
 	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
 	const history = useRouter();
 	const isMobileMode = useMediaQuery('(max-width: 850px)');
+	const thumbnailStorageUrl = `${thumbnailDir}/${props.level.id}${thumbnailSuffix}.png`;
+
+	const [imgState, setImgState] = useState<ImageLoadState>({
+		status: 'Loading',
+		url: null,
+	});
+	getDownloadURL(ref(storage, thumbnailStorageUrl)).then((url) => {
+		setImgState({
+			status: 'Loaded',
+			url,
+		});
+	}).catch(() => {
+		setImgState({
+			status: 'Error',
+			url: null,
+		});
+		console.error(`Failed to load thumbnail for level ${props.level.id}`);
+	});
 
 	const previewContainerContents = isMobileMode ? (
 		<div className="user-level-preview-details" key={props.level.id}>
@@ -31,7 +58,7 @@ function LevelPreview(props: {
 			<div className="user-level-preview-img-container">
 				<img
 					alt={props.level.name}
-					src={props.level.thumbnailUrl}
+					src={imgState}
 				/>
 			</div>
 			<div style={{
@@ -55,7 +82,7 @@ function LevelPreview(props: {
 	) : (
 		<>
 			<div className="user-level-preview-img-container">
-				<img alt={props.level.name} src={props.level.thumbnailUrl} />
+				<img alt={props.level.name} src={imgState.url!} />
 			</div>
 			<div className="user-level-preview-details">
 				<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>

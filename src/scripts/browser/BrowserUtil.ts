@@ -154,20 +154,12 @@ export async function queryLevels(
  * @returns A UserLevel object containing level data or null if no data was found.
  */
 export async function getLevel(id: string): Promise<MakerCentralLevel | null> {
-	const levelRef = doc(db, `levels/${id}`);
+	const levelRef = doc(db, `game-levels/${id}`);
 	const levelDoc = await getDoc(levelRef);
 	if (!levelDoc.exists()) return null;
 	const mainDocData = levelDoc.data();
 
-	const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid !== '' ? mainDocData.makerUid : 'deleted'}`));
-	const makerName: string = makerDoc.exists()
-		? makerDoc.data().name as string : 'Deleted User';
-
-	return {
-		...mainDocData,
-		id: levelDoc.id,
-		makerName,
-	} as MakerCentralLevel;
+	return mainDocData as MakerCentralLevel;
 }
 
 /**
