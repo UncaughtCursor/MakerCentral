@@ -38,11 +38,16 @@ function NotificationPage() {
 		})();
 	}, [user]);
 
+	const notifElements = getNotifElements();
+
 	return (
 		<AppFrame title="Notifications - MakerCentral">
 			<h1>Notifications</h1>
 			<div className="notification-listing-container">
-				{getNotifElements()}
+				{notifElements}
+				{notifElements.length === 0 ? (
+					<span>No Notifications</span>
+				) : null}
 			</div>
 		</AppFrame>
 	);

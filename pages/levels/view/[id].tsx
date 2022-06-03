@@ -17,9 +17,6 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import { ImageLoadState, thumbnailDir, thumbnailSuffix } from '@components/pages/browser/LevelPreview';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
-const clearRateSignificantDigits = 5;
-const clearRateMultiplier = 10 ** clearRateSignificantDigits;
-
 /**
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
  */
@@ -65,9 +62,11 @@ function LevelPage(props: {
 				status: 'Error',
 				url: null,
 			});
-			console.error(`Failed to load thumbnail for level ${props.level.id}`);
+			console.error(`Failed to load thumbnail for level ${props.level!.id}`);
 		});
 	}, [props.level]);
+
+	const formattedLevelCode = `${props.level!.id.substring(0, 3)}-${props.level!.id.substring(3, 6)}-${props.level!.id.substring(6, 9)}`;
 
 	return (
 		<AppFrame
@@ -76,24 +75,23 @@ function LevelPage(props: {
 			imageUrl=""
 		>
 			<div className="level-page-content">
-				<div className="level-page-top">
-					<div className="level-page-info-container" style={{ flexGrow: 6 }}>
-						<BookmarkButton
-							level={level}
-							left="calc(100% - 50px)"
-							top="calc(100% - 50px)"
-						/>
-						<div style={{ marginBottom: '10px' }}>
-							<h3 className="level-page-title">{level.name}</h3>
-							<p className="level-code">{level.id}</p>
-						</div>
-						<div className="level-page-img-container">
-							<div>
-								<img src={imgState.url!} alt={level.name} />
-							</div>
-						</div>
-						{/* <FeedbackControl levelId={level.id} /> */}
+				<div className="level-page-header">
+					<BookmarkButton
+						level={level}
+						left="calc(100% - 50px)"
+						top="15px"
+					/>
+					<img
+						className="level-page-img"
+						src={imgState.url!}
+						alt={level.name}
+					/>
+					<div>
+						<h3 className="level-page-title">{level.name}</h3>
+						<p className="level-code">{formattedLevelCode}</p>
 					</div>
+				</div>
+				<div className="level-page-info-group">
 					<div
 						className="level-page-info-container"
 						style={{
@@ -103,9 +101,8 @@ function LevelPage(props: {
 						<table className="info-table">
 							<tr>
 								<td>Course ID</td>
-								<td>{level.id}</td>
+								<td>{formattedLevelCode}</td>
 							</tr>
-							{/* TODO: Maker profile embed */}
 							<tr>
 								<td>Maker</td>
 								<td><Link href={`/users/${level.makerId}`}>{level.makerName}</Link></td>
@@ -136,63 +133,17 @@ function LevelPage(props: {
 							</tr>
 						</table>
 					</div>
-				</div>
-				<div className="level-page-info-container">
-					<h4>Description</h4>
-					<p>{level.description}</p>
-					<br />
-					<h4>Tags</h4>
-					<TagDisplay tags={level.tags} />
-					{/* <div style={{
-						display: 'flex',
-						justifyContent: 'right',
-					}}
+					<div
+						className="level-page-info-container"
+						style={{
+							width: '300px',
+						}}
 					>
-						<TriggerButton
-							text="Report"
-							type="flush"
-							onClick={() => { setShowReportDialog(true); }}
-						/>
-						<ReportDialog
-							open={showReportDialog}
-							onCloseEvent={() => { setShowReportDialog(false); }}
-							documentPath={`/levels/${props.level?.id}`}
-						/>
-					</div> */}
-				</div>
-				<div
-					className="level-page-info-container"
-					style={{ display: user?.uid === level.makerId ? '' : 'none' }}
-				>
-					<h4>Actions</h4>
-					<div style={{ display: 'flex' }}>
-						<TriggerButton
-							text="Edit"
-							type="dark"
-							onClick={() => {
-								router.push(`/levels/edit/${level.id}`);
-							}}
-						/>
-						<TriggerButton
-							text="Delete"
-							type="dark"
-							onClick={() => {
-								if (typeof window !== 'undefined') {
-									// eslint-disable-next-line no-restricted-globals, no-alert
-									const doDelete = confirm(`Delete "${level.name}"? This cannot be undone.`);
-									if (doDelete) {
-										try {
-											deleteLevel(level.id);
-											router.push('/your-levels');
-										} catch (e) {
-											// eslint-disable-next-line no-alert
-											alert('An error occurred while trying to delete the level.');
-											console.error(e);
-										}
-									}
-								}
-							}}
-						/>
+						<h4>Description</h4>
+						<p>{level.description}</p>
+						<br />
+						<h4>Tags</h4>
+						<TagDisplay tags={level.tags} />
 					</div>
 				</div>
 			</div>

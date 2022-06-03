@@ -1,5 +1,6 @@
 import AppFrame from '@components/AppFrame';
 import LevelPreview from '@components/pages/browser/LevelPreview';
+import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
 import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
 import { useRouter } from 'next/router';
@@ -44,29 +45,7 @@ function SearchResultsPage(props: {
 					}}
 				/>
 			</div>
-			<div style={{
-				minHeight: '100px',
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				gap: '20px',
-			}}
-			>
-				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
-				<div style={{
-					minHeight: '100px',
-					display: 'flex',
-					flexDirection: 'row',
-					alignItems: 'center',
-					gap: '20px',
-					flexWrap: 'wrap',
-					width: '90vw',
-					maxWidth: '1000px',
-					justifyContent: 'center',
-				}}
-				>{props.results.results.map((level) => <LevelPreview level={level} key={level.id} />)}
-				</div>
-			</div>
+			<LevelSearchResultView results={props.results} />
 		</AppFrame>
 	);
 }

@@ -35,7 +35,8 @@ function Header() {
 					</div>
 				</Link>
 				<Navbar />
-				<NotificationWidget />
+				{/* FIXME: Weird resize behavior for notif widget */}
+				{/* <NotificationWidget /> */}
 				<UserMenu />
 				<HamburgerMenuButton
 					isMenuOpen={isHamburgerMenuOpen}

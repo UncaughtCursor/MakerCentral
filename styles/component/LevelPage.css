@@ -1,30 +1,22 @@
 @import "~react-image-gallery/styles/css/image-gallery.css";
 
-.level-page-img-container > p {
-	margin: 4px auto;
-	text-align: left;
-}
-
-.level-page-img-container {
-	max-width: 400px;
-	margin: 0 auto;
-}
-
-.level-page-img-container > img {
+.level-page-img {
 	aspect-ratio: 16 / 9;
-	width: 100%;
-	object-fit: fill !important;
+	height: 50px;
 }
 
-.level-page-top {
+.level-page-header {
 	display: flex;
-	gap: 20px;
 	margin-top: 20px;
 	flex-wrap: wrap;
-}
-
-.level-page-title {
-	margin: 5px;
+	background-color: var(--bg-dark);
+	padding: 20px;
+	border-radius: 20px;
+	position: relative;
+	white-space: pre-wrap;
+	align-items: center;
+	gap: 20px;
+	padding-right: 55px;
 }
 
 .level-page-info-container {
@@ -33,6 +25,7 @@
 	border-radius: 20px;
 	position: relative;
 	white-space: pre-wrap;
+	flex-grow: 1;
 }
 
 .level-page-info-container > p, .level-page-info-container > h4 {
@@ -40,12 +33,16 @@
 	margin: 5px;
 }
 
+.level-page-title {
+	margin: 0;
+	margin-bottom: 5px;
+	text-align: left;
+}
+
 .level-code {
 	font-family: 'Courier New', Courier, monospace;
 	width: max-content;
-	padding: 5px 10px;
-	margin: 0 auto;
-	margin-top: -8px;
+	margin: 0;
 }
 
 .level-page-content {
@@ -77,4 +74,10 @@
 .info-table > tr > td:last-child {
 	border-top-right-radius: 12px;
 	border-bottom-right-radius: 12px;
+}
+
+.level-page-info-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
 }
