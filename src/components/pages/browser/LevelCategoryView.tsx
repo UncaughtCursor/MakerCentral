@@ -50,6 +50,14 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 				}}
 			>
 				{levels.map((level) => <LevelPreview level={level} key={level.id} />)}
+				{levels.length === 0 ? (
+					<span style={{
+						margin: '0 auto',
+						fontWeight: 'bold',
+					}}
+					>No levels here.
+					</span>
+				) : null}
 			</div>
 		</InfiniteScroll>
 	);

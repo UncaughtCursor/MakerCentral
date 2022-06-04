@@ -129,7 +129,7 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Clear Rate</td>
-								<td>{(level.clearRate * 100).toFixed(3)}%</td>
+								<td>{(level.clearRate * 100).toFixed(3)}%{level.clearRate === 0 ? ' (Uncleared)' : ''}</td>
 							</tr>
 						</table>
 					</div>

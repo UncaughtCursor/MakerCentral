@@ -20,6 +20,14 @@ function LevelSearchResultView(props: {
 		}}
 		>
 			<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
+			{props.results.results.length === 0 ? (
+				<span style={{
+					margin: '0 auto',
+					fontWeight: 'bold',
+				}}
+				>No levels here.
+				</span>
+			) : null}
 			<div className="level-results">
 				{props.results.results.slice(0, numResultsPerPage)
 					.map((level) => <LevelPreview level={level} key={level.id} />)}

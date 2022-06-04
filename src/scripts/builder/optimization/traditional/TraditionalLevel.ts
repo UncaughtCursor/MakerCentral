@@ -164,7 +164,7 @@ export default class TraditionalLevel {
 						if (columnCounts[x] === undefined) {
 							columnCounts[x] = { entities: 0, powerups: 0 };
 						}
-						if (MM2Instruments[ins].isPowerup) {
+						if (MM2Instruments[ins - 2].isPowerup) {
 							this.powerupCount++;
 							columnCounts[x].powerups++;
 						} else {

@@ -65,7 +65,7 @@ export default class NoteStructure extends Structure {
 		this.isNote = true;
 		this.entityType = entityType;
 		this.buildRules = {}; // MM2Instruments[entityType].buildRules;
-		Object.assign(this.buildRules, stdBuildRules, MM2Instruments[entityType].buildRules);
+		Object.assign(this.buildRules, stdBuildRules, MM2Instruments[entityType - 2].buildRules);
 		this.mergedStructures = [];
 		this.conflictingStructures = [];
 		this.setup = buildSetups[0];
