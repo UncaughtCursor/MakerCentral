@@ -69,10 +69,10 @@ function UserMenu() {
 							style={{ color: 'gray', fontSize: '12px', margin: '4px' }}
 						>{!signedIn ? 'Logged out' : `Logged in as ${userInfo?.name}`}
 						</p>
-						<UserMenuItem text="Your Music Projects" to="/projects" />
-						<UserMenuItem text="Your Levels" to="/your-levels" />
 						<UserMenuItem text="Your Bookmarks" to="/bookmarks" />
-						<UserMenuItem text="Settings" to="/settings" />
+						<UserMenuItem text="Your Music Projects" to="/projects" />
+						{/* <UserMenuItem text="Your Levels" to="/your-levels" /> */}
+						{/* <UserMenuItem text="Settings" to="/settings" /> */}
 						<hr />
 						<UserMenuItem text="Log Out" to="/" do={logout} />
 					</UserMenuDropdown>

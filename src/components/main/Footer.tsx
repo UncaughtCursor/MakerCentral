@@ -10,7 +10,7 @@ function Footer() {
 	return (
 		<div className="footer">
 			<p>Created by UncaughtCursor</p>
-			<p><a href={patreonLink}>Patreon</a></p>
+			{/* <p><a href={patreonLink}>Patreon</a></p> */}
 			<p><a href={twitterLink}>Twitter</a></p>
 			<p><a href={discordLink}>Discord</a></p>
 			<p><a href={termsOfServiceUrl}>Terms of Service</a></p>

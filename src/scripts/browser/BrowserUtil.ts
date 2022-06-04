@@ -97,7 +97,7 @@ export async function queryLevels(
 	queryConstraints: QueryConstraint[],
 	numLevels: number,
 	lastLevelId: string | null = null,
-	collectionPath: string = 'levels',
+	collectionPath: string = 'game-levels',
 	isLink = false,
 ): Promise<MakerCentralLevel[]> {
 	const levelsRef = collection(db, collectionPath);
@@ -121,18 +121,10 @@ export async function queryLevels(
 		async (levelDoc): Promise<MakerCentralLevel | null> => {
 			const mainDocData = levelDoc.data();
 
-			const makerDoc = await getDoc(doc(db, `users/${mainDocData.makerUid !== '' ? mainDocData.makerUid : 'deleted'}`));
-			const makerName: string = makerDoc.exists()
-				? makerDoc.data().name as string : 'Deleted User';
-
 			if (!isLink) {
-				return {
-					...mainDocData,
-					id: levelDoc.id,
-					makerName,
-				} as MakerCentralLevel;
+				return mainDocData as MakerCentralLevel;
 			}
-			const levelDataDoc = await getDoc(doc(db, `levels/${levelDoc.id}`));
+			const levelDataDoc = await getDoc(doc(db, `game-levels/${levelDoc.id}`));
 			if (!levelDataDoc.exists()) {
 			// Delete dead links
 				await deleteDoc(levelDoc.ref);

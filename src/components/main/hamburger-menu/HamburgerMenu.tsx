@@ -39,10 +39,10 @@ function HamburgerMenu(props: {
 			>{user === null ? 'Logged out' : `Logged in as ${user.displayName}`}
 			</p>
 			<div style={{ display: user !== null ? 'flex' : 'none', flexDirection: 'column' }}>
-				<Navlink text="Your Music Projects" to="/projects" onClick={requestMenuClose} />
-				<Navlink text="Your Levels" to="/your-levels" onClick={requestMenuClose} />
 				<Navlink text="Your Bookmarks" to="/bookmarks" onClick={requestMenuClose} />
-				<Navlink text="Settings" to="/settings" onClick={requestMenuClose} />
+				<Navlink text="Your Music Projects" to="/projects" onClick={requestMenuClose} />
+				{/* <Navlink text="Your Levels" to="/your-levels" onClick={requestMenuClose} /> */}
+				{/* <Navlink text="Settings" to="/settings" onClick={requestMenuClose} /> */}
 				<div style={{ padding: '10px' }}>
 					<TriggerButton
 						text="Log Out"

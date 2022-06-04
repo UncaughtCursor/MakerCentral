@@ -43,13 +43,11 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 			loadMore={fetchLevels}
 			hasMore={!scrollEnded}
 		>
-			<div style={{
-				minHeight: '100px',
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				gap: '20px',
-			}}
+			<div
+				className="level-results"
+				style={{
+					margin: '0 auto',
+				}}
 			>
 				{levels.map((level) => <LevelPreview level={level} key={level.id} />)}
 			</div>

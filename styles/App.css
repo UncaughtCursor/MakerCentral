@@ -27,7 +27,7 @@
 
 .web-content-container {
 	position: relative;
-	min-height: calc(100vh - 2 * var(--header-height));
+	min-height: calc(100vh - 2 * var(--header-height) - 20px);
 	padding-bottom: calc(var(--header-height) + 20px);
 	padding-top: var(--header-height);
 }

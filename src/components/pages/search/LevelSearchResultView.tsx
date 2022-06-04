@@ -13,7 +13,6 @@ function LevelSearchResultView(props: {
 }) {
 	return (
 		<div style={{
-			minHeight: '100px',
 			display: 'flex',
 			flexDirection: 'column',
 			alignItems: 'center',
@@ -21,18 +20,8 @@ function LevelSearchResultView(props: {
 		}}
 		>
 			<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
-			<div style={{
-				minHeight: '100px',
-				display: 'flex',
-				flexDirection: 'row',
-				alignItems: 'center',
-				gap: '20px',
-				flexWrap: 'wrap',
-				width: '90vw',
-				maxWidth: '1000px',
-				justifyContent: 'center',
-			}}
-			>{props.results.results.slice(0, numResultsPerPage)
+			<div className="level-results">
+				{props.results.results.slice(0, numResultsPerPage)
 					.map((level) => <LevelPreview level={level} key={level.id} />)}
 			</div>
 			<LevelSearchPageControl curSearchResults={props.results} />

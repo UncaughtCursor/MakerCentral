@@ -105,7 +105,7 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Maker</td>
-								<td><Link href={`/users/${level.makerId}`}>{level.makerName}</Link></td>
+								<td>{level.makerName}</td>
 							</tr>
 							<tr>
 								<td>Upload Date</td>
