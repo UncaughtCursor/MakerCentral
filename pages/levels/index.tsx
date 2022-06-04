@@ -36,7 +36,7 @@ function LevelBrowser() {
 						marginTop: '4px',
 						fontSize: '20px',
 					}}
-					>Search
+					>Search Preview
 					</h4>
 					<br />
 					<h4 style={{

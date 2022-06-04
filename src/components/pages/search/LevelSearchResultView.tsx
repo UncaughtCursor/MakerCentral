@@ -1,6 +1,7 @@
-import { LevelSearchResults } from '@scripts/browser/MeilisearchUtil';
+import { LevelSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
+import LevelSearchPageControl from './LevelSearchPageControl';
 
 /**
  * Displays level search results.
@@ -31,8 +32,10 @@ function LevelSearchResultView(props: {
 				maxWidth: '1000px',
 				justifyContent: 'center',
 			}}
-			>{props.results.results.map((level) => <LevelPreview level={level} key={level.id} />)}
+			>{props.results.results.slice(0, numResultsPerPage)
+					.map((level) => <LevelPreview level={level} key={level.id} />)}
 			</div>
+			<LevelSearchPageControl curSearchResults={props.results} />
 		</div>
 	);
 }

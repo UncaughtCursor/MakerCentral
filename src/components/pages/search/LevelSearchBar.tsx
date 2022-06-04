@@ -34,6 +34,7 @@ export interface SearchFilterSettings {
 	theme: SMM2Theme | 'Any';
 	gameStyle: SMM2GameStyle | 'Any';
 	tag: MakerCentralTag | 'Any';
+	page: number;
 }
 
 interface SearchBarProps {
@@ -49,6 +50,7 @@ export const defaultFilterSettings: SearchFilterSettings = {
 	theme: 'Any',
 	gameStyle: 'Any',
 	tag: 'Any',
+	page: 0,
 };
 
 /**

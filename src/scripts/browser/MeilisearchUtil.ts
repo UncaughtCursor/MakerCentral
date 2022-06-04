@@ -31,10 +31,7 @@ export interface LevelSearchResults {
 
 const client = new MeiliSearch(MeiliCredentials);
 
-const sortParamNames = [
-	'sortType',
-	'sortOrder',
-];
+export const numResultsPerPage = 10;
 
 const filterParamNames = [
 	'difficulty',
@@ -72,6 +69,8 @@ export async function searchLevels(searchData: LevelSearchParams): Promise<Level
 	const res = await client.index('levels').search(searchData.q, {
 		filter,
 		sort,
+		offset: searchData.page * numResultsPerPage,
+		limit: numResultsPerPage + 1,
 	});
 	return {
 		results: res.hits as MakerCentralLevel[],
