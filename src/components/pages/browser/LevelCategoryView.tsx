@@ -4,6 +4,7 @@ import {
 import { where } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
+import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { LevelSort } from './LevelSortPicker';
 import LevelPreview from './LevelPreview';
 
@@ -49,7 +50,13 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 					margin: '0 auto',
 				}}
 			>
-				{levels.map((level) => <LevelPreview level={level} key={level.id} />)}
+				{levels.map(async (level) => (
+					<LevelPreview
+						level={level}
+						thumbnailUrl={await getLevelThumbnailUrl(level.id)}
+						key={level.id}
+					/>
+				))}
 				{levels.length === 0 ? (
 					<span style={{
 						margin: '0 auto',

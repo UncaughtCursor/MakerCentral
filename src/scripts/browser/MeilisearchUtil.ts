@@ -87,6 +87,8 @@ export async function searchLevels(searchData: LevelSearchParams): Promise<Level
  * @returns A promise that resolves with a search results object.
  */
 export async function getSuggestions(text: string): Promise<string[]> {
-	const res = await client.index('level-suggestions').search(text);
-	return res.hits.slice(0, 6).map((suggestion) => suggestion.word);
+	const res = await client.index('level-suggestions').search(text, {
+		limit: 6,
+	});
+	return res.hits.map((suggestion) => suggestion.word);
 }
