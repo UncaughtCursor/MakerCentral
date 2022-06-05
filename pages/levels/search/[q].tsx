@@ -64,6 +64,7 @@ export default SearchResultsPage;
  */
 export async function getServerSideProps(context: { query: any }) {
 	const queryData = { ...defaultFilterSettings, ...context.query } as LevelSearchParams;
+	if (queryData.q === '_') queryData.q = '';
 	const results = await searchLevels(queryData);
 
 	const thumbnailUrls = await Promise.all(results.results.map(
