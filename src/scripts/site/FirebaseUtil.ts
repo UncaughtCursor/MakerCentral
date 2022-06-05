@@ -297,3 +297,17 @@ async function uploadLocalDocs(docs: LocalDocumentData[], collectionPath: string
 		console.log(`+ Uploaded local doc ${collectionPath}/${localDoc.id}`);
 	}
 }
+
+const levelThumbnailDir = 'gs://music-level-studio-dev.appspot.com/game-level-thumb/small';
+const levelThumbnailSuffix = '_64x36';
+
+/**
+ * Gets the URL of a thumbnail of a level.
+ * @param id The level's course ID.
+ * @returns A Promise that contains the URL.
+ */
+export async function getLevelThumbnailUrl(id: string): Promise<string> {
+	const thumbnailStorageUrl = `${levelThumbnailDir}/${id}${levelThumbnailSuffix}.png`;
+	const thumbnailUrl = await getDownloadURL(ref(storage, thumbnailStorageUrl));
+	return thumbnailUrl;
+}

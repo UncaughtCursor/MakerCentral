@@ -7,9 +7,11 @@ import LevelSearchPageControl from './LevelSearchPageControl';
  * Displays level search results.
  * @param props The props:
  * - results: The results of the search.
+ * - thumbnailUrls: An object matching level IDs with thumbnail URLs.
  */
 function LevelSearchResultView(props: {
 	results: LevelSearchResults,
+	thumbnailUrls: {[key: string]: string},
 }) {
 	return (
 		<div style={{
@@ -30,7 +32,13 @@ function LevelSearchResultView(props: {
 			) : null}
 			<div className="level-results">
 				{props.results.results.slice(0, numResultsPerPage)
-					.map((level) => <LevelPreview level={level} key={level.id} />)}
+					.map((level) => (
+						<LevelPreview
+							level={level}
+							thumbnailUrl={props.thumbnailUrls[level.id]}
+							key={level.id}
+						/>
+					))}
 			</div>
 			<LevelSearchPageControl curSearchResults={props.results} />
 		</div>

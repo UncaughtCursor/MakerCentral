@@ -1,10 +1,10 @@
 import AppFrame from '@components/AppFrame';
-import LevelPreview from '@components/pages/browser/LevelPreview';
 import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
 import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 
 export interface LevelSearchParams extends SearchFilterSettings {
 	q: string;
@@ -14,9 +14,11 @@ export interface LevelSearchParams extends SearchFilterSettings {
  * The search page.
  * @param props The server-side props.
  * * results: The search results.
+ * * thumbnailUrls: An object matching level IDs with thumbnail URLs.
  */
 function SearchResultsPage(props: {
-	results: LevelSearchResults
+	results: LevelSearchResults,
+	thumbnailUrls: {[key: string]: string},
 }) {
 	const history = useRouter();
 	const initSettings = (() => {
@@ -45,7 +47,10 @@ function SearchResultsPage(props: {
 					}}
 				/>
 			</div>
-			<LevelSearchResultView results={props.results} />
+			<LevelSearchResultView
+				results={props.results}
+				thumbnailUrls={props.thumbnailUrls}
+			/>
 		</AppFrame>
 	);
 }
@@ -59,9 +64,22 @@ export default SearchResultsPage;
  */
 export async function getServerSideProps(context: { query: any }) {
 	const queryData = { ...defaultFilterSettings, ...context.query } as LevelSearchParams;
+	const results = await searchLevels(queryData);
+
+	const thumbnailUrls = await Promise.all(results.results.map(
+		async (level) => ({
+			id: level.id, url: await getLevelThumbnailUrl(level.id),
+		}),
+	));
+	const thumbnailUrlObj: {[key: string]: string} = {};
+	thumbnailUrls.forEach((urlEntry) => {
+		thumbnailUrlObj[urlEntry.id] = urlEntry.url;
+	});
+
 	return {
 		props: {
-			results: await searchLevels(queryData),
+			results,
+			thumbnailUrls: thumbnailUrlObj,
 		},
 	};
 }
