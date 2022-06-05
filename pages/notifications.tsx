@@ -6,7 +6,7 @@ import {
 } from 'firebase/firestore/lite';
 import { db } from '@scripts/site/FirebaseUtil';
 import useUserInfo from '@components/hooks/useUserInfo';
-import NotificationListing from './levels/notifications/NotificationListing';
+import NotificationListing from '../src/components/pages/controls/notifications/NotificationListing';
 
 /**
  * The page that displays the user's notifications.
