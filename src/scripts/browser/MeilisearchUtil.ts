@@ -1,5 +1,5 @@
 import { MeiliSearch } from 'meilisearch';
-import MeiliCredentials from '@data/private/meilisearch-credentials.json';
+import MeiliCredentials from '@data/meilisearch-credentials.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { MakerCentralLevel } from './BrowserUtil';
