@@ -14,6 +14,7 @@ import {
 } from 'firebase/storage';
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
+import { isProd } from 'pages/_app';
 import TestData from '../../data/TestData.json';
 import { initUser } from './UserDataScripts';
 
@@ -91,8 +92,8 @@ export const functions = getFunctions(app);
 export const storage = getStorage(app);
 let analytics: Analytics | null = null;
 
-// FIXME: SET TO TRUE IN PROD
-export const usingProdServer = true;
+const overrideDevServer = true;
+export const usingProdServer = isProd || overrideDevServer;
 
 if (!usingProdServer) {
 	try {
