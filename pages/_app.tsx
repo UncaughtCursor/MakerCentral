@@ -64,13 +64,14 @@ export const isProd = true;
  */
 function MyApp({ Component, pageProps }: AppProps) {
 	useEffect(() => {
-		if (isProd) {
+		// FIXME: Deal with old cache and turn service worker back on
+		/* if (isProd) {
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
 					navigator.serviceWorker.register('sw.js', { scope: '/' });
 				});
 			}
-		}
+		} */
 	}, []);
 
 	return <Component {...pageProps} />;
