@@ -57,20 +57,21 @@ import { useEffect } from 'react';
 TimeAgo.addDefaultLocale(en);
 
 // FIXME: SET TO TRUE IN PROD
-export const isProd = false;
+export const isProd = true;
 
 /**
  * The app.
  */
 function MyApp({ Component, pageProps }: AppProps) {
 	useEffect(() => {
-		if (isProd) {
+		// FIXME: Deal with old cache and turn service worker back on
+		/* if (isProd) {
 			if ('serviceWorker' in navigator) {
 				window.addEventListener('load', () => {
 					navigator.serviceWorker.register('sw.js', { scope: '/' });
 				});
 			}
-		}
+		} */
 	}, []);
 
 	return <Component {...pageProps} />;
