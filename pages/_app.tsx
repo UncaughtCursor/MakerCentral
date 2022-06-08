@@ -57,7 +57,7 @@ import { useEffect } from 'react';
 TimeAgo.addDefaultLocale(en);
 
 // FIXME: SET TO TRUE IN PROD
-export const isProd = false;
+export const isProd = true;
 
 /**
  * The app.
