@@ -11,8 +11,8 @@ function LevelBrowser() {
 
 	return (
 		<AppFrame
-			title="Levels - MakerCentral"
-			description="Browse and play levels over 26 million Mario Maker 2 levels!"
+			title="Browse Levels - MakerCentral"
+			description="Search, browse, and bookmark over 800,000 popular Mario Maker 2 levels!"
 		>
 			<div style={{
 				display: 'flex',
