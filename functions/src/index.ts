@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import next from 'next';
 
 // Exports from other source files
 export * from './levels';
@@ -11,22 +10,6 @@ export * from './rewards';
 
 admin.initializeApp();
 
-const isDev = process.env.NODE_ENV !== 'production';
-
-const server = next({
-	dev: isDev,
-	conf: { distDir: '.next' },
-});
-
-const nextjsHandle = server.getRequestHandler();
-export const nextServer = functions.runWith({
-	// minInstances: 1,
-	memory: '1GB',
-}).https.onRequest(
-	(request, response) => server.prepare().then(() => nextjsHandle(request, response)).catch((e) => {
-		console.error(e);
-	}),
-);
 export const initUser = functions.https.onCall(async (_data, context) => {
 	if (context.auth === undefined) return { success: false, msg: 'User is not logged in.' };
 	const userDocRef = admin.firestore().doc(`users/${context.auth.uid}`);
