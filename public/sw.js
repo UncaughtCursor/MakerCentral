@@ -6,7 +6,7 @@ function fetchThenCache(request) {
 	return fetch(request).then((res) => {
 		// cache successful requests
 		if (res.ok) {
-			return caches.open('music-level-studio')
+			return caches.open('makercentral')
 				.then((cache) => cache.add(request))
 			// ignore errors here, the request was still successful
 				.catch(() => {})

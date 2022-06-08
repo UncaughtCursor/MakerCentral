@@ -47,25 +47,31 @@ import '../styles/component/Comments.css';
 import '../styles/component/Notifications.css';
 import '../styles/component/SearchBar.css';
 import '../styles/component/LevelListings.css';
+import '../styles/component/LandingPage.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en.json';
+import { useEffect } from 'react';
 
 TimeAgo.addDefaultLocale(en);
+
+// FIXME: SET TO TRUE IN PROD
+export const isProd = true;
 
 /**
  * The app.
  */
 function MyApp({ Component, pageProps }: AppProps) {
-	// FIXME: UNCOMMENT IN PROD
-	/* useEffect(() => {
-		if ('serviceWorker' in navigator) {
-			window.addEventListener('load', () => {
-				navigator.serviceWorker.register('sw.js', { scope: '/' });
-			});
+	useEffect(() => {
+		if (isProd) {
+			if ('serviceWorker' in navigator) {
+				window.addEventListener('load', () => {
+					navigator.serviceWorker.register('sw.js', { scope: '/' });
+				});
+			}
 		}
-	}, []); */
+	}, []);
 
 	return <Component {...pageProps} />;
 }
