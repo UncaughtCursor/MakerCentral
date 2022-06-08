@@ -1,5 +1,5 @@
 import { MeiliSearch } from 'meilisearch';
-import MeiliCredentials from '@data/meilisearch-credentials.json';
+import MeilisearchConfig from '@data/meilisearch-config.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { MakerCentralLevel } from './BrowserUtil';
@@ -29,7 +29,7 @@ export interface LevelSearchResults {
 	searchParams: LevelSearchParams;
 }
 
-const client = new MeiliSearch(MeiliCredentials);
+const client = new MeiliSearch(MeilisearchConfig);
 
 export const numResultsPerPage = 10;
 
