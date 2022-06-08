@@ -36,7 +36,7 @@ function PageHead(props: {
 
 PageHead.defaultProps = {
 	title: 'MakerCentral',
-	description: 'Easily generate traditional and looping music contraptions in Mario Maker 2!',
+	description: 'Coming Soon: Text search, browse, and bookmark almost every Mario Maker 2 level ever uploaded. For the first time in history.',
 	imageUrl: '', // TODO: Banner image
 };
 
