@@ -9,7 +9,7 @@ import {
 	MCLevelDocData, MCLevelPreprocessData, MCRawLevelDoc, MCUserDocData,
 } from './MCTypes';
 import TextDirStream from './TextDirStream';
-import { loadJSON, printList } from './Util';
+import { loadJSON, printList } from './util/Util';
 
 export const statsDir = 'out/stats';
 

@@ -7,7 +7,7 @@
     "makercentral": "./lib/index.js"
   },
   "scripts": {
-    "start": "node --max_old_space_size=8192 -r ts-node/register ./src/index.ts",
+    "start": "node --max_old_space_size=8192 -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
     "create": "npm run build && npm run test",
     "build": "tsc -p .",
     "local": "sudo npm i -g && makercentral",
@@ -44,6 +44,7 @@
     "sitemap": "^7.1.1",
     "sqlite3": "^5.0.8",
     "threads": "^1.7.0",
+    "tsconfig-paths": "^4.0.0",
     "twitter-url-direct": "^1.0.1",
     "yargs": "^17.4.0",
     "ytdl-core": "^4.11.0"

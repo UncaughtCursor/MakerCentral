@@ -8,13 +8,17 @@
 	  "strict": true,
 	  "types": ["node"],
 	  "esModuleInterop": true,
-	  "resolveJsonModule": true
+	  "resolveJsonModule": true,
+	  "baseUrl": "..",
+		"paths": {
+			"@data/*": ["data/*"],
+		}
 	},
-	"include": ["src"],
+	"include": ["src", "../data"],
 	"ts-node": {
 		"files": true
 	},
 	"files": [
 		"src/globals.d.ts"
-	]
+	],
 }

@@ -1,7 +1,7 @@
 import { SitemapStream, streamToPromise } from 'sitemap';
 import { Readable } from 'stream';
 import * as fs from 'fs';
-import { printList } from './Util';
+import { printList } from './util/Util';
 import { db } from './FirebaseUtil';
 
 const domain = 'https://musiclevelstudio.com';

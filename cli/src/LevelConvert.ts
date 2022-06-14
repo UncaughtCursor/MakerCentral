@@ -15,7 +15,7 @@ import {
 import { generateThumbnail } from './level-reader/GenerateThumbnail';
 import { Theme } from './level-reader/LevelDataTypes';
 import { loadPreLevels, loadUsers } from './LevelStats';
-import { saveJSON } from './Util';
+import { saveJSON } from './util/Util';
 import SpeedTester from './util/SpeedTester';
 import DBQueryStream from './db/DBQueryStream';
 import {

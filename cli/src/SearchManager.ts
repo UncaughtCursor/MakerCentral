@@ -2,8 +2,8 @@
 import MeiliSearch from 'meilisearch';
 import fs from 'fs';
 import chunk from 'chunk';
-import MeiliCredentials from './private/meilisearch-credentials.json';
-import { loadJSON, sleep } from './Util';
+import MeiliCredentials from '@data/private/meilisearch-credentials.json';
+import { loadJSON, sleep } from './util/Util';
 import { loadRawLevelDocs } from './LevelStats';
 import { MCLevelDocData, MCRawLevelDoc } from './MCTypes';
 

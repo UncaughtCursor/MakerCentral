@@ -22,6 +22,7 @@
 /firebase-export*
 /emulator-data
 /src/data/private
+/data/private
 
 # debug
 npm-debug.log*

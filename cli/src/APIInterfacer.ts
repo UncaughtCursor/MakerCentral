@@ -5,7 +5,7 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 import { APIComment, APILevel } from './APITypes';
-import { saveJSON } from './Util';
+import { saveJSON } from './util/Util';
 
 /**
  * Downloads level course world data from the endless level queue,

@@ -4,7 +4,7 @@ import chunk from 'chunk';
 import { db, storage } from './FirebaseUtil';
 import { loadRawLevelDocs } from './LevelStats';
 import { generalOutDir, levelOutDir, thumbOutDir } from './LevelConvert';
-import { saveJSON } from './Util';
+import { saveJSON } from './util/Util';
 import TextDirStream from './TextDirStream';
 import { MCRawLevelDoc } from './MCTypes';
 import SpeedTester from './util/SpeedTester';
