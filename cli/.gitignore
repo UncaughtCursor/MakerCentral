@@ -1,0 +1,11 @@
+src/private/
+
+node_modules/
+
+lib/
+
+out/
+
+tmp/
+
+.VSCodeCounter/

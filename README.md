@@ -1,3 +1,5 @@
+This is the MakerCentral repo, featuring all frontend and backend code, as well as a command line utility.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
