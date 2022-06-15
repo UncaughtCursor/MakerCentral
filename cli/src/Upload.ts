@@ -3,10 +3,10 @@ import fs from 'fs';
 import chunk from 'chunk';
 import { db, storage } from './FirebaseUtil';
 import { loadRawLevelDocs } from './LevelStats';
-import { generalOutDir, levelOutDir, thumbOutDir } from './LevelConvert';
+import { generalOutDir, levelOutDir, thumbOutDir, userOutDir } from './LevelConvert';
 import { saveJSON } from './util/Util';
 import TextDirStream from './TextDirStream';
-import { MCRawLevelDoc } from '../../data/types/MCBrowserTypes';
+import { MCRawLevelDoc, MCRawUserDoc } from '../../data/types/MCBrowserTypes';
 import SpeedTester from './util/SpeedTester';
 
 const levelCollectionPath = 'levels-raw';
@@ -63,6 +63,59 @@ export async function uploadLevels() {
 			}
 		})().then(() => {
 			levelTextStream.resume();
+		});
+	});
+}
+
+/**
+ * Uploads completed users to Firebase.
+ */
+ export async function uploadUsers() {
+	const usersPerChunk = 1000;
+	const spdTest = new SpeedTester(usersPerChunk, (spd, _, total) => {
+		console.log(`${total} users done; ${spd} per second`);
+	});
+	const userTextStream = new TextDirStream(userOutDir);
+	userTextStream.on('data', (text: string) => {
+		const users = JSON.parse(text) as MCRawUserDoc[];
+		console.log('Chunk received.');
+
+		userTextStream.pause();
+
+		(async () => {
+			const userChunks = chunk(users, usersPerChunk);
+			for (let i = 0; i < userChunks.length; i++) {
+				const userChunk = userChunks[i];
+
+				const promises: Promise<void>[] = [];
+
+				for (let j = 0; j < userChunk.length; j++) {
+					const user = userChunk[j];
+					const docLoc = `${levelCollectionPath}/${user.code}`;
+
+					const upload = async () => {
+						let success = false;
+						while (!success) {
+							try {
+								await db.doc(docLoc).set(user);
+								success = true;
+							} catch (e) {
+								console.error(e);
+								success = false;
+							}
+						}
+					};
+					const promise = upload();
+					promise.then(() => {
+						spdTest.tick();
+					});
+					promises.push(promise);
+				}
+
+				await Promise.all(promises);
+			}
+		})().then(() => {
+			userTextStream.resume();
 		});
 	});
 }

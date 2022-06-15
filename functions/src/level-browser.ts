@@ -29,7 +29,7 @@ export const getLevel = functions.https.onCall(async (data: {
 
 	return {
 		id: level.course_id,
-		uploadTime: level.uploaded,
+		uploadTime: level.uploaded * 1000,
 		name: level.name,
 		addedTime: -1,
 		makerName: level.uploader.name,

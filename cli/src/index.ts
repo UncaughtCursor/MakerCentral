@@ -7,13 +7,13 @@ import fs from 'fs';
 import yargs, { Argv } from 'yargs';
 import { createZCDLevelFileFromBCD, parseLevelDataFromCode, parseLevelFromZCDFile } from './level-reader/LevelReader';
 import {
-	compileLevels, compileUsers, completeLevels, streamTableToFile,
+	compileLevels, compileUsers, streamTableToFile,
 } from './LevelConvert';
 import { runLevelStats } from './LevelStats';
 import { createSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
-import { uploadLevels, uploadThumbnails } from './Upload';
+import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
 import CSVObjectStream from './csv/CSVObjectStream';
 import SpeedTester from './util/SpeedTester';
 
@@ -76,9 +76,6 @@ yargs.usage('$0 command')
 	.command('get-users', 'Extract user data', async () => {
 		await compileUsers();
 	})
-	.command('complete-levels', 'Create complete level data from user data', async () => {
-		await completeLevels();
-	})
 	.command('run-stats', 'Run statistics on the compiled level data', async () => {
 		await runLevelStats();
 	})
@@ -93,6 +90,9 @@ yargs.usage('$0 command')
 	})
 	.command('upload-levels', 'Upload completed levels to Firebase', async () => {
 		await uploadLevels();
+	})
+	.command('upload-users', 'Upload users to Firebase', async () => {
+		await uploadUsers();
 	})
 	.command('upload-thumbnails', 'Upload extracted thumbnails to Firebase', async () => {
 		await uploadThumbnails();
@@ -112,20 +112,13 @@ yargs.usage('$0 command')
 		const spd = new SpeedTester(100000, (speed, _, total) => {
 			console.log(`${total} levels processed; ${speed} per second`);
 		});
-		let morphaCount = 0;
-		const csvStream = new CSVObjectStream('E:/processed/level-meta-raw.csv', levelSchema);
+		const csvStream = new CSVObjectStream('E:/processed/user-raw.csv', levelSchema);
 		csvStream.on('data', (data) => {
 			const row = JSON.parse(data) as {
 				name: string,
 				description: string
 			};
-			if (row.name.includes('morpha') || row.description.includes('morpha')) {
-				morphaCount++;
-				console.log(`Found another morpha! That's ${morphaCount} morphas so far.`);
-			}
 			spd.tick();
-			// console.log('CSV stream returned');
-			// console.log(JSON.parse(data));
 		});
 	})
 	.demand(1, 'must provide a valid command')

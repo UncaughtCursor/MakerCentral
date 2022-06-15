@@ -4,13 +4,14 @@ import { NdArray } from 'ndarray';
 import savePixels from 'save-pixels';
 import { getEndlessLevels } from './APIInterfacer';
 import {
+	APIDifficulties,
 	APIDifficulty,
-	APIGameStyle, APILevel, APITag, APITheme,
+	APIGameStyle, APIGameStyles, APILevel, APITag, APITags, APITheme, APIThemes,
 } from '../../data/APITypes';
 import { forEachLevel, forEachUser } from './db/DBInterfacer';
 import UnsafeDBQueryStream from './db/UnsafeDBQueryStream';
 import {
-	DBLevel, DBDifficulty, DBGameStyle, DBTag, DBUser,
+	DBLevel, DBDifficulty, DBGameStyle, DBTag, DBUser, DBTheme,
 } from '../../data/types/DBTypes';
 import { generateThumbnail } from './level-reader/GenerateThumbnail';
 import { Theme } from '../../data/LevelDataTypes';
@@ -19,11 +20,13 @@ import { saveJSON } from './util/Util';
 import SpeedTester from './util/SpeedTester';
 import DBQueryStream from './db/DBQueryStream';
 import {
-	MCDifficulty, MCLevelDocData, MCLevelPreprocessData, MCRawLevelDoc, MCRawMedal, MCRawUserPreview, MCTag, MCUserDocData,
+	LevelAggregationInfo,
+	MCDifficulties,
+	MCDifficulty, MCGameStyles, MCLevelDocData, MCLevelPreprocessData, MCRawLevelAggregation, MCRawLevelDoc, MCRawMedal, MCRawSuperWorld, MCRawUserDoc, MCRawUserPreview, MCRawWorldLevelPreview, MCTag, MCThemes, MCUserDocData,
 } from '../../data/types/MCBrowserTypes';
 import CSVObjectStream from './csv/CSVObjectStream';
 import {
-	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema,
+	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow,
 } from './csv/CSVTypes';
 
 export const generalOutDir = 'E:/processed';
@@ -36,6 +39,8 @@ const CSVDirPath = 'E:/processed/csv';
 const levelCSVPath = `${CSVDirPath}/level-meta-raw.csv`;
 const userCSVPath = `${CSVDirPath}/user-raw.csv`;
 const badgeCSVPath = `${CSVDirPath}/user_badges-raw.csv`;
+const worldCSVPath = `${CSVDirPath}/world-raw.csv`;
+const worldLevelsCSVPath = `${CSVDirPath}/world_levels-raw.csv`;
 
 export interface PixelQueueEntry {
 	path: string;
@@ -153,6 +158,108 @@ function loadUserPreviewMap(
 }
 
 /**
+ * Loads a map of pids to super world preview objects.
+ */
+ function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
+	return new Promise(async (resolve) => {
+		const worldLevelsMap = await loadWorldLevelsMap();
+		const worldMap = new Map<string, MCRawSuperWorld>();
+		const csvStream = new CSVObjectStream(worldCSVPath, worldCSVSchema);
+
+		csvStream.on('data', (row: string) => {
+			if (worldMap.size % 10000 === 0) console.log(worldMap.size);
+
+			const worldData = JSON.parse(row) as WorldCSVRow;
+
+			const worldLevelInfo = worldLevelsMap.get(worldData.pid)!;
+
+			worldMap.set(worldData.pid, {
+				world_id: worldData.world_id,
+				worlds: worldData.worlds,
+				levels: worldData.levels,
+				planet_type: worldData.planet_type,
+				created: worldData.created,
+				aggregated_properties: aggregateLevelInfo(worldLevelInfo),
+				level_info: worldLevelInfo.map(info => {
+					return {
+						name: info.name,
+						course_id: info.code,
+						plays: info.plays,
+						likes: info.likes,
+					};
+				}),
+			});
+		});
+		csvStream.on('end', () => {
+			console.log('Stream ended!!');
+			resolve(worldMap);
+		});
+	});
+}
+
+/**
+ * Loads a map of super world ids to super world level ids.
+ */
+ function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
+	return new Promise(async (resolve) => {
+		const levelRankMap = await loadRankLevelMap();
+		const worldLevelsMap = new Map<string, LevelAggregationInfo[]>();
+		const csvStream = new CSVObjectStream(worldCSVPath, worldCSVSchema);
+
+		csvStream.on('data', (row: string) => {
+			if (worldLevelsMap.size % 10000 === 0) console.log(worldLevelsMap.size);
+			const worldLevelData = JSON.parse(row) as WorldLevelCSVRow;
+			const levelInfo = levelRankMap.get(worldLevelData.data_id)!;
+
+			if (!worldLevelsMap.has(worldLevelData.pid)) {
+				worldLevelsMap.set(worldLevelData.pid, [levelInfo]);
+			} else {
+				worldLevelsMap.get(worldLevelData.pid)!.push(levelInfo);
+			}
+			
+		});
+		csvStream.on('end', () => {
+			console.log('Stream ended!!');
+
+			resolve(worldLevelsMap);
+		});
+	});
+}
+
+/**
+ * Loads a map of pids to a level's likes and code.
+ */
+ function loadRankLevelMap(): Promise<Map<number, LevelAggregationInfo>> {
+	return new Promise(async (resolve) => {
+		const levelRankMap = new Map<number, LevelAggregationInfo>();
+		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
+
+		csvStream.on('data', (row: string) => {
+			if (levelRankMap.size % 10000 === 0) console.log(levelRankMap.size);
+			const levelData = JSON.parse(row) as LevelCSVRow;
+				levelRankMap.set(levelData.data_id, {
+					name: levelData.name,
+					code: levelData.course_id,
+					uploaded: levelData.uploaded,
+					likes: levelData.likes,
+					theme: levelData.theme,
+					difficulty: levelData.difficulty,
+					clear_rate: levelData.clear_rate,
+					tags: [levelData.tag1, levelData.tag2],
+					gamestyle: levelData.gamestyle,
+					plays: levelData.plays,
+					like_to_play_ratio: levelData.likes / levelData.unique_players_and_versus,
+					upload_time: levelData.upload_time
+				});
+		});
+		csvStream.on('end', () => {
+			console.log('Stream ended!!');
+			resolve(levelRankMap);
+		});
+	});
+}
+
+/**
  * Loads a map of user pids to user medal objects.
  */
 function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
@@ -179,49 +286,82 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 }
 
 /**
- * Extracts all users from the DB and saves them in a JSON file.
+ * Downloads and saves levels from the raw user CSV.
  */
-export async function compileUsers() {
-	const userMap: Map<string, MCUserDocData> = new Map();
+ export async function compileUsers() {
+	const batchSize = 100000;
 
-	const batchSize = 200000;
-	let lastTime = Date.now();
-	let numBatches = 0;
+	const worldPreviewMap = await loadWorldPreviewMap();
+	console.log(`Loaded worldPreviewMap - ${worldPreviewMap.size} entries`);
 
-	forEachUser(async (user, i) => {
-		userMap.set(user.pid, {
-			id: user.code,
-			pid: user.pid,
-			name: user.name,
-			makerPoints: user.maker_points,
-			likes: user.likes,
-			docVer: 0,
+	const spdTest = new SpeedTester(100000, (spd, _, totalRows) => {
+		console.log(`${spd} rows per sec; ${totalRows} processed.`);
+	});
+	const csvStream = new CSVObjectStream(userCSVPath, userCSVSchema);
+
+	let fileCount = 0;
+	let workingDocs: MCRawUserDoc[] = [];
+
+	csvStream.on('data', (row) => {
+		const userData = JSON.parse(row) as UserCSVRow;
+		const super_world = worldPreviewMap.get(userData.pid);
+		workingDocs.push({
+			name: userData.name,
+			code: userData.code,
+			pid: userData.pid,
+			data_id: userData.data_id,
+			country: userData.country,
+			region: userData.region,
+			last_active: userData.last_active,
+			mii_image: userData.mii_image,
+			mii_studio_code: userData.mii_studio_code,
+			courses_played: userData.courses_played,
+			courses_cleared: userData.courses_cleared,
+			courses_attempted: userData.courses_attempted,
+			courses_deaths: userData.courses_deaths,
+			coop_clears: userData.coop_clears,
+			coop_plays: userData.coop_plays,
+			comments_enabled: userData.comments_enabled,
+			first_clears: userData.first_clears,
+			weekly_maker_points: userData.weekly_maker_points,
+			world_records: userData.world_records,
+			versus_win_streak: userData.versus_win_streak,
+			versus_kills: userData.versus_kills,
+			versus_killed_by_others: userData.versus_killed_by_others,
+			versus_disconnected: userData.versus_disconnected,
+			likes: userData.likes,
+			maker_points: userData.maker_points,
+			easy_highscore: userData.easy_highscore,
+			normal_highscore: userData.normal_highscore,
+			expert_highscore: userData.expert_highscore,
+			super_expert_highscore: userData.super_expert_highscore,
+			versus_plays: userData.versus_plays,
+			versus_won: userData.versus_won,
+			versus_lost: userData.versus_lost,
+			versus_rating: userData.versus_rating,
+			versus_rank: userData.versus_rating,
+			versus_lose_streak: userData.versus_lose_streak,
+			recent_performance: userData.recent_performance,
+			unique_super_world_clears: userData.unique_super_world_clears,
+			uploaded_levels: userData.uploaded_levels,
+			last_uploaded_level: userData.last_uploaded_level,
+			tags_enabled: userData.tags_enabled,
+			is_nintendo_employee: userData.is_nintendo_employee,
+			super_world: !super_world ? null : super_world,
 		});
 
-		/* if (i % usersPerSave === 0 && i > 0) {
-			const path = `${generalOutDir}/users/${numFiles + 1}.json`;
-			saveJSON(path, Object.fromEntries(userMap));
-			userMap.clear();
-			numFiles++;
-		} */
-	}, {
-		onBatchDone: async () => {
-			saveJSON(`${userOutDir}/${numBatches + 1}.json`, Object.fromEntries(userMap));
-			userMap.clear();
-
-			const curTime = Date.now();
-			const elapsedTimeSec = (curTime - lastTime) / 1000;
-			const usersPerSec = batchSize / elapsedTimeSec;
-
-			lastTime = curTime;
-			console.log(`${(numBatches + 1) * batchSize} users processed`);
-			console.log(`${usersPerSec} per second\n`);
-			numBatches++;
-		},
-		onAllDone: () => {
-			console.log('done');
-		},
-		batchSize,
+		if (workingDocs.length >= batchSize) {
+			const outPath = `${userOutDir}/${fileCount + 1}.json`;
+			fs.writeFileSync(outPath, JSON.stringify(workingDocs));
+			fileCount++;
+			workingDocs = [];
+		}
+		spdTest.tick();
+	});
+	csvStream.on('end', () => {
+		const outPath = `${userOutDir}/${fileCount + 1}.json`;
+		fs.writeFileSync(outPath, JSON.stringify(workingDocs));
+		console.log('User output complete.');
 	});
 }
 
@@ -249,124 +389,6 @@ export function streamTableToFile(tableName: string, queryFields: string[]) {
 }
 
 /**
- * Uses extracted user data to complete level data.
- */
-export async function completeLevels() {
-	console.log('Completing levels...');
-	const preLevels = await loadPreLevels();
-	const users = await loadUsers();
-
-	const completedLevels: MCLevelDocData[] = preLevels.map((level) => {
-		const user = users[level.makerPid];
-
-		return {
-			id: level.id,
-			name: level.name,
-			description: level.description,
-			tags: level.tags,
-			makerId: user.id,
-			makerName: user.name,
-			numComments: level.numComments,
-			numLikes: level.numLikes,
-			numPlays: level.numPlays,
-			likeToPlayRatio: level.likeToPlayRatio,
-			uploadTime: level.uploadTime,
-			addedTime: level.addedTime,
-			difficulty: level.difficulty,
-			gameStyle: level.gameStyle,
-			clearRate: level.clearRate,
-			theme: level.theme,
-			isPromotedByPatron: false,
-			docVer: 0,
-		};
-	});
-
-	saveJSON(`${levelOutDir}/popular.json`, completedLevels);
-	console.log('Done');
-}
-
-/**
- * Converts raw database level course world data to MakerCentral pre-process level data.
- * @param level The database level course world data.
- * @returns The MakerCentral pre-process level data.
- */
-function getLevelDocFromData(level: DBLevel): MCLevelPreprocessData {
-	const levelData = level;
-
-	const name = levelData.name;
-	const uploadTime = levelData.uploaded * 1000;
-	const editedTime = Date.now();
-
-	const difficultyName = DBDifficulty[levelData.difficulty] as APIDifficulty;
-	const difficulty: MCDifficulty = difficultyName === 'Super expert'
-		? 'Super Expert' : difficultyName;
-
-	const gameStyle: APIGameStyle = DBGameStyle[levelData.gamestyle] as APIGameStyle;
-
-	const tags: MCTag[] = (() => {
-		const tagsArr: MCTag[] = [];
-
-		if (levelData.tag1 !== DBTag.None) tagsArr.push(convertDBTagToMC(levelData.tag1)!);
-		if (levelData.tag2 !== DBTag.None && levelData.tag2 !== levelData.tag1) {
-			tagsArr.push(convertDBTagToMC(levelData.tag2)!);
-		}
-
-		return tagsArr;
-	})();
-
-	const numLikes = levelData.likes;
-	const description = levelData.description;
-
-	const createdLevel: MCLevelPreprocessData = {
-		name,
-		id: level.course_id,
-		makerPid: level.uploader_pid,
-		uploadTime,
-		addedTime: editedTime,
-		difficulty,
-		gameStyle,
-		theme: Theme[level.theme] as APITheme,
-		clearRate: level.clears / level.attempts,
-		numLikes,
-		numPlays: level.plays,
-		likeToPlayRatio: numLikes / level.plays,
-		numComments: level.num_comments,
-		description,
-		tags,
-	};
-
-	return createdLevel;
-}
-
-/**
- * Converts a level tag from the database to a level tag for MakerCentral.
- * @param tag The level tag from the database.
- * @returns The MakerCentral tag.
- */
-function convertDBTagToMC(tag: DBTag): MCTag | null {
-	const tagStr = DBTag[tag];
-	switch (tagStr) {
-	case 'Art': return 'Pixel Art';
-	case 'Auto mario': return 'Auto';
-	case 'Autoscroll': return 'Autoscroll';
-	case 'Boss battle': return 'Boss Fight';
-	case 'Link': return 'Link';
-	case 'Multiplayer versus': return 'Multiplayer';
-	case 'Music': return 'Music';
-	case 'None': return null;
-	case 'Puzzle solving': return 'Puzzle';
-	case 'Shooter': return 'Shooter';
-	case 'Short and sweet': return 'Short';
-	case 'Single player': return 'One Player Only';
-	case 'Speedrun': return 'Speedrun';
-	case 'Standard': return 'Standard';
-	case 'Technical': return 'Technical';
-	case 'Themed': return 'Themed';
-	default: return null;
-	}
-}
-
-/**
  * Empties a queue of images to be written to files.
  * @param queue The queue to empty.
  */
@@ -379,4 +401,51 @@ async function emptyWriteQueue(queue: WriteQueueEntry[]) {
 			});
 		}))();
 	}
+}
+
+function aggregateLevelInfo(levelInfo: LevelAggregationInfo[]): MCRawLevelAggregation {
+	const sum_difficulty: number[] = new Array(APIDifficulties.length).fill(0);
+	const sum_theme: number[] = new Array(APIThemes.length).fill(0);
+	const sum_gamestyle: number[] = new Array(APIGameStyles.length).fill(0);
+	const sum_tags: number[] = new Array(APITags.length).fill(0);
+
+	let sum_uploaded = 0;
+	let sum_clear_rate = 0;
+	let sum_likes = 0;
+	let sum_plays = 0;
+	let sum_like_to_play_ratio = 0;
+	let sum_upload_time = 0;
+	let total_tags = 0;
+
+	levelInfo.forEach((info) => {
+		sum_difficulty[info.difficulty]++;
+		sum_gamestyle[info.gamestyle]++;
+		sum_tags[info.tags[0]]++;
+		total_tags++;
+		if (info.tags[1] !== info.tags[0]) {
+			sum_tags[info.tags[1]]++;
+			total_tags++;
+		}
+		sum_theme[info.theme]++;
+
+		sum_uploaded += info.uploaded;
+		sum_upload_time += info.uploaded;
+		sum_likes += info.likes;
+		sum_plays += info.plays;
+		sum_clear_rate += info.clear_rate;
+		sum_like_to_play_ratio += info.like_to_play_ratio;
+	});
+
+	return {
+		avg_uploaded: sum_uploaded / levelInfo.length,
+		avg_difficulty: sum_difficulty.map(n => n / levelInfo.length) as unknown as {[key in DBDifficulty]: number},
+		avg_clear_rate: sum_clear_rate / levelInfo.length,
+		avg_gamestyle: sum_gamestyle.map(n => n / levelInfo.length) as unknown as {[key in DBGameStyle]: number},
+		avg_theme: sum_theme.map(n => n / levelInfo.length) as unknown as {[key in DBTheme]: number},
+		avg_likes: sum_likes / levelInfo.length,
+		avg_plays: sum_plays / levelInfo.length,
+		avg_like_to_play_ratio: sum_like_to_play_ratio / levelInfo.length,
+		avg_tags: sum_tags.map(n => n / total_tags) as unknown as {[key in DBTag]: number},
+		avg_upload_time: sum_upload_time / levelInfo.length,
+	};
 }
