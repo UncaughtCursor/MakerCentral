@@ -28,7 +28,7 @@ import CSVObjectStream from './csv/CSVObjectStream';
 import {
 	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow, worldLevelCSVSchema,
 } from './csv/CSVTypes';
-import BigMap from 'infinity-map';
+import BigMap from './util/BigMap';
 
 export const generalOutDir = 'E:/processed';
 export const levelOutDir = `${generalOutDir}/levels-2`;
@@ -236,7 +236,7 @@ function loadUserPreviewMap(
 		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
 
 		csvStream.on('data', (row: string) => {
-			if (levelRankMap.size % 10000 === 0) console.log(levelRankMap.size);
+			if (levelRankMap.size() % 10000 === 0) console.log(levelRankMap.size);
 			const levelData = JSON.parse(row) as LevelCSVRow;
 				levelRankMap.set(levelData.data_id, {
 					name: levelData.name,

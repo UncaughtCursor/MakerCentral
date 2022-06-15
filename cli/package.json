@@ -7,7 +7,7 @@
     "makercentral": "./lib/index.js"
   },
   "scripts": {
-    "start": "node --max_old_space_size=8192 -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
+    "start": "node --max_old_space_size=32768 -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
     "create": "npm run build && npm run test",
     "build": "tsc -p ."
   },
@@ -32,7 +32,6 @@
     "get-pixels": "^3.3.3",
     "gpu.js": "^2.4.1",
     "html-escaper": "^3.0.3",
-    "infinity-map": "^2.0.0",
     "inquirer": "^8.2.1",
     "meilisearch": "^0.25.0",
     "natural": "^5.2.2",
