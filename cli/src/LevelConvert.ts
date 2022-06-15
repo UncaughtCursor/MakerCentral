@@ -28,6 +28,7 @@ import CSVObjectStream from './csv/CSVObjectStream';
 import {
 	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow, worldLevelCSVSchema,
 } from './csv/CSVTypes';
+import BigMap from 'infinity-map';
 
 export const generalOutDir = 'E:/processed';
 export const levelOutDir = `${generalOutDir}/levels-2`;
@@ -229,9 +230,9 @@ function loadUserPreviewMap(
 /**
  * Loads a map of level data ids to a level's likes and code.
  */
- function loadRankLevelMap(): Promise<Map<number, LevelAggregationInfo>> {
+ function loadRankLevelMap(): Promise<BigMap<number, LevelAggregationInfo>> {
 	return new Promise(async (resolve) => {
-		const levelRankMap = new Map<number, LevelAggregationInfo>();
+		const levelRankMap = new BigMap<number, LevelAggregationInfo>();
 		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
 
 		csvStream.on('data', (row: string) => {

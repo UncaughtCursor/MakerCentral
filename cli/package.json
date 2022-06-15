@@ -32,6 +32,7 @@
     "get-pixels": "^3.3.3",
     "gpu.js": "^2.4.1",
     "html-escaper": "^3.0.3",
+    "infinity-map": "^2.0.0",
     "inquirer": "^8.2.1",
     "meilisearch": "^0.25.0",
     "natural": "^5.2.2",
