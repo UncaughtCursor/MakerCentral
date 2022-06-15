@@ -1,4 +1,4 @@
-import { ObjectID } from './LevelDataTypes';
+import { ObjectID } from '../../../data/LevelDataTypes';
 
 export const colors = {
 	white: [255, 255, 255],

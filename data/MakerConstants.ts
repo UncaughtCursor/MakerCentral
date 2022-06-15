@@ -1,4 +1,4 @@
-import { KEY_C4 } from '@scripts/builder/playback/PlaybackConstants';
+import { KEY_C4 } from './PlaybackConstants';
 import EntityJson from './Entities.json';
 import MidiInstrumentsJson from './MidiInstruments.json';
 

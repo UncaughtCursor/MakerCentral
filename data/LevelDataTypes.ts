@@ -1,4 +1,4 @@
-export interface Level {
+export interface LevelFileData {
 	startY: number;
 	goalY: number;
 	goalX: number;
@@ -24,11 +24,11 @@ export interface Level {
 	unk2: number;
 	name: string;
 	description: string;
-	overworld: Area;
-	subworld: Area;
+	overworld: LevelFileArea;
+	subworld: LevelFileArea;
 }
 
-export interface Area {
+export interface LevelFileArea {
 	theme: keyof typeof Theme;
 	autoscrollType: keyof typeof AutoscrollType;
 	boundaryType: keyof typeof BoundaryType;

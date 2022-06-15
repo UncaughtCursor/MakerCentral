@@ -1,4 +1,4 @@
-import { DEFAULT_SUSTAIN_TIME, KEY_C4 } from './PlaybackConstants';
+import { DEFAULT_SUSTAIN_TIME, KEY_C4 } from '../../../../data/PlaybackConstants';
 import { midiNoteToFreq, playBufferAtPlaybackRate } from './PlaybackUtil';
 
 // Adapted legacy code from Maestro 1

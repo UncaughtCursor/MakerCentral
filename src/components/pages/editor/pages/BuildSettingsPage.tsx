@@ -2,7 +2,7 @@ import TriggerButton from '@components/pages/controls/TriggerButton';
 import { TrackOptimizerTarget } from '@scripts/builder/optimization/looping/DeltaOptimizer';
 import createSubloops, { Subloop } from '@scripts/builder/project/LoopSplitter';
 import * as DeltaOptimizer from '@scripts/builder/optimization/looping/DeltaOptimizer';
-import { KEY_C4 } from '@scripts/builder/playback/PlaybackConstants';
+import { KEY_C4 } from '@data/PlaybackConstants';
 import React, {
 	useState, useContext, ReactNode, ReactElement,
 } from 'react';

@@ -10,12 +10,6 @@
       "**/.*",
       "**/node_modules/**",
       "functions/src/.next/cache/**"
-    ],
-    "rewrites": [
-      {
-        "source": "**",
-        "function": "nextServer"
-      }
     ]
   },
   "emulators": {

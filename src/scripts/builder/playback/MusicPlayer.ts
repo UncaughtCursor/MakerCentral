@@ -1,6 +1,6 @@
 import { EntityData } from '@data/MakerConstants';
 import NoteSchedule from './NoteSchedule';
-import { DEFAULT_SUSTAIN_TIME, KEY_C5 } from './PlaybackConstants';
+import { DEFAULT_SUSTAIN_TIME, KEY_C5 } from '../../../../data/PlaybackConstants';
 
 // Adapted legacy code from Maestro 1
 

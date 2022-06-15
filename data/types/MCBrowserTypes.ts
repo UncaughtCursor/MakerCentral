@@ -1,6 +1,6 @@
 import {
 	APIGameStyle, APIGameStyles, APITheme, APIThemes,
-} from '../../cli/src/APITypes';
+} from '../APITypes';
 import {
 	DBClearCondition,
 	DBDifficulty, DBGameStyle, DBTag, DBTheme, UserRegion, VersusRank,

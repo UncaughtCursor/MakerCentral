@@ -9,14 +9,12 @@
     "target": "es2017",
     "jsx": "react",
     "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
     ],
-    "baseUrl": "..",
-	  "paths": {
-	  	"@data/*": ["data/*"],
-	  }
   },
   "compileOnSave": true,
-  "include": ["src", "../data"]
+  "include": ["src"]
 }

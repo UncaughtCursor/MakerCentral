@@ -6,14 +6,14 @@ import { getEndlessLevels } from './APIInterfacer';
 import {
 	APIDifficulty,
 	APIGameStyle, APILevel, APITag, APITheme,
-} from './APITypes';
+} from '../../data/APITypes';
 import { forEachLevel, forEachUser } from './db/DBInterfacer';
 import UnsafeDBQueryStream from './db/UnsafeDBQueryStream';
 import {
 	DBLevel, DBDifficulty, DBGameStyle, DBTag, DBUser,
 } from '../../data/types/DBTypes';
 import { generateThumbnail } from './level-reader/GenerateThumbnail';
-import { Theme } from './level-reader/LevelDataTypes';
+import { Theme } from '../../data/LevelDataTypes';
 import { loadPreLevels, loadUsers } from './LevelStats';
 import { saveJSON } from './util/Util';
 import SpeedTester from './util/SpeedTester';

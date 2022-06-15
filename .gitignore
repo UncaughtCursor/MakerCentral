@@ -42,3 +42,7 @@ firebase-debug.log*
 
 # typescript
 *.tsbuildinfo
+
+# build stuff
+functions/lib/
+functions/src/data

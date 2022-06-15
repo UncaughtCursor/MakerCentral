@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { defaultPlaybackPPQ, LOAD_DELAY } from '@scripts/builder/playback/PlaybackConstants';
+import { defaultPlaybackPPQ, LOAD_DELAY } from '@data/PlaybackConstants';
 import * as AnimationController from '@scripts/builder/playback/AnimationController';
 import { beatsToSeconds } from '@scripts/builder/playback/PlaybackUtil';
 import { EntityData } from '@data/MakerConstants';

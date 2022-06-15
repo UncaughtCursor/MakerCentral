@@ -1,9 +1,10 @@
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
-import { db } from '@scripts/site/FirebaseUtil';
+import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
 	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
 	OrderByDirection, query, QueryConstraint, startAfter, where, WhereFilterOp,
 } from 'firebase/firestore/lite';
+import { httpsCallable } from 'firebase/functions';
 
 export interface QueryFilter {
 	fieldPath: string | FieldPath;
@@ -79,12 +80,15 @@ export async function queryLevels(
  * @returns A UserLevel object containing level data or null if no data was found.
  */
 export async function getLevel(id: string): Promise<MCLevelDocData | null> {
-	const levelRef = doc(db, `game-levels/${id}`);
-	const levelDoc = await getDoc(levelRef);
-	if (!levelDoc.exists()) return null;
-	const mainDocData = levelDoc.data();
+	const levelFn = httpsCallable(functions, 'getLevel') as unknown as (arg0: string) => Promise<MCLevelDocData>;
 
-	return mainDocData as MCLevelDocData;
+	try {
+		const data = await levelFn(id);
+		return data;
+	} catch (e) {
+		console.error(e);
+		return null;
+	}
 }
 
 /**

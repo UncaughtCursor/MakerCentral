@@ -4,12 +4,12 @@ import path from 'path';
 import { encryption } from 'partrick';
 import zlib from 'zlib';
 import {
-	Area, AutoscrollSpeed, AutoscrollType, BoundaryType,
+	LevelFileArea, AutoscrollSpeed, AutoscrollType, BoundaryType,
 	ClearCondition, ClearConditionCategory, ClearPipe, ClearPipeNode,
 	LevelDataGameStyle, GameVersion, GenericNode, GenericNodeGroupObject, Ground,
-	Icicle, Level, LevelObject, LiquidMode, LiquidSpeed, ObjectID, Orientation,
+	Icicle, LevelFileData, LevelObject, LiquidMode, LiquidSpeed, ObjectID, Orientation,
 	SnakeBlock, SnakeBlockNode, Sound, Theme, Track,
-} from './LevelDataTypes';
+} from '../../../data/LevelDataTypes';
 import { downloadLevelData } from '../APIInterfacer';
 
 /**
@@ -17,7 +17,7 @@ import { downloadLevelData } from '../APIInterfacer';
  * @param code The course ID.
  * @returns A promise containing the level data.
  */
-export async function parseLevelDataFromCode(code: string): Promise<Level> {
+export async function parseLevelDataFromCode(code: string): Promise<LevelFileData> {
 	const fileName = `tmp/${code}.bcd`;
 	await downloadLevelData(code, fileName);
 	return parseLevelFromBCDFile(fileName);
@@ -45,7 +45,7 @@ export function createZCDLevelFileFromBCD(inFilePath: string) {
  * @param fileName The path of the ZCD file.
  * @returns The parsed data.
  */
-export function parseLevelFromZCDFile(fileName: string): Level {
+export function parseLevelFromZCDFile(fileName: string): LevelFileData {
 	const compressed = fs.readFileSync(fileName);
 	const decompressed = zlib.inflateRawSync(compressed);
 	return parseLevelBuffer(decompressed);
@@ -56,7 +56,7 @@ export function parseLevelFromZCDFile(fileName: string): Level {
  * @param data The level data.
  * @returns The parsed data.
  */
-export function parseLevelFromDBBuffer(data: Buffer): Level {
+export function parseLevelFromDBBuffer(data: Buffer): LevelFileData {
 	const decompressed = zlib.inflateSync(data);
 	return parseLevelBuffer(decompressed);
 }
@@ -66,7 +66,7 @@ export function parseLevelFromDBBuffer(data: Buffer): Level {
  * @param fileName The path of the BCD file.
  * @returns The parsed data.
  */
-export function parseLevelFromBCDFile(fileName: string): Level {
+export function parseLevelFromBCDFile(fileName: string): LevelFileData {
 	const encrypted = fs.readFileSync(fileName);
 	const decrypted = encryption.decryptCourse(encrypted) as Buffer;
 	return parseLevelBuffer(decrypted);
@@ -79,10 +79,10 @@ let filePos = 0;
  * @param buffer The buffer containing the data.
  * @returns The parsed level data.
  */
-export function parseLevelBuffer(buffer: Buffer): Level {
+export function parseLevelBuffer(buffer: Buffer): LevelFileData {
 	filePos = 0;
 
-	const level: Level = {
+	const level: LevelFileData = {
 		startY: readLE(buffer, 'uint8'),
 		goalY: readLE(buffer, 'uint8'),
 		goalX: readLE(buffer, 'int16'),
@@ -114,7 +114,7 @@ export function parseLevelBuffer(buffer: Buffer): Level {
 	return level;
 }
 
-function readArea(buffer: Buffer): Area {
+function readArea(buffer: Buffer): LevelFileArea {
 	const header = {
 		theme: Theme[readLE(buffer, 'uint8')] as keyof typeof Theme,
 		autoscrollType: AutoscrollType[readLE(buffer, 'uint8')] as keyof typeof AutoscrollType,

@@ -3,8 +3,8 @@ import savePixels from 'save-pixels';
 import ndarray, { NdArray } from 'ndarray';
 import fs from 'fs';
 import {
-	Area, Ground, Level, LevelObject, ObjectID,
-} from './LevelDataTypes';
+	LevelFileArea, Ground, LevelFileData, LevelObject, ObjectID,
+} from '../../../data/LevelDataTypes';
 import { getObjectColor } from './RenderData';
 
 interface Coordinates2D {
@@ -21,7 +21,7 @@ const tileWidthPx = 16;
  * @param level The level to render.
  * @returns A 3D NdArray of the rendering.
  */
-export function renderLevelIDs(level: Level): NdArray[] {
+export function renderLevelIDs(level: LevelFileData): NdArray[] {
 	const overworld = renderAreaIDs(level.overworld);
 	const subworld = renderAreaIDs(level.subworld);
 
@@ -33,7 +33,7 @@ export function renderLevelIDs(level: Level): NdArray[] {
  * @param area The area to render.
  * @returns A 3D NdArray of the rendering.
  */
-function renderAreaIDs(area: Area): NdArray {
+function renderAreaIDs(area: LevelFileArea): NdArray {
 	const gridSize = {
 		x: area.boundaryRight / tileWidthPx,
 		y: area.boundaryTop / tileWidthPx,
@@ -46,14 +46,14 @@ function renderAreaIDs(area: Area): NdArray {
 	return pixelValues;
 }
 
-export function renderLevel(level: Level, filePath: string) {
+export function renderLevel(level: LevelFileData, filePath: string) {
 	const basename = path.basename(filePath, '.png');
 	const dir = path.dirname(filePath);
 	renderArea(level.overworld, `${dir}/${basename}-overworld.png`);
 	renderArea(level.subworld, `${dir}/${basename}-subworld.png`);
 }
 
-function renderArea(area: Area, filePath: string) {
+function renderArea(area: LevelFileArea, filePath: string) {
 	const gridSize = {
 		x: area.boundaryRight / tileWidthPx,
 		y: area.boundaryTop / tileWidthPx,

@@ -1,10 +1,10 @@
+import * as functions from 'firebase-functions';
 import {
 	DBDifficulty, DBGameStyle, DBTag, DBTheme,
-} from '@data/types/DBTypes';
+} from './data/types/DBTypes';
 import {
 	MCLevelDocData, MCRawLevelDoc, MCRawUserDoc, MCTag, MCUserDocData,
-} from '@data/types/MCBrowserTypes';
-import * as functions from 'firebase-functions';
+} from './data/types/MCBrowserTypes';
 import { db } from '.';
 
 export const getLevel = functions.https.onCall(async (data: {

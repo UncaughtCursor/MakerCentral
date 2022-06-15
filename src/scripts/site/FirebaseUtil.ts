@@ -309,6 +309,13 @@ const levelThumbnailSuffix = '_64x36';
  */
 export async function getLevelThumbnailUrl(id: string): Promise<string> {
 	const thumbnailStorageUrl = `${levelThumbnailDir}/${id}${levelThumbnailSuffix}.png`;
-	const thumbnailUrl = await getDownloadURL(ref(storage, thumbnailStorageUrl));
+	const thumbnailUrl = await (async () => {
+		try {
+			const url = await getDownloadURL(ref(storage, thumbnailStorageUrl));
+			return url;
+		} catch (e) {
+			return '';
+		}
+	})();
 	return thumbnailUrl;
 }

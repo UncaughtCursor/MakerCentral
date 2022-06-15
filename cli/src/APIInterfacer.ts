@@ -4,7 +4,7 @@
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-import { APIComment, APILevel } from './APITypes';
+import { APIComment, APILevel } from '../../data/APITypes';
 import { saveJSON } from './util/Util';
 
 /**
