@@ -1,4 +1,5 @@
 import useUserInfo from '@components/hooks/useUserInfo';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import {
 	auth, db, functions, getUser,
 } from '@scripts/site/FirebaseUtil';
@@ -88,7 +89,10 @@ function FeedbackControl(props: {
 	 */
 	function submitVote(queuedVoteVal: 1 | 0 | -1) {
 		setLoading(true);
-		const voteFn = httpsCallable(functions, 'voteOnLevel');
+		const voteFn: CloudFunction<{
+			levelId: string,
+			voteVal: 1 | 0 | -1,
+		}> = httpsCallable(functions, 'voteOnLevel');
 
 		voteFn({ levelId: props.levelId, voteVal: queuedVoteVal }).then(() => {
 			setVoteVal(queuedVoteVal);

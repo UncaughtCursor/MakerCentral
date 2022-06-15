@@ -1,3 +1,4 @@
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
@@ -80,10 +81,14 @@ export async function queryLevels(
  * @returns A UserLevel object containing level data or null if no data was found.
  */
 export async function getLevel(id: string): Promise<MCLevelDocData | null> {
-	const levelFn = httpsCallable(functions, 'getLevel') as unknown as (arg0: string) => Promise<MCLevelDocData>;
+	const levelFn: CloudFunction<{
+		levelId: string,
+	}, MCLevelDocData> = httpsCallable(functions, 'getLevel');
 
 	try {
-		const data = await levelFn(id);
+		const data = (await levelFn({
+			levelId: id,
+		})).data;
 		return data;
 	} catch (e) {
 		console.error(e);

@@ -119,7 +119,6 @@ export async function getServerSideProps(context: { params: {
 }}) {
 	const levelId = context.params.id;
 	const loadedLevel = await getLevel(levelId);
-	console.log(loadedLevel);
 
 	const thumbnailUrl = await getLevelThumbnailUrl(levelId);
 	return {

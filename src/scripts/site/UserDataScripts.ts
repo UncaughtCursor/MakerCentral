@@ -8,6 +8,7 @@ import LZString from 'lz-string';
 import UndoRedoManager from '@scripts/builder/project/UndoRedoManager';
 import ProjectTrack from '@scripts/builder/project/ProjectTrack';
 import { httpsCallable } from 'firebase/functions';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import {
 	db, functions, getUser,
 } from './FirebaseUtil';
@@ -26,7 +27,7 @@ export async function initUser() {
 	const userDocRef = doc(db, `users/${curUser.uid}`);
 	const isFirstLogin = !(await getDoc(userDocRef)).exists();
 
-	const userInit = httpsCallable(functions, 'initUser');
+	const userInit: CloudFunction = httpsCallable(functions, 'initUser');
 	await userInit();
 
 	if (isFirstLogin) {
@@ -35,8 +36,8 @@ export async function initUser() {
 		}, { merge: true });
 	}
 
-	const getPatronStatus = httpsCallable(functions, 'getPatronStatus');
-	const patronType = (await getPatronStatus()).data as 'None' | 'Mushroom' | 'Fire Flower' | 'Super Star';
+	const getPatronStatus: CloudFunction<void, 'None' | 'Mushroom' | 'Fire Flower' | 'Super Star'> = httpsCallable(functions, 'getPatronStatus');
+	const patronType = (await getPatronStatus()).data;
 	curPatronStatus = patronType;
 
 	const evt = new Event('userinit');

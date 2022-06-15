@@ -1,6 +1,7 @@
 import ReportDialog from '@components/main/dialogs/ReportDialog';
 import TextArea from '@components/pages/controls/TextArea';
 import TriggerButton from '@components/pages/controls/TriggerButton';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { db, functions } from '@scripts/site/FirebaseUtil';
 import { doc, getDoc } from 'firebase/firestore/lite';
 import { httpsCallable } from 'firebase/functions';
@@ -127,7 +128,7 @@ function Comment(props: {
 				<div className="comment-content">
 					<p>{props.comment.text}</p>
 				</div>
-				{/*<div className="comment-controls" style={{ display: isSignedIn && !showReplyBox ? '' : 'none' }}>
+				{/* <div className="comment-controls" style={{ display: isSignedIn && !showReplyBox ? '' : 'none' }}>
 					<div style={{ display: isOwnComment ? '' : 'none' }}>
 						<TriggerButton text="Delete" type="flush" onClick={() => { deleteComment(); }} />
 					</div>
@@ -149,7 +150,7 @@ function Comment(props: {
 					</div>
 					<TriggerButton text="Send" type="blue" onClick={() => { sendReply(); }} />
 					<TriggerButton text="Cancel" type="flush" onClick={() => { setShowReplyBox(false); }} />
-				</div>*/}
+				</div> */}
 			</div>
 			{replyElements}
 		</>
@@ -173,7 +174,13 @@ function Comment(props: {
 	 * Sends a reply to the comment.
 	 */
 	async function sendReply() {
-		const submitCommentFn = httpsCallable(functions, 'submitComment');
+		const submitCommentFn: CloudFunction<{
+			location: string,
+			docId: string,
+			commentId: string,
+			text: string,
+			makerUid: string,
+		}> = httpsCallable(functions, 'submitComment');
 		await submitCommentFn({
 			location: 'levels',
 			docId: props.pageId,
@@ -190,7 +197,11 @@ function Comment(props: {
 	 * Deletes a comment.
 	 */
 	async function deleteComment() {
-		const deleteCommentFn = httpsCallable(functions, 'deleteComment');
+		const deleteCommentFn: CloudFunction<{
+			location: string,
+			docId: string,
+			commentId: string,
+		}> = httpsCallable(functions, 'deleteComment');
 		await deleteCommentFn({
 			location: 'levels',
 			docId: props.pageId,
