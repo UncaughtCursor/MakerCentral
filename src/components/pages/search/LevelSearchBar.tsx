@@ -3,9 +3,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { Difficulty, MakerCentralTag } from '@scripts/browser/BrowserUtil';
 import Dialog from '@components/main/Dialog';
 import { getSuggestions } from '@scripts/browser/MeilisearchUtil';
+import { MCDifficulty, MCTag } from '@data/types/MCBrowserTypes';
 import LevelSearchOptions from './LevelSearchOptions';
 
 export const SMM2GameStyles = [
@@ -30,10 +30,10 @@ type SortType = typeof sortTypes[number];
 export interface SearchFilterSettings {
 	sortType: SortType;
 	sortOrder: 'Ascending' | 'Descending';
-	difficulty: Difficulty | 'Any';
+	difficulty: MCDifficulty | 'Any';
 	theme: SMM2Theme | 'Any';
 	gameStyle: SMM2GameStyle | 'Any';
-	tag: MakerCentralTag | 'Any';
+	tag: MCTag | 'Any';
 	page: number;
 }
 

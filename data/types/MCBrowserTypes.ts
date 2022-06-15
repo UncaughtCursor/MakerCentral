@@ -1,8 +1,10 @@
-import { APIGameStyle, APITheme } from './APITypes';
+import {
+	APIGameStyle, APIGameStyles, APITheme, APIThemes,
+} from '../../cli/src/APITypes';
 import {
 	DBClearCondition,
 	DBDifficulty, DBGameStyle, DBTag, DBTheme, UserRegion, VersusRank,
-} from './db/DBTypes';
+} from './DBTypes';
 
 export interface MCLevelDocData {
 	name: string;
@@ -13,8 +15,8 @@ export interface MCLevelDocData {
 	makerId: string;
 	difficulty: MCDifficulty;
 	clearRate: number;
-	gameStyle: APIGameStyle;
-	theme: APITheme;
+	gameStyle: MCGameStyle;
+	theme: MCTheme;
 	numLikes: number;
 	numPlays: number;
 	likeToPlayRatio: number;
@@ -76,7 +78,7 @@ export interface MCWorldInfo extends MCWorldLevelAggregation {
 	featuredLevelIds: string[];
 }
 
-const MCTags = [
+export const MCTags = [
 	'Standard',
 	'Puzzle',
 	'Music',
@@ -103,8 +105,21 @@ const MCTags = [
 	'One Player Only',
 ] as const;
 
-export type MCDifficulty = 'Easy' | 'Normal' | 'Expert' | 'Super Expert';
 export type MCTag = typeof MCTags[number];
+
+export const MCDifficulties = [
+	'Easy',
+	'Normal',
+	'Expert',
+	'Super Expert',
+] as const;
+export type MCDifficulty = typeof MCDifficulties[number];
+
+export const MCThemes = APIThemes;
+export type MCTheme = APITheme;
+
+export const MCGameStyles = APIGameStyles;
+export type MCGameStyle = APIGameStyle;
 
 export interface MCRawLevelDoc {
 	data_id: number,

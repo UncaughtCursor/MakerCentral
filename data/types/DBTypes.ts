@@ -1,4 +1,4 @@
-import { ClearCondition } from '../level-reader/LevelDataTypes';
+import { ClearCondition } from '../../cli/src/level-reader/LevelDataTypes';
 
 export interface DBLevel {
 	data_id: number;

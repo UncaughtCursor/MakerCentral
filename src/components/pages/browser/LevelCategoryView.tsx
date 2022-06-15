@@ -1,10 +1,11 @@
 import {
-	queryLevels, MakerCentralLevel,
+	queryLevels,
 } from '@scripts/browser/BrowserUtil';
 import { where } from 'firebase/firestore/lite';
 import React, { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroller';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import { LevelSort } from './LevelSortPicker';
 import LevelPreview from './LevelPreview';
 
@@ -27,7 +28,7 @@ interface LevelCategoryViewProps {
  * just link to a level in levels/ by sharing the same document ID.
  */
 function LevelCategoryView(props: LevelCategoryViewProps) {
-	const [levels, setLevels] = useState([] as MakerCentralLevel[]);
+	const [levels, setLevels] = useState([] as MCLevelDocData[]);
 	const [scrollEnded, setScrollEnded] = useState(false);
 	const [lastLevelId, setLastLevelId] = useState(null as string | null);
 	let locked = false;

@@ -11,10 +11,12 @@
     "skipLibCheck": true,
     "plugins": [
       { "transform": "typescript-is/lib/transform-inline/transformer" }
-  ]
+    ],
+    "baseUrl": "..",
+	  "paths": {
+	  	"@data/*": ["data/*"],
+	  }
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src", "../data"]
 }

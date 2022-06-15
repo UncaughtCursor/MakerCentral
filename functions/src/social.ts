@@ -4,6 +4,7 @@ import { is } from 'typescript-is';
 import { firestore } from 'firebase-admin';
 import { randomString, UserLevelDocData } from './levels';
 import { getUserDoc, sendNotification } from './util';
+import { db } from '.';
 
 type VoteValue = 1 | 0 | -1;
 
@@ -31,9 +32,9 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<VoteValue>(data.voteVal)) throw new Error('Invalid vote value.');
 
-	await admin.firestore().runTransaction(async (t) => {
-		const levelRef = admin.firestore().doc(`levels/${data.levelId}`);
-		const voteRef = admin.firestore().doc(`users/${context.auth!.uid}/engagements/${data.levelId}`);
+	await db.runTransaction(async (t) => {
+		const levelRef = db.doc(`levels/${data.levelId}`);
+		const voteRef = db.doc(`users/${context.auth!.uid}/engagements/${data.levelId}`);
 
 		let currentVoteVal = 0;
 		const preVoteSnap = await t.get(voteRef);
@@ -63,7 +64,7 @@ export const voteOnLevel = functions.https.onCall(async (data: {
 			voteVal: data.voteVal,
 		});
 
-		const authorSocialRef = admin.firestore().doc(`users/${levelData.makerUid}/priv/social`);
+		const authorSocialRef = db.doc(`users/${levelData.makerUid}/priv/social`);
 		t.set(authorSocialRef, {
 			points: firestore.FieldValue.increment(scoreChange),
 		}, { merge: true });
@@ -86,16 +87,16 @@ export const submitComment = functions.https.onCall(async (data: {
 	if (userDoc === null) throw new Error('User document does not exist.');
 
 	const docRef = !isReply
-		? admin.firestore().doc(`${data.location}/${data.docId}/comments/${randomString(24)}`)
-		: admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId}/replies/${randomString(24)}`);
+		? db.doc(`${data.location}/${data.docId}/comments/${randomString(24)}`)
+		: db.doc(`${data.location}/${data.docId}/comments/${data.commentId}/replies/${randomString(24)}`);
 
-	await admin.firestore().runTransaction(async (t) => {
+	await db.runTransaction(async (t) => {
 		// Get level data
-		const levelData = (await t.get(admin.firestore().doc(`${data.location}/${data.docId}`))).data() as UserLevelDocData | undefined;
+		const levelData = (await t.get(db.doc(`${data.location}/${data.docId}`))).data() as UserLevelDocData | undefined;
 		if (levelData === undefined) throw new Error('Level data does not exist.');
 
 		// Get top-level comment data holding the subscriber UID list if this is a reply
-		const topLevelCommentData = isReply ? (await t.get(admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId!}`))).data() as CommentData : null;
+		const topLevelCommentData = isReply ? (await t.get(db.doc(`${data.location}/${data.docId}/comments/${data.commentId!}`))).data() as CommentData : null;
 
 		const makerUid = levelData.makerUid;
 		// TODO: If a reply, download parent comment and
@@ -127,13 +128,13 @@ export const submitComment = functions.https.onCall(async (data: {
 		// already subscribed and this is a reply
 		if (isReply) {
 			console.log(context.auth!.uid);
-			t.set(admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId!}`), {
+			t.set(db.doc(`${data.location}/${data.docId}/comments/${data.commentId!}`), {
 				subscriberUids: admin.firestore.FieldValue.arrayUnion(context.auth!.uid),
 			}, { merge: true });
 		}
 
 		// Update level's comment count
-		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
+		t.set(db.doc(`${data.location}/${data.docId}`), {
 			numComments: admin.firestore.FieldValue.increment(1),
 		}, { merge: true });
 
@@ -153,12 +154,12 @@ export const deleteComment = functions.https.onCall(async (data: {
 }, context) => {
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 	if (!is<CommentLocation>(data.location)) throw new Error('Invalid comment location.');
-	const docRef = admin.firestore().doc(`${data.location}/${data.docId}/comments/${data.commentId}`);
+	const docRef = db.doc(`${data.location}/${data.docId}/comments/${data.commentId}`);
 
-	await admin.firestore().runTransaction(async (t) => {
+	await db.runTransaction(async (t) => {
 		t.delete(docRef);
 
-		t.set(admin.firestore().doc(`${data.location}/${data.docId}`), {
+		t.set(db.doc(`${data.location}/${data.docId}`), {
 			numComments: admin.firestore.FieldValue.increment(-1),
 		}, { merge: true });
 	});

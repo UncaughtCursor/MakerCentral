@@ -2,19 +2,19 @@ import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
-import { MakerCentralLevel } from './BrowserUtil';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 
 export interface LevelSearch {
 	query: string;
 }
 
 export interface LevelSearchSort {
-	property: keyof MakerCentralLevel;
+	property: keyof MCLevelDocData;
 	order: 'Ascending' | 'Descending';
 }
 
 export interface LevelSearchFilter {
-	property: keyof MakerCentralLevel;
+	property: keyof MCLevelDocData;
 	operator: LevelSearchFilterOperator;
 	value: any;
 }
@@ -22,7 +22,7 @@ export interface LevelSearchFilter {
 export type LevelSearchFilterOperator = '==' | '!=' | '>' | '>=' | '<' | '<=' | 'contains' | 'does not contain';
 
 export interface LevelSearchResults {
-	results: MakerCentralLevel[];
+	results: MCLevelDocData[];
 	numResults: number;
 	isNumResultsExact: boolean;
 	computeTimeMs: number;
@@ -73,7 +73,7 @@ export async function searchLevels(searchData: LevelSearchParams): Promise<Level
 		limit: numResultsPerPage + 1,
 	});
 	return {
-		results: res.hits as MakerCentralLevel[],
+		results: res.hits as MCLevelDocData[],
 		numResults: res.nbHits,
 		isNumResultsExact: res.exhaustiveNbHits,
 		computeTimeMs: res.processingTimeMs,

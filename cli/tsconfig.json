@@ -10,9 +10,9 @@
 	  "esModuleInterop": true,
 	  "resolveJsonModule": true,
 	  "baseUrl": "..",
-		"paths": {
-			"@data/*": ["data/*"],
-		}
+	  "paths": {
+	  	"@data/*": ["data/*"],
+	  }
 	},
 	"include": ["src", "../data"],
 	"ts-node": {

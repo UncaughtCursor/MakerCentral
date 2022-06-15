@@ -1,4 +1,4 @@
-import ImageNames from '../../../data/ImageNames.json';
+import ImageNames from '@data/ImageNames.json';
 
 let isLoaded: boolean = false;
 const loadedImages: Map<string, HTMLImageElement> = new Map();

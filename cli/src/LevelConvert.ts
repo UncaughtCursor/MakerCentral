@@ -11,7 +11,7 @@ import { forEachLevel, forEachUser } from './db/DBInterfacer';
 import UnsafeDBQueryStream from './db/UnsafeDBQueryStream';
 import {
 	DBLevel, DBDifficulty, DBGameStyle, DBTag, DBUser,
-} from './db/DBTypes';
+} from '../../data/types/DBTypes';
 import { generateThumbnail } from './level-reader/GenerateThumbnail';
 import { Theme } from './level-reader/LevelDataTypes';
 import { loadPreLevels, loadUsers } from './LevelStats';
@@ -20,7 +20,7 @@ import SpeedTester from './util/SpeedTester';
 import DBQueryStream from './db/DBQueryStream';
 import {
 	MCDifficulty, MCLevelDocData, MCLevelPreprocessData, MCRawLevelDoc, MCRawMedal, MCRawUserPreview, MCTag, MCUserDocData,
-} from './MCTypes';
+} from '../../data/types/MCBrowserTypes';
 import CSVObjectStream from './csv/CSVObjectStream';
 import {
 	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema,

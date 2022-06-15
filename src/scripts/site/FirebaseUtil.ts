@@ -15,7 +15,7 @@ import {
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
 import { isProd } from 'pages/_app';
-import TestData from '../../data/TestData.json';
+import TestData from '@data/TestData.json';
 import { initUser } from './UserDataScripts';
 
 // Non-EAP prod

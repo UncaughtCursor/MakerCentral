@@ -9,9 +9,7 @@
   "scripts": {
     "start": "node --max_old_space_size=8192 -r ts-node/register -r tsconfig-paths/register ./src/index.ts",
     "create": "npm run build && npm run test",
-    "build": "tsc -p .",
-    "local": "sudo npm i -g && makercentral",
-    "refresh": "rm -rf ./node_modules ./package-lock.json && npm install"
+    "build": "tsc -p ."
   },
   "author": "",
   "license": "ISC",

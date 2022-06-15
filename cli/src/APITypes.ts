@@ -143,9 +143,16 @@ export interface APIImage {
 	filename: string,
 }
 
-export type APIGameStyle = 'SMB1' | 'SMB3' | 'SMW' | 'NSMBU' | 'SM3DW';
+export const APIGameStyles = [
+	'SMB1',
+	'SMB3',
+	'SMW',
+	'NSMBU',
+	'SM3DW'
+] as const;
+export type APIGameStyle = typeof APIGameStyles[number];
 
-const APIThemes = [
+export const APIThemes = [
 	'Overworld', 'Underground',
 	'Castle', 'Airship',
 	'Underwater', 'Ghost house',
@@ -154,7 +161,7 @@ const APIThemes = [
 ] as const;
 export type APITheme = typeof APIThemes[number];
 
-const APITags = [
+export const APITags = [
 	'None', 'Standard',
 	'Puzzle solving', 'Speedrun',
 	'Autoscroll', 'Auto mario',
@@ -166,7 +173,7 @@ const APITags = [
 ] as const;
 export type APITag = typeof APITags[number];
 
-const APIDifficulties = [
+export const APIDifficulties = [
 	'Easy', 'Normal', 'Expert', 'Super expert',
 ] as const;
 export type APIDifficulty = typeof APIDifficulties[number];

@@ -1,4 +1,4 @@
-import * as admin from 'firebase-admin';
+import { db } from '.';
 import { randomString } from './levels';
 
 /* eslint-disable import/prefer-default-export */
@@ -22,9 +22,9 @@ interface UserDocData {
  */
 export async function sendNotification(uid: string, data: NotificationData) {
 	// TODO: Notification merging
-	await admin.firestore().runTransaction(async (t) => {
+	await db.runTransaction(async (t) => {
 		const path = `users/${uid}/notifications/${randomString(24)}`;
-		const notifDocRef = admin.firestore().doc(path);
+		const notifDocRef = db.doc(path);
 
 		t.set(notifDocRef, {
 			...data,
@@ -40,6 +40,6 @@ export async function sendNotification(uid: string, data: NotificationData) {
  * @returns The data or null if the user document does not exist.
  */
 export async function getUserDoc(uid: string): Promise<UserDocData | null> {
-	const userData: UserDocData | undefined = (await admin.firestore().doc(`/users/${uid}`).get()).data() as UserDocData | undefined;
+	const userData: UserDocData | undefined = (await db.doc(`/users/${uid}`).get()).data() as UserDocData | undefined;
 	return userData !== undefined ? userData : null;
 }

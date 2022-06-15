@@ -7,7 +7,7 @@ import {
 } from './LevelConvert';
 import {
 	MCLevelDocData, MCLevelPreprocessData, MCRawLevelDoc, MCUserDocData,
-} from './MCTypes';
+} from '../../data/types/MCBrowserTypes';
 import TextDirStream from './TextDirStream';
 import { loadJSON, printList } from './util/Util';
 

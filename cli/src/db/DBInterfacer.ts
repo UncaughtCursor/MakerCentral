@@ -1,6 +1,6 @@
 /* eslint-disable no-loop-func */
 import { Database } from 'sqlite3';
-import { DBLevel, DBUser } from './DBTypes';
+import { DBLevel, DBUser } from '../../../data/types/DBTypes';
 
 export const dbPath = 'E:/decompressed/dump.db';
 export const db = new Database(dbPath);

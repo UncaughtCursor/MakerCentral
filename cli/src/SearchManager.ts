@@ -5,7 +5,7 @@ import chunk from 'chunk';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
 import { loadJSON, sleep } from './util/Util';
 import { loadRawLevelDocs } from './LevelStats';
-import { MCLevelDocData, MCRawLevelDoc } from './MCTypes';
+import { MCLevelDocData, MCRawLevelDoc } from '../../data/types/MCBrowserTypes';
 
 const wordDataOutputName = 'out/stats/wordData.json';
 
