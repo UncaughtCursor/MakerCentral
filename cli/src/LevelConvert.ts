@@ -26,7 +26,7 @@ import {
 } from '../../data/types/MCBrowserTypes';
 import CSVObjectStream from './csv/CSVObjectStream';
 import {
-	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow,
+	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow, worldLevelCSVSchema,
 } from './csv/CSVTypes';
 
 export const generalOutDir = 'E:/processed';
@@ -198,13 +198,13 @@ function loadUserPreviewMap(
 }
 
 /**
- * Loads a map of super world ids to super world level ids.
+ * Loads a map of player pids to super world level ids.
  */
  function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
 	return new Promise(async (resolve) => {
 		const levelRankMap = await loadRankLevelMap();
 		const worldLevelsMap = new Map<string, LevelAggregationInfo[]>();
-		const csvStream = new CSVObjectStream(worldCSVPath, worldCSVSchema);
+		const csvStream = new CSVObjectStream(worldLevelsCSVPath, worldLevelCSVSchema);
 
 		csvStream.on('data', (row: string) => {
 			if (worldLevelsMap.size % 10000 === 0) console.log(worldLevelsMap.size);
@@ -227,7 +227,7 @@ function loadUserPreviewMap(
 }
 
 /**
- * Loads a map of pids to a level's likes and code.
+ * Loads a map of level data ids to a level's likes and code.
  */
  function loadRankLevelMap(): Promise<Map<number, LevelAggregationInfo>> {
 	return new Promise(async (resolve) => {
