@@ -79,9 +79,9 @@ export async function uploadUsers() {
 		console.log(`${total} users done; ${spd} per second`);
 	});
 	const userTextIterator = new TextDirIterator(userOutDir);
-	userTextIterator.iterate(async (text: string) => {
+	await userTextIterator.iterate(async (text: string, fileIdx: number) => {
 		const users = JSON.parse(text) as MCRawUserDoc[];
-		console.log('Chunk received.');
+		console.log(`File #${fileIdx + 1}, ${users.length} user docs`);
 
 		const userChunks = chunk(users, usersPerChunk);
 		for (let i = 0; i < userChunks.length; i++) {
