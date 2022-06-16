@@ -209,6 +209,7 @@ export interface MCRawUserDoc {
 	is_nintendo_employee: number,
 	comments_enabled: number,
 	tags_enabled: number,
+	medals: MCRawMedal[],
 	super_world: MCRawSuperWorld | null;
 }
 

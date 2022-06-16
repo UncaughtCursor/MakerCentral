@@ -236,7 +236,7 @@ function loadUserPreviewMap(
 		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
 
 		csvStream.on('data', (row: string) => {
-			if (levelRankMap.size() % 10000 === 0) console.log(levelRankMap.size);
+			if (levelRankMap.size() % 10000 === 0) console.log(levelRankMap.size());
 			const levelData = JSON.parse(row) as LevelCSVRow;
 				levelRankMap.set(levelData.data_id, {
 					name: levelData.name,
@@ -293,6 +293,7 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 	const batchSize = 100000;
 
 	const worldPreviewMap = await loadWorldPreviewMap();
+	const medalMap = await loadUserMedalMap();
 	console.log(`Loaded worldPreviewMap - ${worldPreviewMap.size} entries`);
 
 	const spdTest = new SpeedTester(100000, (spd, _, totalRows) => {
@@ -306,6 +307,7 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 	csvStream.on('data', (row) => {
 		const userData = JSON.parse(row) as UserCSVRow;
 		const super_world = worldPreviewMap.get(userData.pid);
+		const medals = medalMap.get(userData.pid);
 		workingDocs.push({
 			name: userData.name,
 			code: userData.code,
@@ -349,6 +351,7 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 			tags_enabled: userData.tags_enabled,
 			is_nintendo_employee: userData.is_nintendo_employee,
 			super_world: !super_world ? null : super_world,
+			medals: !medals ? [] : medals,
 		});
 
 		if (workingDocs.length >= batchSize) {
