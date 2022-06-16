@@ -210,7 +210,7 @@ export interface MCRawUserDoc {
 	comments_enabled: number,
 	tags_enabled: number,
 	medals: MCRawMedal[],
-	super_world: MCRawSuperWorld | null;
+	super_world: MCRawSuperWorld | null,
 }
 
 export interface MCRawMedal {

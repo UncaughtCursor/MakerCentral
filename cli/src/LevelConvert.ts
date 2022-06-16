@@ -161,7 +161,7 @@ function loadUserPreviewMap(
 /**
  * Loads a map of pids to super world preview objects.
  */
- function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
+function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
 	return new Promise(async (resolve) => {
 		const worldLevelsMap = await loadWorldLevelsMap();
 		const worldMap = new Map<string, MCRawSuperWorld>();
@@ -181,14 +181,12 @@ function loadUserPreviewMap(
 				planet_type: worldData.planet_type,
 				created: worldData.created,
 				aggregated_properties: aggregateLevelInfo(worldLevelInfo),
-				level_info: worldLevelInfo.map(info => {
-					return {
-						name: info.name,
-						course_id: info.code,
-						plays: info.plays,
-						likes: info.likes,
-					};
-				}),
+				level_info: worldLevelInfo.map((info) => ({
+					name: info.name,
+					course_id: info.code,
+					plays: info.plays,
+					likes: info.likes,
+				})),
 			});
 		});
 		csvStream.on('end', () => {
@@ -201,7 +199,7 @@ function loadUserPreviewMap(
 /**
  * Loads a map of player pids to super world level ids.
  */
- function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
+function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
 	return new Promise(async (resolve) => {
 		const levelRankMap = await loadRankLevelMap();
 		const worldLevelsMap = new Map<string, LevelAggregationInfo[]>();
@@ -217,7 +215,6 @@ function loadUserPreviewMap(
 			} else {
 				worldLevelsMap.get(worldLevelData.pid)!.push(levelInfo);
 			}
-			
 		});
 		csvStream.on('end', () => {
 			console.log('Stream ended!!');
@@ -230,7 +227,7 @@ function loadUserPreviewMap(
 /**
  * Loads a map of level data ids to a level's likes and code.
  */
- function loadRankLevelMap(): Promise<BigMap<number, LevelAggregationInfo>> {
+function loadRankLevelMap(): Promise<BigMap<number, LevelAggregationInfo>> {
 	return new Promise(async (resolve) => {
 		const levelRankMap = new BigMap<number, LevelAggregationInfo>();
 		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
@@ -238,20 +235,20 @@ function loadUserPreviewMap(
 		csvStream.on('data', (row: string) => {
 			if (levelRankMap.size() % 10000 === 0) console.log(levelRankMap.size());
 			const levelData = JSON.parse(row) as LevelCSVRow;
-				levelRankMap.set(levelData.data_id, {
-					name: levelData.name,
-					code: levelData.course_id,
-					uploaded: levelData.uploaded,
-					likes: levelData.likes,
-					theme: levelData.theme,
-					difficulty: levelData.difficulty,
-					clear_rate: levelData.clear_rate,
-					tags: [levelData.tag1, levelData.tag2],
-					gamestyle: levelData.gamestyle,
-					plays: levelData.plays,
-					like_to_play_ratio: levelData.likes / levelData.unique_players_and_versus,
-					upload_time: levelData.upload_time
-				});
+			levelRankMap.set(levelData.data_id, {
+				name: levelData.name,
+				code: levelData.course_id,
+				uploaded: levelData.uploaded,
+				likes: levelData.likes,
+				theme: levelData.theme,
+				difficulty: levelData.difficulty,
+				clear_rate: levelData.clear_rate,
+				tags: [levelData.tag1, levelData.tag2],
+				gamestyle: levelData.gamestyle,
+				plays: levelData.plays,
+				like_to_play_ratio: levelData.likes / levelData.unique_players_and_versus,
+				upload_time: levelData.upload_time,
+			});
 		});
 		csvStream.on('end', () => {
 			console.log('Stream ended!!');
@@ -289,7 +286,7 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 /**
  * Downloads and saves levels from the raw user CSV.
  */
- export async function compileUsers() {
+export async function compileUsers() {
 	const batchSize = 100000;
 
 	const worldPreviewMap = await loadWorldPreviewMap();
@@ -442,14 +439,14 @@ function aggregateLevelInfo(levelInfo: LevelAggregationInfo[]): MCRawLevelAggreg
 
 	return {
 		avg_uploaded: sum_uploaded / levelInfo.length,
-		avg_difficulty: sum_difficulty.map(n => n / levelInfo.length) as unknown as {[key in DBDifficulty]: number},
+		avg_difficulty: sum_difficulty.map((n) => n / levelInfo.length) as unknown as {[key in DBDifficulty]: number},
 		avg_clear_rate: sum_clear_rate / levelInfo.length,
-		avg_gamestyle: sum_gamestyle.map(n => n / levelInfo.length) as unknown as {[key in DBGameStyle]: number},
-		avg_theme: sum_theme.map(n => n / levelInfo.length) as unknown as {[key in DBTheme]: number},
+		avg_gamestyle: sum_gamestyle.map((n) => n / levelInfo.length) as unknown as {[key in DBGameStyle]: number},
+		avg_theme: sum_theme.map((n) => n / levelInfo.length) as unknown as {[key in DBTheme]: number},
 		avg_likes: sum_likes / levelInfo.length,
 		avg_plays: sum_plays / levelInfo.length,
 		avg_like_to_play_ratio: sum_like_to_play_ratio / levelInfo.length,
-		avg_tags: sum_tags.map(n => n / total_tags) as unknown as {[key in DBTag]: number},
+		avg_tags: sum_tags.map((n) => n / total_tags) as unknown as {[key in DBTag]: number},
 		avg_upload_time: sum_upload_time / levelInfo.length,
 	};
 }
