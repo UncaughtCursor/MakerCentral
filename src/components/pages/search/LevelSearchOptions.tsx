@@ -1,5 +1,5 @@
 import {
-	MCDifficulties, MCGameStyles, MCTags, MCThemes,
+	MCDifficulties, MCGameStyles, MCTag, MCTags, MCThemes,
 } from '@data/types/MCBrowserTypes';
 import React, { useState } from 'react';
 import SelectInput from '../controls/SelectInput';
@@ -7,6 +7,24 @@ import TriggerButton from '../controls/TriggerButton';
 import {
 	SearchFilterSettings, sortTypes,
 } from './LevelSearchBar';
+
+const MCTagOptions: MCTag[] = [
+	'Auto',
+	'Autoscroll',
+	'Boss Fight',
+	'Link',
+	'Multiplayer',
+	'Music',
+	'One Player Only',
+	'Pixel Art',
+	'Puzzle',
+	'Shooter',
+	'Short',
+	'Speedrun',
+	'Standard',
+	'Technical',
+	'Themed',
+];
 
 /**
  * Settings for the level search feature.
@@ -26,7 +44,7 @@ function LevelSearchOptions(props: {
 	const themeOptions = ['Any', ...MCThemes] as const;
 	const difficultyOptions = ['Any', ...MCDifficulties] as const;
 	const gameStyleOptions = ['Any', ...MCGameStyles] as const;
-	const tagOptions = ['Any', ...MCTags] as const;
+	const tagOptions = ['Any', ...MCTagOptions] as const;
 
 	return (
 		<div className="search-settings">
