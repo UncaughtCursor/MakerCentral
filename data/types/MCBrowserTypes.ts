@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import {
 	APIGameStyle, APIGameStyles, APITheme, APIThemes,
 } from '../APITypes';
@@ -24,7 +26,6 @@ export interface MCLevelDocData {
 	description: string;
 	tags: MCTag[];
 	isPromotedByPatron: boolean;
-	docVer: 0;
 }
 
 export interface MCLevelPreprocessData {
@@ -54,28 +55,38 @@ export type MCWorldLevelAggregation = {
 	avgLikes: number;
 	avgPlays: number;
 	avgLikeToPlayRatio: number;
-	avgComments: number;
 	avgTags: {[key in MCTag]: number};
 	isPromotedByPatron: boolean;
 };
 
 export interface MCUserDocData {
 	id: string;
-	pid: string;
 	name: string;
 	likes: number;
 	makerPoints: number;
-	docVer: 0;
+	world: MCWorldPreview | null;
 }
 
-export interface MCWorldInfo extends MCWorldLevelAggregation {
+export interface MCWorldPreview {
+	numLevels: number;
+	numWorlds: number;
+	avgPlays: number;
+	avgLikes: number;
+}
+
+export interface MCWorldDocData extends MCWorldLevelAggregation {
+	makerId: string;
 	numLevels: number;
 	numWorlds: number;
 	created: number;
-	keywords: string[];
-	totalLikes: number;
-	totalPlays: number;
-	featuredLevelIds: string[];
+	levels: MCWorldLevelPreview[];
+}
+
+export interface MCWorldLevelPreview {
+	name: string,
+	id: string,
+	numPlays: number,
+	numLikes: number,
 }
 
 export const MCTags = [

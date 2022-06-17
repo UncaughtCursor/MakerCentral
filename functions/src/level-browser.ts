@@ -3,7 +3,12 @@ import {
 	DBDifficulty, DBGameStyle, DBTag, DBTheme,
 } from './data/types/DBTypes';
 import {
-	MCLevelDocData, MCRawLevelDoc, MCRawUserDoc, MCTag, MCUserDocData,
+	MCDifficulties,
+	MCDifficulty,
+	MCGameStyle,
+	MCGameStyles,
+	MCLevelDocData, MCRawLevelDoc, MCRawUserDoc, MCTag,
+	MCTheme, MCThemes, MCUserDocData, MCWorldDocData, MCWorldLevelPreview, MCWorldPreview,
 } from './data/types/MCBrowserTypes';
 import { db } from '.';
 
@@ -45,7 +50,6 @@ export const getLevel = functions.https.onCall(async (data: {
 		description: level.description,
 		tags,
 		isPromotedByPatron: false,
-		docVer: 0,
 	};
 });
 
@@ -55,27 +59,68 @@ export const getUser = functions.https.onCall(async (data: {
 	const user = (await db.doc(`users-raw/${data.userId}`).get()).data() as MCRawUserDoc | undefined;
 	if (user === undefined) throw new Error(`No user found with ID ${data.userId}`);
 
+	const world: MCWorldPreview | null = user.super_world !== null ? {
+		numLevels: user.super_world.levels,
+		numWorlds: user.super_world.worlds,
+		avgPlays: user.super_world.aggregated_properties.avg_plays,
+		avgLikes: user.super_world.aggregated_properties.avg_likes,
+	} : null;
+
 	return {
 		id: user.code,
-		pid: user.pid,
 		name: user.name,
 		likes: user.likes,
 		makerPoints: user.maker_points,
-		docVer: 0,
+		world,
 	};
 });
 
-/* export const getWorld = functions.https.onCall(async (data: {
+export const getWorld = functions.https.onCall(async (data: {
 	userId: string,
-}): Promise<MCSuperWorldDoc> => {
-	const user = (await db.doc(`worlds-raw/${data.userId}`).get()).data()
-		as MCRawSuperWorldDoc | undefined;
+}): Promise<MCWorldDocData | null> => {
+	const user = (await db.doc(`users-raw/${data.userId}`).get()).data() as MCRawUserDoc | undefined;
 	if (user === undefined) throw new Error(`No user found with ID ${data.userId}`);
 
+	const world = user.super_world;
+	if (world === null) return null;
+
+	const worldLevels: MCWorldLevelPreview[] = world.level_info.map((levelInfo) => ({
+		id: levelInfo.course_id,
+		name: levelInfo.name,
+		numPlays: levelInfo.plays,
+		numLikes: levelInfo.likes,
+	}));
+
 	return {
-		... TODO
+		makerId: user.code,
+		numLevels: world.levels,
+		numWorlds: world.worlds,
+		levels: worldLevels,
+		created: world.created,
+		avgUploadTime: world.aggregated_properties.avg_upload_time,
+		avgClearRate: world.aggregated_properties.avg_clear_rate,
+		avgDifficulty: DBProportionToMCProportion<DBDifficulty, MCDifficulty>(
+			world.aggregated_properties.avg_difficulty,
+			(val) => MCDifficulties[val],
+		),
+		avgGameStyle: DBProportionToMCProportion<DBGameStyle, MCGameStyle>(
+			world.aggregated_properties.avg_gamestyle,
+			(val) => MCGameStyles[val],
+		),
+		avgTheme: DBProportionToMCProportion<DBTheme, MCTheme>(
+			world.aggregated_properties.avg_theme,
+			(val) => MCThemes[val],
+		),
+		avgTags: DBProportionToMCProportion<DBTag, MCTag>(
+			world.aggregated_properties.avg_tags,
+			(val) => convertDBTagToMC(val),
+		),
+		avgLikes: world.aggregated_properties.avg_likes,
+		avgPlays: world.aggregated_properties.avg_plays,
+		avgLikeToPlayRatio: world.aggregated_properties.avg_like_to_play_ratio,
+		isPromotedByPatron: false,
 	};
-}); */
+});
 
 /**
  * Converts a level tag from the database to a level tag for MakerCentral.
@@ -103,4 +148,24 @@ function convertDBTagToMC(tag: DBTag): MCTag | null {
 	case 'Themed': return 'Themed';
 	default: return null;
 	}
+}
+
+/**
+ * Converts a DB proportion to a MC proportion.
+ * @param DBObj The proportion to convert.
+ * @param converter The function to convert each DB type to the MC type.
+ * If it returns null, the key will be excluded from the result.
+ * @returns The MC proportion.
+ */
+function DBProportionToMCProportion<DBType extends number, MCType extends string>(
+	DBObj: {[key in DBType]: number},
+	converter: (num: DBType) => MCType | null,
+): {[key in MCType]: number} {
+	const newObj: {[key in MCType]: number} = {} as any;
+	Object.keys(DBObj).forEach((key) => {
+		const num = parseInt(key, 10) as DBType;
+		const MCKey = converter(num);
+		if (MCKey !== null) newObj[MCKey] = DBObj[num];
+	});
+	return newObj;
 }
