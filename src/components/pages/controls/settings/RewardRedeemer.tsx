@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { functions } from '@scripts/site/FirebaseUtil';
 import { httpsCallable } from 'firebase/functions';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import TextField from '../TextField';
 import TriggerButton from '../TriggerButton';
 
-const redeemKey = httpsCallable(functions, 'redeemKey');
+const redeemKey: CloudFunction<{
+	key: string
+}, {
+	success: boolean,
+	msg: string
+}> = httpsCallable(functions, 'redeemKey');
 
 /**
  * A control used for redeeming reward keys.
@@ -51,7 +57,7 @@ function RewardRedeemer(props: {
 		if (key === '') return;
 		setStatusText('Submitting...');
 		redeemKey({ key }).then((result) => {
-			const data = result.data as { success: boolean, msg: string };
+			const data = result.data;
 			if (data.success) {
 				setStatusText('Redeem successful!');
 				// TODO: Functionality to listen for specific rewards

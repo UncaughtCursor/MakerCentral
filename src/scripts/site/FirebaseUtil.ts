@@ -15,7 +15,7 @@ import {
 import 'firebaseui/dist/firebaseui.css';
 import { getCookieConsentValue } from 'react-cookie-consent';
 import { isProd } from 'pages/_app';
-import TestData from '../../data/TestData.json';
+import TestData from '@data/TestData.json';
 import { initUser } from './UserDataScripts';
 
 // Non-EAP prod
@@ -309,6 +309,13 @@ const levelThumbnailSuffix = '_64x36';
  */
 export async function getLevelThumbnailUrl(id: string): Promise<string> {
 	const thumbnailStorageUrl = `${levelThumbnailDir}/${id}${levelThumbnailSuffix}.png`;
-	const thumbnailUrl = await getDownloadURL(ref(storage, thumbnailStorageUrl));
+	const thumbnailUrl = await (async () => {
+		try {
+			const url = await getDownloadURL(ref(storage, thumbnailStorageUrl));
+			return url;
+		} catch (e) {
+			return '';
+		}
+	})();
 	return thumbnailUrl;
 }

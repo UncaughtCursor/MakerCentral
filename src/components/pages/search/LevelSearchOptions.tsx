@@ -1,10 +1,30 @@
-import { difficulties, makerCentralTags } from '@scripts/browser/BrowserUtil';
+import {
+	MCDifficulties, MCGameStyles, MCTag, MCTags, MCThemes,
+} from '@data/types/MCBrowserTypes';
 import React, { useState } from 'react';
 import SelectInput from '../controls/SelectInput';
 import TriggerButton from '../controls/TriggerButton';
 import {
-	SearchFilterSettings, SMM2GameStyles, SMM2Themes, sortTypes,
+	SearchFilterSettings, sortTypes,
 } from './LevelSearchBar';
+
+const MCTagOptions: MCTag[] = [
+	'Auto',
+	'Autoscroll',
+	'Boss Fight',
+	'Link',
+	'Multiplayer',
+	'Music',
+	'One Player Only',
+	'Pixel Art',
+	'Puzzle',
+	'Shooter',
+	'Short',
+	'Speedrun',
+	'Standard',
+	'Technical',
+	'Themed',
+];
 
 /**
  * Settings for the level search feature.
@@ -21,10 +41,10 @@ function LevelSearchOptions(props: {
 	const [settings, setSettings] = useState(props.initSettings);
 
 	const sortOrders = ['Ascending', 'Descending'] as const;
-	const themeOptions = ['Any', ...SMM2Themes] as const;
-	const difficultyOptions = ['Any', ...difficulties] as const;
-	const gameStyleOptions = ['Any', ...SMM2GameStyles] as const;
-	const tagOptions = ['Any', ...makerCentralTags] as const;
+	const themeOptions = ['Any', ...MCThemes] as const;
+	const difficultyOptions = ['Any', ...MCDifficulties] as const;
+	const gameStyleOptions = ['Any', ...MCGameStyles] as const;
+	const tagOptions = ['Any', ...MCTagOptions] as const;
 
 	return (
 		<div className="search-settings">

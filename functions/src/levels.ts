@@ -2,6 +2,7 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { is } from 'typescript-is';
 import { PatronStatus } from './rewards';
+import { db } from '.';
 
 interface UserLevelInformation {
 	name: string;
@@ -86,15 +87,15 @@ export const publishLevel = functions.https.onCall(async (data: {
 	const monthQueueDays = getFutureEpochDays(30, now);
 
 	// Load Patron status to determine if the level gets featured in the Patrons section
-	const userPrivDocRef = admin.firestore().doc(`/users/${context.auth.uid}/priv/access`);
+	const userPrivDocRef = db.doc(`/users/${context.auth.uid}/priv/access`);
 	const userPrivDocSnap = await userPrivDocRef.get();
 	if (!userPrivDocSnap.exists) throw new Error('User access data not found.');
 	const userPrivData = userPrivDocSnap.data()!;
 	const patronStatus = userPrivData.patronStatus as PatronStatus;
 
-	await admin.firestore().runTransaction(async (t) => {
+	await db.runTransaction(async (t) => {
 		// Update the users' last posted level time
-		const userSocialDoc = admin.firestore().doc(`/users/${context.auth!.uid}/priv/social`);
+		const userSocialDoc = db.doc(`/users/${context.auth!.uid}/priv/social`);
 		const userSocialDocSnap = await userSocialDoc.get();
 		if (!userSocialDocSnap.exists) throw new Error('User social data does not exist.');
 		const userSocialData = userSocialDocSnap.data()!;
@@ -137,7 +138,7 @@ export const publishLevel = functions.https.onCall(async (data: {
 			isByPatron: patronStatus === 'Super Star',
 		};
 
-		const levelDocRef = admin.firestore().doc(`/levels/${levelId}`);
+		const levelDocRef = db.doc(`/levels/${levelId}`);
 		t.set(levelDocRef, fullLevelData);
 	});
 
@@ -153,7 +154,7 @@ export const publishLevelEdits = functions.https.onCall(async (data: {
 	if (!isValidLevelCode(level.levelCode)) throw new Error('Invalid course ID.');
 	if (context.auth === undefined) throw new Error('User is not logged in.');
 
-	const levelDocRef = admin.firestore().doc(`/levels/${data.levelId}`);
+	const levelDocRef = db.doc(`/levels/${data.levelId}`);
 	const levelDocSnap = await levelDocRef.get();
 	if (!levelDocSnap.exists) throw new Error('Level does not exist already.');
 	const levelDocData = levelDocSnap.data() as UserLevelDocData;

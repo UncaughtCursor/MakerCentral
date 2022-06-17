@@ -1,12 +1,12 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { MakerCentralLevel } from '@scripts/browser/BrowserUtil';
 import React from 'react';
 import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
 import FlagCircleIcon from '@mui/icons-material/FlagCircle';
 import { useRouter } from 'next/router';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
 
 const timeAgo = new TimeAgo('en-us');
@@ -18,7 +18,7 @@ const timeAgo = new TimeAgo('en-us');
  * * thumbnailUrl: The URL of the thumbnail to display.
  */
 function LevelPreview(props: {
-	level: MakerCentralLevel,
+	level: MCLevelDocData,
 	thumbnailUrl: string,
 }) {
 	// eslint-disable-next-line no-param-reassign

@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+	  "target": "es6",
+	  "module": "commonjs",
+	  "lib": ["es6", "es2015", "dom"],
+	  "declaration": true,
+	  "outDir": "lib",
+	  "strict": true,
+	  "types": ["node"],
+	  "esModuleInterop": true,
+	  "resolveJsonModule": true,
+	  "baseUrl": "..",
+	  "paths": {
+	  	"@data/*": ["data/*"],
+	  }
+	},
+	"include": ["src", "../data"],
+	"ts-node": {
+		"files": true
+	},
+	"files": [
+		"src/globals.d.ts"
+	],
+}

@@ -1,6 +1,6 @@
 // Adapted legacy code from Maestro 1
 
-import { KEY_A4, MASTER_VOLUME, RELEASE_DURATION } from './PlaybackConstants';
+import { KEY_A4, MASTER_VOLUME, RELEASE_DURATION } from '../../../../data/PlaybackConstants';
 
 /**
  * Loads the data from an audio file into an AudioBuffer object.
@@ -36,8 +36,14 @@ export function loadSample(url: string, ctx: AudioContext): Promise<AudioBuffer>
  * @param ctx The audio context to play the buffer on.
  * @returns The created AudioBufferSourceNode.
  */
-export function playBufferAtPlaybackRate(buffer: AudioBuffer, time: number = 0,
-	rate: number, sustainTime: number, duration: number, ctx: AudioContext) {
+export function playBufferAtPlaybackRate(
+	buffer: AudioBuffer,
+	time: number = 0,
+	rate: number,
+	sustainTime: number,
+	duration: number,
+	ctx: AudioContext,
+) {
 	// Release note at the end of the duration or at the normal time, whichever is sooner
 	const releaseTime = Math.min(time + duration, time + sustainTime);
 	const endTime = releaseTime + (RELEASE_DURATION / 44100);

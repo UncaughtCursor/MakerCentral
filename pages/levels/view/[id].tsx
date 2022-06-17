@@ -1,17 +1,18 @@
-import { getLevel, MakerCentralLevel } from '@scripts/browser/BrowserUtil';
+import { getLevel } from '@scripts/browser/BrowserUtil';
 import React, { useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import BookmarkButton from '@components/pages/browser/BookmarkButton';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { useRouter } from 'next/router';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
  */
 function LevelPage(props: {
-	level: MakerCentralLevel | null,
+	level: MCLevelDocData | null,
 	thumbnailUrl: string,
 }) {
 	const [showReportDialog, setShowReportDialog] = useState(false);
@@ -62,7 +63,7 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Maker</td>
-								<td>{level.makerName}</td>
+								<td><a href={`/users/${level.makerId}`}>{level.makerName}</a></td>
 							</tr>
 							<tr>
 								<td>Upload Date</td>

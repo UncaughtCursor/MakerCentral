@@ -5,18 +5,21 @@ import * as admin from 'firebase-admin';
 export * from './levels';
 export * from './social';
 export * from './rewards';
+export * from './level-browser';
 
 // IMPORTANT: RUN 'npx ttsc -w' after changes are made!! (ttsc isn't a typo!)
 
 admin.initializeApp();
 
+export const db = admin.firestore();
+
 export const initUser = functions.https.onCall(async (_data, context) => {
 	if (context.auth === undefined) return { success: false, msg: 'User is not logged in.' };
-	const userDocRef = admin.firestore().doc(`users/${context.auth.uid}`);
+	const userDocRef = db.doc(`users/${context.auth.uid}`);
 	const userDocSnap = await userDocRef.get();
-	const userAccessDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/access`);
+	const userAccessDocRef = db.doc(`users/${context.auth.uid}/priv/access`);
 	const userAccessDocSnap = await userAccessDocRef.get();
-	const userSocialDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/social`);
+	const userSocialDocRef = db.doc(`users/${context.auth.uid}/priv/social`);
 	const userSocialDocSnap = await userSocialDocRef.get();
 
 	if (!userDocSnap.exists) {

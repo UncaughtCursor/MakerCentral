@@ -1,6 +1,7 @@
 import useUserInfo from '@components/hooks/useUserInfo';
 import TextArea from '@components/pages/controls/TextArea';
 import TriggerButton from '@components/pages/controls/TriggerButton';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { auth, functions, getUser } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import { httpsCallable } from 'firebase/functions';
@@ -38,7 +39,7 @@ function CommentsSection(props: {
 			}}
 			>
 				<h2>Comments ({props.numComments})</h2>
-				{/*<div style={{ margin: '0 auto', width: 'fit-content', marginBottom: '10px' }}>
+				{/* <div style={{ margin: '0 auto', width: 'fit-content', marginBottom: '10px' }}>
 					<TextArea
 						label="Leave a Comment"
 						value={userComment}
@@ -53,7 +54,7 @@ function CommentsSection(props: {
 					type="blue"
 					isLoading={isSendingComment}
 					onClick={() => { sendComment(); }}
-				/>*/}
+				/> */}
 			</div>
 			<CommentsFeed docId={props.docId} docPath={props.docPath} />
 		</div>
@@ -65,7 +66,11 @@ function CommentsSection(props: {
 	async function sendComment() {
 		setIsSendingComment(true);
 		try {
-			const submitCommentFn = httpsCallable(functions, 'submitComment');
+			const submitCommentFn: CloudFunction<{
+				location: string,
+				docId: string,
+				text: string,
+			}> = httpsCallable(functions, 'submitComment');
 			await submitCommentFn({
 				location: 'levels',
 				docId: props.docId,

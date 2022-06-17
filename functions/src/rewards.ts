@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
+import { db } from '.';
 
 type Timestamp = admin.firestore.Timestamp;
 
@@ -25,7 +26,7 @@ export const getPatronStatus = functions.https.onCall(
 	async (_data, context): Promise<PatronStatus> => {
 		if (context.auth === undefined) return 'None';
 
-		const userPrivDocRef = admin.firestore().doc(`users/${context.auth.uid}/priv/access`);
+		const userPrivDocRef = db.doc(`users/${context.auth.uid}/priv/access`);
 		const userPrivDocSnap = await userPrivDocRef.get();
 		if (!userPrivDocSnap.exists || userPrivDocSnap.data() === undefined) return 'None';
 
@@ -45,7 +46,7 @@ export const getPatronStatus = functions.https.onCall(
 );
 
 export const redeemKey = functions.https.onCall((data: { key: string }, context) => {
-	const keyDocRef = admin.firestore().doc(`keys/${data.key}`);
+	const keyDocRef = db.doc(`keys/${data.key}`);
 
 	return new Promise((resolve) => {
 		if (context.auth === undefined) {
@@ -123,7 +124,7 @@ expiryDate,
 		const nowMillis = Date.now();
 
 		// Get user data
-		const userPrivDocRef = admin.firestore().doc(`/users/${uid}/priv/access`);
+		const userPrivDocRef = db.doc(`/users/${uid}/priv/access`);
 		const userPrivDocSnap = await userPrivDocRef.get();
 		if (!userPrivDocSnap.exists) return { success: false, msg: 'User data does not exist.' };
 		const userData = userPrivDocSnap.data()! as UserData;

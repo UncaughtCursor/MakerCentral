@@ -7,8 +7,8 @@ import { onAuthStateChanged } from 'firebase/auth';
 import {
 	deleteDoc, doc, getDoc, serverTimestamp, setDoc,
 } from 'firebase/firestore/lite';
-import { MakerCentralLevel } from '@scripts/browser/BrowserUtil';
 import useUserInfo from '@components/hooks/useUserInfo';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 
 /**
  * A button used for bookmarking levels. Must be inside a relatively-positioned element.
@@ -18,7 +18,7 @@ import useUserInfo from '@components/hooks/useUserInfo';
  * * top: The top CSS property.
  */
 function BookmarkButton(props: {
-	level: MakerCentralLevel,
+	level: MCLevelDocData,
 	left: string,
 	top: string,
 }) {

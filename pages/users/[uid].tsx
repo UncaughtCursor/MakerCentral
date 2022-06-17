@@ -1,20 +1,18 @@
 import AppFrame from '@components/AppFrame';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
-import { db } from '@scripts/site/FirebaseUtil';
+import LevelSearchResultWidget from '@components/pages/search/LevelSearchResultWidget';
+import { CloudFunction } from '@data/types/FirebaseUtilTypes';
+import { MCUserDocData } from '@data/types/MCBrowserTypes';
+import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
 	doc, getDoc, QueryConstraint, where,
 } from 'firebase/firestore/lite';
+import { httpsCallable } from 'firebase/functions';
 import Page404 from 'pages/404';
 import React from 'react';
 
 interface UserPageProps {
-	uid: string | null,
-	userInfo: {
-		name: string,
-		avatarUrl: string | null,
-		bio: string | null,
-		creatorRep: number,
-	}
+	userDocData: MCUserDocData | null,
 }
 
 /**
@@ -24,50 +22,39 @@ interface UserPageProps {
  * * userInfo: The user's display name, bio, avatar url, and creator rep.
  */
 function UserPage(props: UserPageProps) {
-	if (props.uid === null) return <Page404 />;
+	if (props.userDocData === null) return <Page404 />;
+	const userData = props.userDocData;
 
-	const constraint: QueryConstraint = where('makerUid', '==', props.uid);
+	const formattedMakerCode = `${userData.id.substring(0, 3)}-${userData.id.substring(3, 6)}-${userData.id.substring(6, 9)}`;
 
 	return (
 		<AppFrame
-			title={`${props.userInfo.name}'s Profile - MakerCentral`}
-			description={`${props.userInfo.name}'s profile on MakerCentral. ${props.userInfo.creatorRep} creator rep.`}
+			title={`${userData.name}'s Profile - MakerCentral`}
+			description={`${userData.name}'s profile on MakerCentral. ${userData.makerPoints} maker points.`}
 		>
 			<div className="user-profile-container-upper">
-				<div className={props.userInfo.avatarUrl !== null ? 'user-profile-img-container'
-					: 'user-profile-img-container user-profile-img-container-null'}
-				>
-					<span style={{
-						display: props.userInfo.avatarUrl !== null ? 'none' : '',
-					}}
-					>No profile image
-					</span>
-					<img
-						src={props.userInfo.avatarUrl !== null
-							? props.userInfo.avatarUrl : undefined}
-						alt={props.userInfo.name}
-					/>
-				</div>
 				<div className="user-profile-name-container">
-					<span>{props.userInfo.name}</span>
-					<span>{props.userInfo.creatorRep} Creator Rep</span>
-					<div
-						className="user-profile-bio-container"
-						style={{
-							display: props.userInfo.bio !== null ? '' : 'none',
-						}}
-					>
-						<p>{props.userInfo.bio}</p>
-					</div>
+					<span>{userData.name}</span>
+					<span>{userData.makerPoints.toLocaleString()} Maker Points</span>
+				</div>
+				<div className="user-profile-code-container">
+					<span>
+						Maker ID:&nbsp;&nbsp;
+						<span className="level-code">{formattedMakerCode}</span>
+					</span>
 				</div>
 			</div>
-			<LevelCategoryFeed
-				extraQueryConstraints={[constraint]}
-				excludedSortCodes={[
-					'BY_PATRONS',
-					'POPULAR',
-					'TOP_THIS_MONTH',
-				]}
+			<LevelSearchResultWidget searchParams={{
+				q: '',
+				sortType: 'By Date',
+				sortOrder: 'Descending',
+				gameStyle: 'Any',
+				difficulty: 'Any',
+				tag: 'Any',
+				theme: 'Any',
+				page: 0,
+				makerId: userData.id,
+			}}
 			/>
 		</AppFrame>
 	);
@@ -81,42 +68,27 @@ function UserPage(props: UserPageProps) {
 export async function getServerSideProps(
 	context: {params: {uid: string}},
 ): Promise<{props: UserPageProps}> {
-	const userSnap = await getDoc(doc(db, `/users/${context.params.uid}`));
-	const userSocialSnap = await getDoc(doc(db, `/users/${context.params.uid}/priv/social`));
+	const userFn: CloudFunction<{
+		userId: string,
+	}, MCUserDocData> = httpsCallable(functions, 'getUser');
 
-	if (!userSnap.exists() || !userSocialSnap.exists()) {
+	try {
+		const data = (await userFn({
+			userId: context.params.uid,
+		})).data;
 		return {
 			props: {
-				uid: null,
-				userInfo: {
-					name: 'Null User',
-					bio: '',
-					avatarUrl: '',
-					creatorRep: 0,
-				},
+				userDocData: data,
+			},
+		};
+	} catch (err) {
+		console.error(err);
+		return {
+			props: {
+				userDocData: null,
 			},
 		};
 	}
-
-	const userData = userSnap.data()!;
-	const userSocialData = userSocialSnap.data()!;
-
-	const name = userData.name;
-	const avatarUrl = userData.avatarUrl as string | null | undefined;
-	const bio = userData.bio as string | undefined;
-	const creatorRep = userSocialData.points as number;
-
-	return {
-		props: {
-			uid: context.params.uid,
-			userInfo: {
-				name,
-				bio: bio !== undefined ? bio : null,
-				avatarUrl: avatarUrl !== undefined ? avatarUrl : null,
-				creatorRep,
-			},
-		},
-	};
 }
 
 export default UserPage;

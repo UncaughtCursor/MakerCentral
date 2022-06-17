@@ -21,7 +21,8 @@
 .user-profile-name-container {
 	display: flex;
 	flex-direction: column;
-	justify-content: left;
+	align-items: left;
+	gap: 5px;
 }
 
 .user-profile-name-container > span {
@@ -33,7 +34,7 @@
 	font-size: 35px;
 }
 
-.user-profile-name-container > span:last-child {
+.user-profile-name-container > span:not(first-child) {
 	font-size: 20px;
 }
 
@@ -81,4 +82,18 @@
 	text-align: left;
 	word-wrap: anywhere;
 	white-space: pre-wrap;
+}
+
+.user-profile-code-container {
+	flex-grow: 1;
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+}
+
+@media (max-width: 490px) {
+	.user-profile-code-container {
+		margin-top: 8px;
+		justify-content: flex-start;
+	}
 }

@@ -8,10 +8,16 @@ import LevelSearchPageControl from './LevelSearchPageControl';
  * @param props The props:
  * - results: The results of the search.
  * - thumbnailUrls: An object matching level IDs with thumbnail URLs.
+ * - isWidget: (Optional) Whether or not the component should be able to dynamically
+ * update and trigger callbacks for user events. Defaults to true.
+ * - onPageChange (Optional) Function to be called when the page has changed.
+ * The parameter is the change in the page index.
  */
 function LevelSearchResultView(props: {
 	results: LevelSearchResults,
 	thumbnailUrls: {[key: string]: string},
+	isWidget?: boolean,
+	onPageChange?: (delta: number) => void,
 }) {
 	return (
 		<div style={{
@@ -21,7 +27,9 @@ function LevelSearchResultView(props: {
 			gap: '20px',
 		}}
 		>
-			<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
+			{!props.isWidget! ? (
+				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
+			) : null}
 			{props.results.results.length === 0 ? (
 				<span style={{
 					margin: '0 auto',
@@ -40,9 +48,18 @@ function LevelSearchResultView(props: {
 						/>
 					))}
 			</div>
-			<LevelSearchPageControl curSearchResults={props.results} />
+			<LevelSearchPageControl
+				goToPage={!props.isWidget!}
+				curSearchResults={props.results}
+				onPageChange={props.onPageChange!}
+			/>
 		</div>
 	);
 }
+
+LevelSearchResultView.defaultProps = {
+	isWidget: true,
+	onPageChange: () => {},
+};
 
 export default LevelSearchResultView;

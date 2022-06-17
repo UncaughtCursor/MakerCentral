@@ -1,6 +1,6 @@
 import {
 	defaultPlaybackPPQ, END_DELAY, LOAD_DELAY, SAMPLE_RATE,
-} from './PlaybackConstants';
+} from '../../../../data/PlaybackConstants';
 import PlaybackInstrument from './PlaybackInstrument';
 import { beatsToSeconds, loadSample } from './PlaybackUtil';
 
@@ -81,12 +81,14 @@ export default class NoteSchedule {
      * @param sustainLength The number of seconds to hold a note for.
 	 * @param ctx The context context to use.
      */
-	async addInstrument(name: string, url: string, baseNote: number,
-		sustainLength: number) {
+	async addInstrument(
+		name: string,
+		url: string,
+		baseNote: number,
+		sustainLength: number,
+	) {
 		const that = this;
-		const inst = new PlaybackInstrument(
-			await loadSample(url, this.audioCtx), baseNote,
-		);
+		const inst = new PlaybackInstrument(await loadSample(url, this.audioCtx), baseNote);
 		inst.sustainLength = sustainLength;
 		that.instruments.set(name, inst);
 	}
@@ -169,18 +171,14 @@ export default class NoteSchedule {
 
 		noteChunks.forEach((chunk, i) => {
 			// Load each chunk 1 second in advance
-			const loadTimeMs = 1000 * Math.max(
-				(beatsToSeconds(i * beatsPerChunk, 60 / this.secondsPerBeat)) - 1, 0,
-			);
+			const loadTimeMs = 1000 * Math.max((beatsToSeconds(i * beatsPerChunk, 60 / this.secondsPerBeat)) - 1, 0);
 			if (chunk.length > 0) {
 				const timeoutId = window.setTimeout(() => {
 					chunk.forEach((thisNote) => {
 						const time = this.ticksToSeconds(thisNote.ticks) + startTime + LOAD_DELAY;
 						const duration = this.ticksToSeconds(thisNote.duration);
 						const instName = thisNote.instrumentName;
-						this.instruments.get(instName)!.playNote(
-							thisNote.noteNumber, time, thisNote.sustainLength, duration, this.audioCtx,
-						);
+						this.instruments.get(instName)!.playNote(thisNote.noteNumber, time, thisNote.sustainLength, duration, this.audioCtx);
 					});
 				}, loadTimeMs);
 				this.timeoutIds.push(timeoutId);
@@ -214,11 +212,9 @@ export default class NoteSchedule {
 	 */
 	getNoteChunks() {
 		const chunks: ScheduledNote[][] = [];
-		const numChunks = this.schedule.reduce(
-			(acc, note) => Math.max(acc, Math.floor(
-				(note.ticks / this.ppq) / beatsPerChunk,
-			)), 0,
-		) + 1;
+		const numChunks = this.schedule.reduce((acc, note) => Math.max(acc, Math.floor(
+			(note.ticks / this.ppq) / beatsPerChunk,
+		)), 0) + 1;
 
 		for (let i = 0; i < numChunks; i++) chunks[i] = [];
 

@@ -2,19 +2,20 @@ import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
-import { MakerCentralLevel } from './BrowserUtil';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { FullLevelSearchParams } from './SearchUtil';
 
 export interface LevelSearch {
 	query: string;
 }
 
 export interface LevelSearchSort {
-	property: keyof MakerCentralLevel;
+	property: keyof MCLevelDocData;
 	order: 'Ascending' | 'Descending';
 }
 
 export interface LevelSearchFilter {
-	property: keyof MakerCentralLevel;
+	property: keyof MCLevelDocData;
 	operator: LevelSearchFilterOperator;
 	value: any;
 }
@@ -22,7 +23,7 @@ export interface LevelSearchFilter {
 export type LevelSearchFilterOperator = '==' | '!=' | '>' | '>=' | '<' | '<=' | 'contains' | 'does not contain';
 
 export interface LevelSearchResults {
-	results: MakerCentralLevel[];
+	results: MCLevelDocData[];
 	numResults: number;
 	isNumResultsExact: boolean;
 	computeTimeMs: number;
@@ -38,6 +39,7 @@ const filterParamNames = [
 	'theme',
 	'gameStyle',
 	'tag',
+	'makerId',
 ];
 
 /**
@@ -45,7 +47,9 @@ const filterParamNames = [
  * @param searchData The data to search based off of.
  * @returns A promise that resolves with a search results object.
  */
-export async function searchLevels(searchData: LevelSearchParams): Promise<LevelSearchResults> {
+export async function searchLevels(
+	searchData: LevelSearchParams | FullLevelSearchParams,
+): Promise<LevelSearchResults> {
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames.includes(paramName)
 			&& searchData[paramName as keyof LevelSearchParams]
@@ -73,7 +77,7 @@ export async function searchLevels(searchData: LevelSearchParams): Promise<Level
 		limit: numResultsPerPage + 1,
 	});
 	return {
-		results: res.hits as MakerCentralLevel[],
+		results: res.hits as MCLevelDocData[],
 		numResults: res.nbHits,
 		isNumResultsExact: res.exhaustiveNbHits,
 		computeTimeMs: res.processingTimeMs,
