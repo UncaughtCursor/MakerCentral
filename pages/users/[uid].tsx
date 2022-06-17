@@ -25,7 +25,7 @@ function UserPage(props: UserPageProps) {
 	if (props.userDocData === null) return <Page404 />;
 	const userData = props.userDocData;
 
-	const constraint: QueryConstraint = where('makerId', '==', userData.id);
+	const formattedMakerCode = `${userData.id.substring(0, 3)}-${userData.id.substring(3, 6)}-${userData.id.substring(6, 9)}`;
 
 	return (
 		<AppFrame
@@ -33,16 +33,15 @@ function UserPage(props: UserPageProps) {
 			description={`${userData.name}'s profile on MakerCentral. ${userData.makerPoints} maker points.`}
 		>
 			<div className="user-profile-container-upper">
-				<div className="user-profile-img-container user-profile-img-container-null">
-					<span>No profile image</span>
-					<img
-						src={undefined}
-						alt={userData.name}
-					/>
-				</div>
 				<div className="user-profile-name-container">
 					<span>{userData.name}</span>
-					<span>{userData.makerPoints} Maker Points</span>
+					<span>{userData.makerPoints.toLocaleString()} Maker Points</span>
+				</div>
+				<div className="user-profile-code-container">
+					<span>
+						Maker ID:&nbsp;&nbsp;
+						<span className="level-code">{formattedMakerCode}</span>
+					</span>
 				</div>
 			</div>
 			<LevelSearchResultWidget searchParams={{
