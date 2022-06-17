@@ -5,6 +5,7 @@ import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUt
 import { useRouter } from 'next/router';
 import React from 'react';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
+import { getLevelResultDisplayData } from '@scripts/browser/SearchUtil';
 
 export interface LevelSearchParams extends SearchFilterSettings {
 	q: string;
@@ -50,6 +51,7 @@ function SearchResultsPage(props: {
 			<LevelSearchResultView
 				results={props.results}
 				thumbnailUrls={props.thumbnailUrls}
+				isWidget={false}
 			/>
 		</AppFrame>
 	);
@@ -65,22 +67,13 @@ export default SearchResultsPage;
 export async function getServerSideProps(context: { query: any }) {
 	const queryData = { ...defaultFilterSettings, ...context.query } as LevelSearchParams;
 	if (queryData.q === '_') queryData.q = '';
-	const results = await searchLevels(queryData);
 
-	const thumbnailUrls = await Promise.all(results.results.map(
-		async (level) => ({
-			id: level.id, url: await getLevelThumbnailUrl(level.id),
-		}),
-	));
-	const thumbnailUrlObj: {[key: string]: string} = {};
-	thumbnailUrls.forEach((urlEntry) => {
-		thumbnailUrlObj[urlEntry.id] = urlEntry.url;
-	});
+	const displayRes = await getLevelResultDisplayData(queryData);
 
 	return {
 		props: {
-			results,
-			thumbnailUrls: thumbnailUrlObj,
+			results: displayRes.results,
+			thumbnailUrls: displayRes.thumbnailUrlObj,
 		},
 	};
 }

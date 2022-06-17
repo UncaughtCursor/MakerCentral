@@ -3,6 +3,7 @@ import MeilisearchConfig from '@data/meilisearch-config.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { FullLevelSearchParams } from './SearchUtil';
 
 export interface LevelSearch {
 	query: string;
@@ -38,6 +39,7 @@ const filterParamNames = [
 	'theme',
 	'gameStyle',
 	'tag',
+	'makerId',
 ];
 
 /**
@@ -45,7 +47,9 @@ const filterParamNames = [
  * @param searchData The data to search based off of.
  * @returns A promise that resolves with a search results object.
  */
-export async function searchLevels(searchData: LevelSearchParams): Promise<LevelSearchResults> {
+export async function searchLevels(
+	searchData: LevelSearchParams | FullLevelSearchParams,
+): Promise<LevelSearchResults> {
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames.includes(paramName)
 			&& searchData[paramName as keyof LevelSearchParams]

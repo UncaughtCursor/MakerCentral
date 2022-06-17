@@ -8,9 +8,15 @@ import { getSearchUrl, SearchFilterSettings } from './LevelSearchBar';
  * Displays pagination controls for a search result page.
  * @param props The props:
  * - curSearch: The current search that results are being displayed for.
+ * - toToPage: (Optional) Whether or not to navigate to the next page
+ * automatically. Defaults to true.
+ * - onPageChange: (Optional) The function to be called when the page has changed.
+ * The parameter the change in the page index.
  */
 function LevelSearchPageControl(props: {
 	curSearchResults: LevelSearchResults,
+	goToPage?: boolean,
+	onPageChange?: (delta: number) => void,
 }) {
 	const history = useRouter();
 
@@ -42,8 +48,11 @@ function LevelSearchPageControl(props: {
 							tag: searchParams.tag,
 							page: curPage - 1,
 						};
-						const url = getSearchUrl(query, newSearchSettings);
-						history.push(url);
+						if (props.goToPage!) {
+							const url = getSearchUrl(query, newSearchSettings);
+							history.push(url);
+						}
+						props.onPageChange!(-1);
 					}}
 				/>
 			</div>
@@ -63,13 +72,21 @@ function LevelSearchPageControl(props: {
 							tag: searchParams.tag,
 							page: curPage + 1,
 						};
-						const url = getSearchUrl(query, newSearchSettings);
-						history.push(url);
+						if (props.goToPage!) {
+							const url = getSearchUrl(query, newSearchSettings);
+							history.push(url);
+						}
+						props.onPageChange!(1);
 					}}
 				/>
 			</div>
 		</div>
 	);
 }
+
+LevelSearchPageControl.defaultProps = {
+	goToPage: true,
+	onPageChange: () => {},
+};
 
 export default LevelSearchPageControl;
