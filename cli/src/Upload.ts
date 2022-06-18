@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import fs from 'fs';
 import chunk from 'chunk';
+import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
 import { db, storage } from './FirebaseUtil';
 import { loadRawLevelDocs } from './LevelStats';
 import {
@@ -8,7 +9,6 @@ import {
 } from './LevelConvert';
 import { saveJSON } from './util/Util';
 import TextDirStream from './TextDirStream';
-import { MCRawLevelDoc, MCRawUserDoc } from '../../data/types/MCBrowserTypes';
 import SpeedTester from './util/SpeedTester';
 import TextDirIterator from './TextDirIterator';
 

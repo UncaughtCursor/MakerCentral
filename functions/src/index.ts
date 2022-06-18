@@ -5,7 +5,7 @@ import * as admin from 'firebase-admin';
 export * from './levels';
 export * from './social';
 export * from './rewards';
-export * from './level-browser';
+export * from './levelBrowser';
 
 // IMPORTANT: RUN 'npx ttsc -w' after changes are made!! (ttsc isn't a typo!)
 

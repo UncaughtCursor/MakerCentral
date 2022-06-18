@@ -2,11 +2,12 @@
 /* eslint-disable no-redeclare */
 import fs from 'fs';
 import natural from 'natural';
+import { MCRawLevelDoc } from '@data/types/MCRawTypes';
 import {
 	levelOutDir, preLevelOutDir, userOutDir,
 } from './LevelConvert';
 import {
-	MCLevelDocData, MCLevelPreprocessData, MCRawLevelDoc, MCUserDocData,
+	MCLevelDocData, MCLevelPreprocessData, MCUserDocData,
 } from '../../data/types/MCBrowserTypes';
 import TextDirStream from './TextDirStream';
 import { loadJSON, printList } from './util/Util';

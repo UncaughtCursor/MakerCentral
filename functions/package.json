@@ -2,8 +2,8 @@
   "name": "functions",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
-    "refresh-files": "node ./build.mjs",
-    "build": "node ./build.mjs && ttsc",
+    "sync-files": "node ./syncFiles.mjs",
+    "build": "node ./syncFiles.mjs && ttsc",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
@@ -23,6 +23,7 @@
     "color": "^4.2.1",
     "compute-lcm": "^1.1.2",
     "cross-env": "^7.0.3",
+    "eslint-plugin-only-warn": "^1.0.3",
     "firebase": "^9.6.8",
     "firebase-admin": "^9.8.0",
     "firebase-functions": "^3.14.1",

@@ -7,10 +7,11 @@ import {
 	MCDifficulty,
 	MCGameStyle,
 	MCGameStyles,
-	MCLevelDocData, MCRawLevelDoc, MCRawUserDoc, MCTag,
+	MCLevelDocData, MCTag,
 	MCTheme, MCThemes, MCUserDocData, MCWorldDocData, MCWorldLevelPreview, MCWorldPreview,
 } from './data/types/MCBrowserTypes';
 import { db } from '.';
+import { MCRawLevelDoc, MCRawUserDoc } from './data/types/MCRawTypes';
 
 export const getLevel = functions.https.onCall(async (data: {
 	levelId: string,
@@ -70,6 +71,7 @@ export const getUser = functions.https.onCall(async (data: {
 		id: user.code,
 		name: user.name,
 		likes: user.likes,
+		levels: user.uploaded_levels,
 		makerPoints: user.maker_points,
 		world,
 	};

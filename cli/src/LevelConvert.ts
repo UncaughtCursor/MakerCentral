@@ -1,34 +1,23 @@
 /* eslint-disable no-async-promise-executor */
 import * as fs from 'fs';
 import { NdArray } from 'ndarray';
-import savePixels from 'save-pixels';
-import { getEndlessLevels } from './APIInterfacer';
+
 import {
-	APIDifficulties,
-	APIDifficulty,
-	APIGameStyle, APIGameStyles, APILevel, APITag, APITags, APITheme, APIThemes,
+	DBDifficulty, DBGameStyle, DBTheme, DBTag,
+} from '@data/types/DBTypes';
+import {
+	MCRawLevelDoc, MCRawUserPreview, MCRawSuperWorld, MCRawMedal, MCRawUserDoc, MCRawLevelAggregation, MCRawLevelAggregationUnit,
+} from '@data/types/MCRawTypes';
+import {
+	APIDifficulties, APIGameStyles, APITags, APIThemes,
 } from '../../data/APITypes';
-import { forEachLevel, forEachUser } from './db/DBInterfacer';
-import UnsafeDBQueryStream from './db/UnsafeDBQueryStream';
-import {
-	DBLevel, DBDifficulty, DBGameStyle, DBTag, DBUser, DBTheme,
-} from '../../data/types/DBTypes';
-import { generateThumbnail } from './level-reader/GenerateThumbnail';
-import { Theme } from '../../data/LevelDataTypes';
-import { loadPreLevels, loadUsers } from './LevelStats';
-import { saveJSON } from './util/Util';
 import SpeedTester from './util/SpeedTester';
 import DBQueryStream from './db/DBQueryStream';
-import {
-	LevelAggregationInfo,
-	MCDifficulties,
-	MCDifficulty, MCGameStyles, MCLevelDocData, MCLevelPreprocessData, MCRawLevelAggregation, MCRawLevelDoc, MCRawMedal, MCRawSuperWorld, MCRawUserDoc, MCRawUserPreview, MCRawWorldLevelPreview, MCTag, MCThemes, MCUserDocData,
-} from '../../data/types/MCBrowserTypes';
 import CSVObjectStream from './csv/CSVObjectStream';
-import {
-	BadgeCSVRow, badgeCSVSchema, LevelCSVRow, levelCSVSchema, UserCSVRow, userCSVSchema, WorldCSVRow, worldCSVSchema, WorldLevelCSVRow, worldLevelCSVSchema,
-} from './csv/CSVTypes';
 import BigMap from './util/BigMap';
+import {
+	levelCSVSchema, LevelCSVRow, userCSVSchema, UserCSVRow, worldCSVSchema, WorldCSVRow, worldLevelCSVSchema, WorldLevelCSVRow, badgeCSVSchema, BadgeCSVRow,
+} from './csv/CSVTypes';
 
 export const generalOutDir = 'E:/processed';
 export const levelOutDir = `${generalOutDir}/levels-2`;
@@ -199,10 +188,10 @@ function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
 /**
  * Loads a map of player pids to super world level ids.
  */
-function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
+function loadWorldLevelsMap(): Promise<Map<string, MCRawLevelAggregationUnit[]>> {
 	return new Promise(async (resolve) => {
 		const levelRankMap = await loadRankLevelMap();
-		const worldLevelsMap = new Map<string, LevelAggregationInfo[]>();
+		const worldLevelsMap = new Map<string, MCRawLevelAggregationUnit[]>();
 		const csvStream = new CSVObjectStream(worldLevelsCSVPath, worldLevelCSVSchema);
 
 		csvStream.on('data', (row: string) => {
@@ -227,9 +216,9 @@ function loadWorldLevelsMap(): Promise<Map<string, LevelAggregationInfo[]>> {
 /**
  * Loads a map of level data ids to a level's likes and code.
  */
-function loadRankLevelMap(): Promise<BigMap<number, LevelAggregationInfo>> {
+function loadRankLevelMap(): Promise<BigMap<number, MCRawLevelAggregationUnit>> {
 	return new Promise(async (resolve) => {
-		const levelRankMap = new BigMap<number, LevelAggregationInfo>();
+		const levelRankMap = new BigMap<number, MCRawLevelAggregationUnit>();
 		const csvStream = new CSVObjectStream(levelCSVPath, levelCSVSchema);
 
 		csvStream.on('data', (row: string) => {
@@ -404,7 +393,7 @@ async function emptyWriteQueue(queue: WriteQueueEntry[]) {
 	}
 }
 
-function aggregateLevelInfo(levelInfo: LevelAggregationInfo[]): MCRawLevelAggregation {
+function aggregateLevelInfo(levelInfo: MCRawLevelAggregationUnit[]): MCRawLevelAggregation {
 	const sum_difficulty: number[] = new Array(APIDifficulties.length).fill(0);
 	const sum_theme: number[] = new Array(APIThemes.length).fill(0);
 	const sum_gamestyle: number[] = new Array(APIGameStyles.length).fill(0);

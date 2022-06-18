@@ -1,6 +1,6 @@
 import copy from 'recursive-copy';
 
-console.log('Running MakerCentral build script...');
+console.log('Running functions sync script...');
 
 // Copy data to cloud functions folder
 await copy('../data', 'src/data', {
