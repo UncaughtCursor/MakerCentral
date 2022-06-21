@@ -4,7 +4,7 @@ import fs from 'fs';
 import natural from 'natural';
 import { MCRawLevelDoc } from '@data/types/MCRawTypes';
 import {
-	levelOutDir, preLevelOutDir, userOutDir,
+	levelOutDir, userOutDir,
 } from './LevelConvert';
 import {
 	MCLevelDocData, MCLevelPreprocessData, MCUserDocData,
@@ -13,21 +13,6 @@ import TextDirStream from './TextDirStream';
 import { loadJSON, printList } from './util/Util';
 
 export const statsDir = 'out/stats';
-
-/**
- * Run stats on downloaded levels.
- */
-export async function runLevelStats() {
-	console.log('Running stats...');
-	const levels = await loadPreLevels();
-	console.log(`${levels.length} levels loaded`);
-
-	generatePhraseCount(levels);
-
-	/* const percentiles = getPercentilesForLevelValues(levels, 'numLikes', 100001);
-	fs.writeFileSync('out/stats/percentiles.json', JSON.stringify(percentiles));
-	console.log('Percentiles saved.'); */
-}
 
 /**
  * Loads the set of raw level documents.
@@ -47,26 +32,6 @@ export async function loadRawLevelDocs() {
 	});
 
 	return levels;
-}
-
-/**
- * Loads the set of downloaded levels without user data.
- * @returns A promise containing the loaded levels.
- */
-export async function loadPreLevels() {
-	const fileNames = fs.readdirSync(preLevelOutDir);
-
-	const levelsMap: Map<string, MCLevelPreprocessData> = new Map();
-
-	fileNames.forEach((fileName) => {
-		const batchLevels = loadJSON(`${preLevelOutDir}/${fileName}`) as MCLevelPreprocessData[];
-		batchLevels.forEach((level) => {
-			levelsMap.set(level.id, level);
-		});
-	});
-	const levelsArr = Array.from(levelsMap.values());
-
-	return levelsArr;
 }
 
 /**

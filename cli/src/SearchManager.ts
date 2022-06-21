@@ -6,6 +6,9 @@ import MeiliCredentials from '@data/private/meilisearch-credentials.json';
 import { MCRawLevelDoc } from '@data/types/MCRawTypes';
 import { loadJSON, sleep } from './util/Util';
 import { loadRawLevelDocs } from './LevelStats';
+import { levelOutDir } from './LevelConvert';
+import TextDirIterator from './TextDirIterator';
+import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
 
 const wordDataOutputName = 'out/stats/wordData.json';
 
@@ -14,28 +17,22 @@ const client = new MeiliSearch(MeiliCredentials);
 /**
  * Creates and uploads search data to Meilisearch.
  */
-export async function createSearchData() {
-	// Reset level data
+export async function createLevelSearchData() {
+
 	console.log('Loading levels...');
-	// FIXME: Load levels
-	const levels: MCRawLevelDoc[] = await loadRawLevelDocs();
-	console.log(`${levels.length} levels loaded`);
-	await client.index('levels').deleteAllDocuments();
+	const levelFileIterator = new TextDirIterator(levelOutDir);
+	// await client.index('levels').deleteAllDocuments();
 
-	const filteredLevels = levels.filter((level) => level.likes >= 0);
+	await levelFileIterator.iterate(async (data: string, i: number) => {
+		console.log(`File #${i + 1}`);
+		const rawDocs = JSON.parse(data) as MCRawLevelDoc[];
+		const docs = rawDocs.map(rawDoc => MCRawLevelDocToMCLevelDoc(rawDoc));
 
-	const chunkSize = 100000;
-	const levelChunks = chunk(filteredLevels, chunkSize);
-
-	for (let i = 0; i < levelChunks.length; i++) {
-		console.log(`${i * chunkSize} / ${levelChunks.length * chunkSize}`);
-		const task = await client.index('levels').addDocuments(levelChunks[i]);
+		const task = await client.index('levels').addDocuments(docs);
 		console.log(task);
-		sleep(20 * 1000);
-		console.log('');
-	}
 
-	await setSearchSuggestions();
+		await sleep(10 * 1000);
+	});
 }
 
 /**

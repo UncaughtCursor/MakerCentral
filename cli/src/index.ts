@@ -9,8 +9,7 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode, parseLevelFromZCDFil
 import {
 	compileLevels, compileUsers, streamTableToFile,
 } from './LevelConvert';
-import { runLevelStats } from './LevelStats';
-import { createSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createLevelSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -76,11 +75,8 @@ yargs.usage('$0 command')
 	.command('get-users', 'Extract user data', async () => {
 		await compileUsers();
 	})
-	.command('run-stats', 'Run statistics on the compiled level data', async () => {
-		await runLevelStats();
-	})
-	.command('create-search', 'Upload the compiled level data to Meilisearch', async () => {
-		await createSearchData();
+	.command('create-level-search', 'Upload the compiled level data to Meilisearch', async () => {
+		await createLevelSearchData();
 	})
 	.command('set-search-suggestions', 'Upload the latest word stats to Meilisearch to update the search suggestions', async () => {
 		await setSearchSuggestions();

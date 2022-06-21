@@ -6,7 +6,8 @@ import {
 	DBDifficulty, DBGameStyle, DBTheme, DBTag,
 } from '@data/types/DBTypes';
 import {
-	MCRawLevelDoc, MCRawUserPreview, MCRawSuperWorld, MCRawMedal, MCRawUserDoc, MCRawLevelAggregation, MCRawLevelAggregationUnit,
+	MCRawLevelDoc, MCRawUserPreview, MCRawSuperWorld, MCRawMedal,
+	MCRawUserDoc, MCRawLevelAggregation, MCRawLevelAggregationUnit,
 } from '@data/types/MCRawTypes';
 import {
 	APIDifficulties, APIGameStyles, APITags, APIThemes,
@@ -16,14 +17,14 @@ import DBQueryStream from './db/DBQueryStream';
 import CSVObjectStream from './csv/CSVObjectStream';
 import BigMap from './util/BigMap';
 import {
-	levelCSVSchema, LevelCSVRow, userCSVSchema, UserCSVRow, worldCSVSchema, WorldCSVRow, worldLevelCSVSchema, WorldLevelCSVRow, badgeCSVSchema, BadgeCSVRow,
+	levelCSVSchema, LevelCSVRow, userCSVSchema, UserCSVRow,
+	worldCSVSchema, WorldCSVRow, worldLevelCSVSchema, WorldLevelCSVRow, badgeCSVSchema, BadgeCSVRow,
 } from './csv/CSVTypes';
 
 export const generalOutDir = 'E:/processed';
-export const levelOutDir = `${generalOutDir}/levels-2`;
-export const preLevelOutDir = `${generalOutDir}/levels-pre-2`;
+export const levelOutDir = `${generalOutDir}/levels`;
 export const thumbOutDir = `${generalOutDir}/level-thumbs`;
-export const userOutDir = `${generalOutDir}/users-2`;
+export const userOutDir = `${generalOutDir}/users`;
 
 const CSVDirPath = 'E:/processed/csv';
 const levelCSVPath = `${CSVDirPath}/level-meta-raw.csv`;

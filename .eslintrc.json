@@ -16,9 +16,9 @@
         "sourceType": "module"
     },
     "plugins": [
+		"only-warn",
         "react",
-        "@typescript-eslint",
-		"only-warn"
+        "@typescript-eslint"
     ],
     "rules": {
 		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
