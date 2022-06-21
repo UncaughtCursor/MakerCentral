@@ -1,0 +1,8 @@
+{
+	"plugins": [
+		"only-warn",
+        "react",
+        "@typescript-eslint"
+    ],
+	"root": true
+}

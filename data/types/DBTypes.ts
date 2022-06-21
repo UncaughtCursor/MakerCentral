@@ -14,7 +14,7 @@ export interface DBLevel {
     world_record: number;
     upload_time: number;
     num_comments: number;
-    clear_condition: ClearCondition;
+    clear_condition: DBClearCondition;
     clear_condition_magnitude: number;
     clears: number;
     attempts: number;

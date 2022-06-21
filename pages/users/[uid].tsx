@@ -44,6 +44,14 @@ function UserPage(props: UserPageProps) {
 					</span>
 				</div>
 			</div>
+			<h2 style={{
+				maxWidth: '860px',
+				textAlign: 'left',
+				margin: '20px auto',
+				paddingLeft: '20px',
+			}}
+			>Levels ({userData.levels})
+			</h2>
 			<LevelSearchResultWidget searchParams={{
 				q: '',
 				sortType: 'By Date',

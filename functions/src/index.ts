@@ -12,6 +12,7 @@ export * from './level-browser';
 admin.initializeApp();
 
 export const db = admin.firestore();
+export const storageBucket = admin.storage().bucket();
 
 export const initUser = functions.https.onCall(async (_data, context) => {
 	if (context.auth === undefined) return { success: false, msg: 'User is not logged in.' };

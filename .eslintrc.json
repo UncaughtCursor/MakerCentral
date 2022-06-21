@@ -16,9 +16,9 @@
         "sourceType": "module"
     },
     "plugins": [
+		"only-warn",
         "react",
-        "@typescript-eslint",
-		"only-warn"
+        "@typescript-eslint"
     ],
     "rules": {
 		"react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
@@ -55,6 +55,7 @@
 		"no-continue": "off",
 		"react/jsx-indent": ["error", "tab"],
 		"react/jsx-indent-props": ["error", "tab"],
-		"react/destructuring-assignment": "off"
+		"react/destructuring-assignment": "off",
+		"camelcase": "off"
     }
 }
