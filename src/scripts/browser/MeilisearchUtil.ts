@@ -57,6 +57,8 @@ export async function searchLevels(
 	).map(
 		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof LevelSearchParams]}"`,
 	);
+	// Disable levels with less than 25 likes from showing up for now
+	filter.push('numLikes >= 25');
 
 	// eslint-disable-next-line consistent-return
 	const sortTypePropertyName = (() => {
