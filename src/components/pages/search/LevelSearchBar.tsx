@@ -67,7 +67,10 @@ function LevelSearchBar(props: SearchBarProps) {
 
 	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
 	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
-		props.initialSettings,
+		{
+			...props.initialSettings,
+			page: 0,
+		},
 	);
 	filterSettingsRef.current = filterSettings;
 

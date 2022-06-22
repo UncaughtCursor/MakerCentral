@@ -30,9 +30,7 @@ export async function createLevelSearchData() {
 
 		const task = await client.index('levels').addDocuments(docs);
 		console.log(task);
-
-		await sleep(10 * 1000);
-	});
+	}, 82); // TODO: Remove this argument when done uploading levels.
 }
 
 /**
