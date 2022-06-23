@@ -16,6 +16,7 @@ import {
 import {
 	APIDifficulties, APIGameStyles, APITags, APIThemes,
 } from './data/APITypes';
+import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 
 const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
@@ -30,13 +31,6 @@ const meilisearchLevelIndex = meilisearchClient.index('levels');
 const meilisearchUserIndex = meilisearchClient.index('users');
 const meilisearchWorldIndex = meilisearchClient.index('worlds');
 
-const smm2APIBaseUrl = 'http://magic.makercentral.io';
-
-const maxDataIdEndpoint = 'newest_data_id';
-const levelEndpoint = 'level_info_multiple';
-const userEndpoint = 'user_info_multiple';
-const superWorldEndpoint = 'super_world';
-
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
 	lastNewestDataId: number;
@@ -46,13 +40,10 @@ interface UpdaterProgress {
 /**
  * Updates the levels in the database from Nintendo's servers.
  */
-export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {
+/* export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 	console.log(progress);
-
-	// Throw off the Nintendo ninjas
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * 20000));
 
 	// If it's possible to go over the cached max data ID, get the new max data ID.
 	const maxId = progress.lastDataIdDownloaded + maxLevelsToAdd >= progress.lastNewestDataId
@@ -91,7 +82,7 @@ export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async
 
 	// Save the progress.
 	await saveProgress(progress);
-});
+}); */
 
 /**
  * Downloads levels from Nintendo's servers, sweeping through the data IDs specified.
