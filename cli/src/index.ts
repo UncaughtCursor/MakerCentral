@@ -15,6 +15,7 @@ import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
 import CSVObjectStream from './csv/CSVObjectStream';
 import SpeedTester from './util/SpeedTester';
+import CloudFn from './util/CloudFn';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -105,17 +106,28 @@ yargs.usage('$0 command')
 		console.log('Level rendered');
 	})
 	.command('test', 'Test', async () => {
-		const spd = new SpeedTester(100000, (speed, _, total) => {
-			console.log(`${total} levels processed; ${speed} per second`);
+		const speedTester = new SpeedTester(1, ((_, ms) => {
+			console.log(`Completed in ${ms}ms`);
+		}));
+		const result = await CloudFn<{
+			levelIDs: string[];
+		}, string[]>('generateThumbnailsForLevelIDs', {
+			levelIDs: [
+				'9HCP7JRSG',
+				'00000C34G',
+				'7N1MVBWKF',
+				'LHBPC3FDG',
+				'MD2HM2BFG',
+				'HPGWPSHDG',
+				'V8FD0F5WF',
+				'NJWPK0JWG',
+				'Y2D6FMJ9G',
+				'Y09FKYGWF'
+			],
 		});
-		const csvStream = new CSVObjectStream('E:/processed/user-raw.csv', levelSchema);
-		csvStream.on('data', (data) => {
-			const row = JSON.parse(data) as {
-				name: string,
-				description: string
-			};
-			spd.tick();
-		});
+		speedTester.tick();
+
+		if (result !== null) console.log(result.data.length);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

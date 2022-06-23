@@ -14,7 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.27.1",
+    "axios": "^0.27.2",
     "chalk": "^4.1.2",
     "chunk": "0.0.3",
     "clear": "^0.1.0",
@@ -27,6 +27,7 @@
     "eslint-plugin-react": "^7.29.4",
     "figlet": "^1.5.2",
     "firebase-admin": "^10.0.2",
+    "firebase-functions": "^3.21.2",
     "fluent-ffmpeg": "^2.1.2",
     "get-pixels": "^3.3.3",
     "gpu.js": "^2.4.1",

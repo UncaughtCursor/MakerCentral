@@ -2,30 +2,26 @@ import * as functions from 'firebase-functions';
 import { smm2APIBaseUrl, thumbnailEndpoint } from './constants';
 import sharp from 'sharp';
 import { storageBucket } from '.';
-import { CloudFunction } from './data/types/FirebaseUtilTypes';
+import { fetchBuffer } from './util';
 
-const thumbnailPath = 'game-level-thumbs/small';
+const thumbnailPath = 'game-level-thumb/small';
 const thumbnailSize = {
 	width: 64,
 	height: 36,
 }
 
-export type generateThumbnailsForLevelIDsType = CloudFunction<{
-	levelIDs: string[],
-}, Buffer[]>
 export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data: {
 	levelIDs: string[],
 }) => {
 	// Download the thumbnails for the level IDs from the SMM2 server.
 	const images: Buffer[] = await Promise.all(data.levelIDs.map(async (levelID) => {
 		const url = `${smm2APIBaseUrl}/${thumbnailEndpoint}/${levelID}`;
-		const response = await fetch(url);
-		return Buffer.from(await response.arrayBuffer());
+		return await fetchBuffer(url);
 	}));
 	
 	// Resize the thumbnails to the correct size.
 	const thumbnails: Buffer[] = await Promise.all(images.map(async (image) => {
-		const thumbnail = await sharp(image).resize(thumbnailSize.width, thumbnailSize.height).toBuffer();
+		const thumbnail = await sharp(image).resize(thumbnailSize.width, thumbnailSize.height).png().toBuffer();
 		return thumbnail;
 	}));
 
@@ -35,8 +31,9 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 		await uploadThumbnail(thumbnail, thumbnailName);
 	}));
 
-	// Return the buffers of the thumbnails to make things faster for the client.
-	return thumbnails;
+	// Return the thumbnails to make things faster for the client.
+	// Encode them as base64 strings.
+	return thumbnails.map((thumbnail) => thumbnail.toString('base64'));
 });
 
 /**
