@@ -2,7 +2,9 @@ import * as functions from 'firebase-functions';
 import { smm2APIBaseUrl, thumbnailEndpoint } from './constants';
 import sharp from 'sharp';
 import { storageBucket } from '.';
-import { fetchBuffer } from './util';
+import { fetchBuffer, operationCollectionName } from './util';
+import { AxiosError } from 'axios';
+import { db } from '.';
 
 const thumbnailPath = 'game-level-thumb/small';
 const thumbnailSize = {
@@ -10,32 +12,89 @@ const thumbnailSize = {
 	height: 36,
 }
 
+const levelDeleteQueueCollectionPath = `${operationCollectionName}/queues/level-delete-queue`;
+
 export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data: {
 	levelIDs: string[],
 }) => {
+	type ThumbnailDownloadResult = {
+		levelID: string,
+		status: 'Success' | 'Error' | 'Removed',
+		buffer: Buffer | null,
+	};
+
 	// Download the thumbnails for the level IDs from the SMM2 server.
-	const images: Buffer[] = await Promise.all(data.levelIDs.map(async (levelID) => {
+	const results: ThumbnailDownloadResult[] = await Promise.all(data.levelIDs.map(async (levelID) => {
 		const url = `${smm2APIBaseUrl}/${thumbnailEndpoint}/${levelID}`;
-		return await fetchBuffer(url);
+		let buffer: Buffer | null = null;
+		let status: 'Success' | 'Error' | 'Removed' = 'Error';
+		try {
+			buffer = await fetchBuffer(url);
+			status = 'Success';
+		} catch(e) {
+			console.error('Error downloading thumbnail');
+			if (e instanceof AxiosError) {
+				console.error('HTTP error:', e.response?.status);
+				const respData = (e.response?.data as Buffer | undefined);
+				const respJson = (respData instanceof Buffer ? JSON.parse(respData.toString()) : undefined);
+				if (respJson.error === 'No course with that ID') {
+					status = 'Removed';
+
+					// Add the level ID to the level delete queue
+					// as an empty document whose ID is the level ID.
+					const docRef = db.collection(levelDeleteQueueCollectionPath).doc(levelID);
+					await docRef.set({});
+				}
+			}
+		}
+		return {
+			levelID,
+			status,
+			buffer,
+		};
 	}));
+
+	const statusMap: { [levelID: string]: 'Success' | 'Error' | 'Removed' } = {};
+	results.forEach(({ levelID, status }) => {
+		statusMap[levelID] = status;
+	});
+		
 	
 	// Resize the thumbnails to the correct size.
-	const thumbnails: Buffer[] = await Promise.all(images.map(async (image) => {
-		const thumbnail = await sharp(image).resize(thumbnailSize.width, thumbnailSize.height).png().toBuffer();
-		return thumbnail;
-	}));
+	const thumbnails: Map<string, Buffer> = new Map();
+	for (const result of results) {
+		const buffer = result.buffer;
+		if (buffer) {
+			const thumbnail = await sharp(buffer)
+				.resize(thumbnailSize.width, thumbnailSize.height)
+				.toBuffer();
+			thumbnails.set(result.levelID, thumbnail);
+		}
+	}
 
 	// Upload the thumbnails to Firebase Storage.
-	await Promise.all(thumbnails.map(async (thumbnail, i) => {
-		const thumbnailName = `${data.levelIDs[i]}_${thumbnailSize.width}x${thumbnailSize.height}.png`;
-		await uploadThumbnail(thumbnail, thumbnailName);
-	}));
+	for (const [levelID, thumbnail] of thumbnails) {
+		const numTries = 5;
+		for (let i = 0; i < numTries; i++) {
+			try {
+				await uploadThumbnail(thumbnail, `${levelID}.png`);
+				break;
+			}
+			catch(e) {
+				console.error(e);
+			}
+		}
+	}
 
 	// Return the thumbnails to make things faster for the client.
-	// Encode them as base64 strings.
-	return thumbnails.map((thumbnail) => thumbnail.toString('base64'));
+	// Encode them as a map of level ID to thumbnail URL or the status if there was an error.
+	const thumbnailsMap: { [levelID: string]: string } = {};
+	Object.keys(statusMap).forEach((levelID) => {
+		const thumbnail = thumbnails.get(levelID);
+		thumbnailsMap[levelID] = statusMap[levelID] === 'Success' ? thumbnail!.toString('base64') : statusMap[levelID];
+	});
+	return thumbnailsMap;
 });
-
 /**
  * Uploads a thumbnail to Firebase Storage.
  * @param thumbnail A buffer containing the thumbnail image data.

@@ -16,6 +16,8 @@ interface UserDocData {
 	bio: string,
 }
 
+export const operationCollectionName = 'operations';
+
 /**
  * Sends a notification to a user.
  * @param uid The user to send the notification to.

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Readable } from 'stream';
 import { escape } from 'html-escaper';
-import { db } from './DBInterfacer';
+import { getDB } from './DBInterfacer';
 
 /**
  * An object that puts the results of a query into a CSV read stream.
@@ -48,7 +48,7 @@ export default class UnsafeDBQueryStream extends Readable {
 		if (this.readStarted) return;
 		this.readStarted = true;
 
-		db.each(this.query, (err, res) => {
+		getDB().each(this.query, (err, res) => {
 			if (err) console.error(err);
 
 			if (this.fieldNames.length === 0) {

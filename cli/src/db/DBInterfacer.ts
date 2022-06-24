@@ -3,7 +3,12 @@ import { Database } from 'sqlite3';
 import { DBLevel, DBUser } from '../../../data/types/DBTypes';
 
 export const dbPath = 'E:/decompressed/dump.db';
-export const db = new Database(dbPath);
+let db: Database | null = null;
+
+export function getDB() {
+	if (!db) db = new Database(dbPath);
+	return db;
+}
 
 const minDataId = 3000000;
 
@@ -77,7 +82,7 @@ export async function forEachLevel(
 		const levels = await (() => new Promise<DBLevel[]>((resolve) => {
 			console.log('Querying...');
 			console.log(`Min Data ID = ${maxDataIdSeen - 1000}`);
-			db.all(sql, (err, res) => {
+			getDB().all(sql, (err, res) => {
 				if (err) console.error(err);
 				console.log('Query ended...');
 				resolve(res as DBLevel[]);
@@ -129,7 +134,7 @@ export async function forEachUser(
 
 		const users = await (() => new Promise<DBUser[]>((resolve) => {
 			console.log('Querying...');
-			db.all(sql, (err, res) => {
+			getDB().all(sql, (err, res) => {
 				if (err) console.error(err);
 				console.log('Query ended...');
 				resolve(res as DBUser[]);

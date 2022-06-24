@@ -111,7 +111,7 @@ yargs.usage('$0 command')
 		}));
 		const result = await CloudFn<{
 			levelIDs: string[];
-		}, string[]>('generateThumbnailsForLevelIDs', {
+		}, { [levelID: string]: string }>('generateThumbnailsForLevelIDs', {
 			levelIDs: [
 				'9HCP7JRSG',
 				'00000C34G',
@@ -127,7 +127,7 @@ yargs.usage('$0 command')
 		});
 		speedTester.tick();
 
-		if (result !== null) console.log(result.data.length);
+		if (result !== null) console.log(result.data);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
