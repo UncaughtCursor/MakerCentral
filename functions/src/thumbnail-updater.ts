@@ -75,9 +75,10 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 	// Upload the thumbnails to Firebase Storage.
 	for (const [levelID, thumbnail] of thumbnails) {
 		const numTries = 5;
+		const thumbnailSuffix = '_64x36';
 		for (let i = 0; i < numTries; i++) {
 			try {
-				await uploadThumbnail(thumbnail, `${levelID}.png`);
+				await uploadThumbnail(thumbnail, `${levelID}${thumbnailSuffix}.png`);
 				break;
 			}
 			catch(e) {
@@ -91,7 +92,8 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 	const thumbnailsMap: { [levelID: string]: string } = {};
 	Object.keys(statusMap).forEach((levelID) => {
 		const thumbnail = thumbnails.get(levelID);
-		thumbnailsMap[levelID] = statusMap[levelID] === 'Success' ? thumbnail!.toString('base64') : statusMap[levelID];
+		thumbnailsMap[levelID] = statusMap[levelID] === 'Success'
+			? `data:image/png;base64,${thumbnail!.toString('base64')}` : statusMap[levelID];
 	});
 	return thumbnailsMap;
 });

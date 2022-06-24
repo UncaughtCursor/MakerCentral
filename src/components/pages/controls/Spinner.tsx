@@ -6,18 +6,19 @@ import React from 'react';
  * * yOfsPx: The number of pixels to offset the spinner down from the top of the container.
  */
 function Spinner(props: {
-	isActive: boolean,
+	isActive?: boolean,
 	yOfsPx?: number,
 }) {
 	return (
 		<div
 			className="lds-dual-ring"
-			style={{ display: props.isActive ? '' : 'none', top: `${props.yOfsPx!}px` }}
+			style={{ display: props.isActive! ? '' : 'none', top: `${props.yOfsPx!}px` }}
 		/>
 	);
 }
 
 Spinner.defaultProps = {
+	isActive: true,
 	yOfsPx: 72,
 };
 

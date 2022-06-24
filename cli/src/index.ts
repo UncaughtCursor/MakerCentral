@@ -15,7 +15,7 @@ import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
 import CSVObjectStream from './csv/CSVObjectStream';
 import SpeedTester from './util/SpeedTester';
-import CloudFn from './util/CloudFn';
+import CloudFn from '../../data/util/CloudFn';
 
 const testLevelCode = '3B3KRDTPF';
 
