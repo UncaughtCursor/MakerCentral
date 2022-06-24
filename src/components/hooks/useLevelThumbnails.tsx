@@ -23,7 +23,6 @@ function useLevelThumbnails(initState: LevelThumbnailStates): LevelThumbnailStat
 			levelIDs: nonUploadedLevelIds,
 		} : null,
 	);
-	console.log(thumbnailFnState);
 
 	// Initialize the output object to be a copy of initState.
 	const outputObj: LevelThumbnailStates = { ...initState };
@@ -37,7 +36,7 @@ function useLevelThumbnails(initState: LevelThumbnailStates): LevelThumbnailStat
 				} if (thumbnailFnState.state === 'Error') {
 					return 'Error';
 				}
-				console.log('This should never happen.');
+				console.error('This should never happen.');
 				return 'Error';
 			}
 			switch (thumbnailFnState.value[levelID]) {

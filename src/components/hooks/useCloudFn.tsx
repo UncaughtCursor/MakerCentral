@@ -23,18 +23,12 @@ function useCloudFn<Input = void, Output = void>(
 		};
 	}
 
-	console.log('useCloudFn', name, input);
 	const [state, setState] = useState<CloudFnState<Output>>({
 		state: 'Loading',
 		value: null,
 	});
 
 	useEffect(() => {
-		console.log('effect', name, Object.values(input));
-		setState({
-			state: 'Loading',
-			value: null,
-		});
 		CloudFn<Input, Output>(name, input).then((value) => {
 			setState({
 				state: 'Loaded',
@@ -47,6 +41,12 @@ function useCloudFn<Input = void, Output = void>(
 				value: null,
 			});
 		});
+		if (state.state === 'Loaded') {
+			setState({
+				state: 'Loading',
+				value: null,
+			});
+		}
 	}, [name, JSON.stringify(input)]);
 
 	return state;
