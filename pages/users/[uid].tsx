@@ -1,5 +1,6 @@
 import AppFrame from '@components/AppFrame';
 import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
+import SuperWorldPreview from '@components/pages/browser/SuperWorldPreview';
 import LevelSearchResultWidget from '@components/pages/search/LevelSearchResultWidget';
 import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { MCUserDocData } from '@data/types/MCBrowserTypes';
@@ -24,6 +25,7 @@ interface UserPageProps {
 function UserPage(props: UserPageProps) {
 	if (props.userDocData === null) return <Page404 />;
 	const userData = props.userDocData;
+	console.log(userData);
 
 	const formattedMakerCode = `${userData.id.substring(0, 3)}-${userData.id.substring(3, 6)}-${userData.id.substring(6, 9)}`;
 
@@ -32,38 +34,43 @@ function UserPage(props: UserPageProps) {
 			title={`${userData.name}'s Profile - MakerCentral`}
 			description={`${userData.name}'s profile on MakerCentral. ${userData.makerPoints} maker points.`}
 		>
-			<div className="user-profile-container-upper">
-				<div className="user-profile-name-container">
-					<span>{userData.name}</span>
-					<span>{userData.makerPoints.toLocaleString()} Maker Points</span>
+			<div className="user-profile">
+				<div className="user-profile-container-upper">
+					<div className="user-profile-name-container">
+						<span>{userData.name}</span>
+						<span>{userData.makerPoints.toLocaleString()} Maker Points</span>
+					</div>
+					<div className="user-profile-code-container">
+						<span>
+							Maker ID:&nbsp;&nbsp;
+							<span className="level-code">{formattedMakerCode}</span>
+						</span>
+					</div>
 				</div>
-				<div className="user-profile-code-container">
-					<span>
-						Maker ID:&nbsp;&nbsp;
-						<span className="level-code">{formattedMakerCode}</span>
-					</span>
-				</div>
+				{userData.world !== null && (
+					<>
+						<h2 className="user-profile-header">Super World</h2>
+						<SuperWorldPreview
+							world={userData.world}
+							makerName={userData.name}
+							makerId={userData.id}
+						/>
+					</>
+				)}
+				<h2 className="user-profile-header">Levels ({userData.levels})</h2>
+				<LevelSearchResultWidget searchParams={{
+					q: '',
+					sortType: 'By Date',
+					sortOrder: 'Descending',
+					gameStyle: 'Any',
+					difficulty: 'Any',
+					tag: 'Any',
+					theme: 'Any',
+					page: 0,
+					makerId: userData.id,
+				}}
+				/>
 			</div>
-			<h2 style={{
-				maxWidth: '860px',
-				textAlign: 'left',
-				margin: '20px auto',
-				paddingLeft: '20px',
-			}}
-			>Levels ({userData.levels})
-			</h2>
-			<LevelSearchResultWidget searchParams={{
-				q: '',
-				sortType: 'By Date',
-				sortOrder: 'Descending',
-				gameStyle: 'Any',
-				difficulty: 'Any',
-				tag: 'Any',
-				theme: 'Any',
-				page: 0,
-				makerId: userData.id,
-			}}
-			/>
 		</AppFrame>
 	);
 }

@@ -1,3 +1,11 @@
+.user-profile {
+	display: flex;
+	flex-direction: column;
+	width: 80vw;
+	max-width: 860px;
+	margin: 0 auto;
+}
+
 .user-profile-container {
 	display: flex;
 	flex-direction: column;
@@ -12,10 +20,8 @@
 	grid-template-rows: repeat(2, minmax(100px, 1fr));
 	background-color: var(--bg-dark);
 	border-radius: 20px;
-	margin: 20px auto;
+	margin: 20px 0;
 	flex-wrap: wrap;
-	max-width: 800px;
-	width: 80vw;
 }
 
 .user-profile-name-container {
@@ -89,6 +95,13 @@
 	display: flex;
 	align-items: flex-end;
 	justify-content: flex-end;
+}
+
+.user-profile-header {
+	width: 100%;
+	text-align: left;
+	margin: 20px 0;
+	padding-left: 10px;
 }
 
 @media (max-width: 490px) {

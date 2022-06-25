@@ -3,9 +3,8 @@
 import React from 'react';
 import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import FlagCircleIcon from '@mui/icons-material/FlagCircle';
-import { useRouter } from 'next/router';
+import PlayIcon from '@mui/icons-material/SportsEsports';
+import ClearRateIcon from '@mui/icons-material/FlagCircle';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
 import LevelThumbnail from './LevelThumbnail';
@@ -27,8 +26,6 @@ function LevelPreview(props: {
 	// eslint-disable-next-line no-param-reassign
 	props.level.uploadTime = props.level.uploadTime as number;
 	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
-	const history = useRouter();
-
 	const previewContainerContents = (
 		<>
 			<div className="user-level-preview-header">
@@ -50,9 +47,9 @@ function LevelPreview(props: {
 				<div className="icon-count-row">
 					<LikeIcon style={{ color: 'var(--text-color)' }} />
 					<p>{props.level.numLikes.toLocaleString()}</p>
-					<SportsEsportsIcon style={{ color: 'var(--text-color)' }} />
+					<PlayIcon style={{ color: 'var(--text-color)' }} />
 					<p>{props.level.numPlays.toLocaleString()}</p>
-					<FlagCircleIcon style={{ color: 'var(--text-color)' }} />
+					<ClearRateIcon style={{ color: 'var(--text-color)' }} />
 					<p>{(props.level.clearRate * 100).toFixed(2)}%</p>
 				</div>
 				<TagDisplay tags={props.level.tags} />
@@ -62,13 +59,11 @@ function LevelPreview(props: {
 	);
 
 	return (
-		<div
+		<a
+			href={`/levels/view/${props.level.id}`}
 			className="user-level-preview"
-			onClick={() => {
-				history.push(`/levels/view/${props.level.id}`);
-			}}
 		>{previewContainerContents}
-		</div>
+		</a>
 	);
 }
 

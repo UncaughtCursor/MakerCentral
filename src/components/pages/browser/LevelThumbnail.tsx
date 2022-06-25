@@ -1,7 +1,6 @@
 import React from 'react';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import RemovedImageIcon from '@mui/icons-material/CancelPresentation';
-import Spinner from '../controls/Spinner';
 import ImageSpinner from '../controls/ImageSpinner';
 
 /**
