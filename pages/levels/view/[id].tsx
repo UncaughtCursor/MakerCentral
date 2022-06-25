@@ -8,6 +8,7 @@ import { useRouter } from 'next/router';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import useCloudFn from '@components/hooks/useCloudFn';
 import useLevelThumbnails from '@components/hooks/useLevelThumbnails';
+import LevelThumbnail from '@components/pages/browser/LevelThumbnail';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -48,10 +49,12 @@ function LevelPage(props: {
 						left="calc(100% - 50px)"
 						top="15px"
 					/>
-					<img
-						className="level-page-img"
-						src={imgThumbnailUrl}
-						alt={level.name}
+					<LevelThumbnail
+						url={imgThumbnailUrl}
+						status={thumbnails[level.id].state}
+						style={{
+							height: '50px',
+						}}
 					/>
 					<div>
 						<h3 className="level-page-title">{level.name}</h3>

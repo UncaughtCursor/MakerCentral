@@ -48,6 +48,7 @@ import '../styles/component/Notifications.css';
 import '../styles/component/SearchBar.css';
 import '../styles/component/LevelListings.css';
 import '../styles/component/LandingPage.css';
+import '../styles/component/LevelThumbnail.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';

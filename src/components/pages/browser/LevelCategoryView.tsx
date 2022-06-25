@@ -52,9 +52,11 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 				}}
 			>
 				{levels.map(async (level) => (
+					// FIXME: Use the useThumbnails hooks for this
 					<LevelPreview
 						level={level}
 						thumbnailUrl={await getLevelThumbnailUrl(level.id)}
+						status="Loaded"
 						key={level.id}
 					/>
 				))}

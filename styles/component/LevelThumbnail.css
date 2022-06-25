@@ -1,0 +1,21 @@
+.level-thumbnail-container {
+	aspect-ratio: 16 / 9;
+}
+
+.level-thumbnail-image {
+	aspect-ratio: 16 / 9;
+	image-rendering: crisp-edges;
+	height: 100%;
+}
+
+.level-thumbnail-loading {
+	aspect-ratio: 16 / 9;
+	height: 100%;
+}
+
+.level-thumbnail-error, .level-thumbnail-removed {
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}

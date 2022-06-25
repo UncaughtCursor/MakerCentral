@@ -62,6 +62,7 @@ function LevelSearchResultView(props: {
 						<LevelPreview
 							level={level}
 							thumbnailUrl={thumbnails[level.id].url !== null ? thumbnails[level.id].url! : ''}
+							status={thumbnails[level.id].state}
 							key={level.id}
 						/>
 					))}

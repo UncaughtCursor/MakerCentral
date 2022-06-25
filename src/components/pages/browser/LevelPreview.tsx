@@ -8,6 +8,7 @@ import FlagCircleIcon from '@mui/icons-material/FlagCircle';
 import { useRouter } from 'next/router';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
+import LevelThumbnail from './LevelThumbnail';
 
 const timeAgo = new TimeAgo('en-us');
 
@@ -16,10 +17,12 @@ const timeAgo = new TimeAgo('en-us');
  * @param props The props:
  * * level: The level to display a preview of.
  * * thumbnailUrl: The URL of the thumbnail to display.
+ * * status: The status of the thumbnail.
  */
 function LevelPreview(props: {
 	level: MCLevelDocData,
 	thumbnailUrl: string,
+	status: 'Loading' | 'Loaded' | 'Error' | 'Removed' | 'Not Uploaded',
 }) {
 	// eslint-disable-next-line no-param-reassign
 	props.level.uploadTime = props.level.uploadTime as number;
@@ -29,7 +32,15 @@ function LevelPreview(props: {
 	const previewContainerContents = (
 		<>
 			<div className="user-level-preview-header">
-				<img alt={props.level.name} src={props.thumbnailUrl} />
+				<LevelThumbnail
+					url={props.thumbnailUrl}
+					status={props.status}
+					style={{
+						width: '140px',
+						minWidth: '140px',
+						height: 'min-content',
+					}}
+				/>
 				<div className="user-level-preview-details">
 					<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
 					<p>{props.level.makerName} • {timeAgoStr}</p>

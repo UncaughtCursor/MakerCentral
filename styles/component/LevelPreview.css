@@ -21,14 +21,6 @@
 	margin: 10px 10px;
 }
 
-.user-level-preview-header > img {
-	aspect-ratio: 16 / 9;
-	width: 140px;
-	min-width: 140px;
-	height: min-content;
-	image-rendering: crisp-edges;
-}
-
 .user-level-preview-details {
 	display: flex;
 	flex-direction: column;
