@@ -44,6 +44,11 @@
   background-color: var(--bg-darker)
 }
 
+.image-spinner > svg {
+  width: 50%;
+  height: 50%;
+}
+
 @keyframes image-spinner {
     0%,100% {
       filter: brightness(60%);

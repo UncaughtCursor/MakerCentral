@@ -19,3 +19,8 @@
 	justify-content: center;
 	align-items: center;
 }
+
+.level-thumbnail-error > svg, .level-thumbnail-removed > svg {
+	width: 50%;
+	height: 50%;
+}

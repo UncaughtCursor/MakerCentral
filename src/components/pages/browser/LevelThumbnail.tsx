@@ -36,7 +36,7 @@ function LevelThumbnail(props: {
 			{props.status === 'Error' && (
 				<div className="level-thumbnail-error">
 					<ErrorOutlineIcon style={{
-						color: '#fff',
+						color: 'var(--bg-lite)',
 					}}
 					/>
 				</div>
@@ -44,7 +44,7 @@ function LevelThumbnail(props: {
 			{props.status === 'Removed' && (
 				<div className="level-thumbnail-removed">
 					<RemovedImageIcon style={{
-						color: '#fff',
+						color: 'var(--bg-lite)',
 					}}
 					/>
 				</div>

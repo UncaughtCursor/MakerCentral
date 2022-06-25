@@ -66,6 +66,7 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 		const buffer = result.buffer;
 		if (buffer) {
 			const thumbnail = await sharp(buffer)
+				.png()
 				.resize(thumbnailSize.width, thumbnailSize.height)
 				.toBuffer();
 			thumbnails.set(result.levelID, thumbnail);
