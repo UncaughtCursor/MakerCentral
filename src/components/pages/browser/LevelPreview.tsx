@@ -33,9 +33,7 @@ function LevelPreview(props: {
 					url={props.thumbnailUrl}
 					status={props.status}
 					style={{
-						width: '140px',
-						minWidth: '140px',
-						height: 'min-content',
+						height: '81px',
 					}}
 				/>
 				<div className="user-level-preview-details">

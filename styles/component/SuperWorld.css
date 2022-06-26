@@ -4,6 +4,7 @@
 	border-radius: 10px;
 	text-decoration: none;
 	transition: transform 0.2s;
+	display: flex;
 }
 
 .super-world-preview:hover {
@@ -11,7 +12,8 @@
 }
 
 .super-world-thumbnail-container {
-
+	display: grid;
+	padding: 10px;
 }
 
 .super-world-info-container {

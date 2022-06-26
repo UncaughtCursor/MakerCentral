@@ -37,7 +37,7 @@
 .image-spinner {
   width: 100%;
   height: 100%;
-  animation: image-spinner 3s ease-in-out infinite;
+  animation: image-spinner 2s ease-in-out infinite;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -50,10 +50,10 @@
 }
 
 @keyframes image-spinner {
-    0%,100% {
-      filter: brightness(60%);
-    }
-    50% {
-      filter: brightness(100%);
-    }
+  0%,100% {
+    filter: brightness(60%);
   }
+  50% {
+    filter: brightness(100%);
+  }
+}

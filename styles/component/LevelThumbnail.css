@@ -1,5 +1,6 @@
 .level-thumbnail-container {
 	aspect-ratio: 16 / 9;
+	height: 100%;
 }
 
 .level-thumbnail-image {
