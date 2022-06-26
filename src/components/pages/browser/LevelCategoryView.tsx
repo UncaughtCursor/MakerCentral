@@ -39,6 +39,9 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 		setLastLevelId(null);
 	}, [props.category, props.collectionPath]);
 
+	// FIXME: Change infinite scroll to a pagination system.
+	// Load each image upfront when the page loads.
+
 	return (
 		<InfiniteScroll
 			pageStart={0}
@@ -51,11 +54,10 @@ function LevelCategoryView(props: LevelCategoryViewProps) {
 					margin: '0 auto',
 				}}
 			>
-				{levels.map(async (level) => (
-					// FIXME: Use the useThumbnails hooks for this
+				{levels.map((level) => (
 					<LevelPreview
 						level={level}
-						thumbnailUrl={await getLevelThumbnailUrl(level.id)}
+						thumbnailUrl="" // FIXME: Get the thumbnail URL.
 						status="Loaded"
 						key={level.id}
 					/>

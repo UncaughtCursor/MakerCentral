@@ -1,20 +1,24 @@
+.user-level-preview-wrapper {
+	position: relative;
+	transition: transform 0.2s;
+}
+
+.user-level-preview-wrapper:hover {
+	transform: scale(1.05);
+}
+
 .user-level-preview {
 	display: flex;
 	flex-direction: column;
 	align-items: left;
 	width: 90vw;
-	max-width: 400px;
+	max-width: 450px;
 	background-color: var(--bg-dark);
 	padding: 10px;
 	border-radius: 10px;
-	transition: transform 0.2s;
 	cursor: pointer;
 	height: 225px;
 	text-decoration: none;
-}
-
-.user-level-preview:hover {
-	transform: scale(1.05);
 }
 
 .user-level-preview-header {
@@ -39,6 +43,10 @@
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+.user-level-preview-details > h3 {
+	margin-right: 25px;
 }
 
 .icon-count-row {

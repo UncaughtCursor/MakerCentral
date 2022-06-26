@@ -312,7 +312,6 @@ export async function getLevelThumbnailUrl(id: string): Promise<string> {
 	const thumbnailUrl = await (async () => {
 		try {
 			const thumbnailRef = ref(storage, thumbnailStorageUrl);
-			console.log(thumbnailRef.fullPath);
 			const url = await getDownloadURL(thumbnailRef);
 			return url;
 		} catch (e) {

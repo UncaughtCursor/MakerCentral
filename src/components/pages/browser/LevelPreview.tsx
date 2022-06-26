@@ -8,6 +8,7 @@ import ClearRateIcon from '@mui/icons-material/FlagCircle';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
 import LevelThumbnail from './LevelThumbnail';
+import BookmarkButton from './BookmarkButton';
 
 const timeAgo = new TimeAgo('en-us');
 
@@ -38,7 +39,14 @@ function LevelPreview(props: {
 				/>
 				<div className="user-level-preview-details">
 					<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
-					<p>{props.level.makerName} • {timeAgoStr}</p>
+					<p><a
+						href={`/users/${props.level.makerId}`}
+						style={{
+							color: 'var(--text-color)',
+						}}
+					>{props.level.makerName}
+					</a> • {timeAgoStr}
+					</p>
 				</div>
 			</div>
 			<div className="user-level-preview-details">
@@ -57,11 +65,18 @@ function LevelPreview(props: {
 	);
 
 	return (
-		<a
-			href={`/levels/view/${props.level.id}`}
-			className="user-level-preview"
-		>{previewContainerContents}
-		</a>
+		<div className="user-level-preview-wrapper">
+			<BookmarkButton
+				level={props.level}
+				left="calc(100% - 36.75px - 10px)"
+				top="10px"
+			/>
+			<a
+				href={`/levels/view/${props.level.id}`}
+				className="user-level-preview"
+			>{previewContainerContents}
+			</a>
+		</div>
 	);
 }
 

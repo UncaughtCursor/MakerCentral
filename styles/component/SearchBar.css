@@ -51,7 +51,7 @@
 	background-color: var(--bg-darker);
 	width: calc(90vw + 24px);
 	max-width: 524px;
-	z-index: 0;
+	z-index: 1;
 	transition: box-shadow 0.2s, filter 0.2s;
 	border-bottom-left-radius: 24px;
 	border-bottom-right-radius: 24px;

@@ -3,7 +3,9 @@ import React from 'react';
 import LikeIcon from '@mui/icons-material/Favorite';
 import LevelsIcon from '@mui/icons-material/EmojiFlags';
 import PlayIcon from '@mui/icons-material/SportsEsports';
+import ClearRateIcon from '@mui/icons-material/FlagCircle';
 import SuperWorldThumbnail from './SuperWorldThumbnail';
+import TagDisplay from './TagDisplay';
 
 const superWorldSlug = '/worlds';
 
@@ -29,7 +31,7 @@ function SuperWorldPreview(props: {
 			href={`${superWorldSlug}/${props.makerId}`}
 		>
 			<SuperWorldThumbnail
-				heightPx={81}
+				heightPx={162}
 				thumbnailUrls={props.thumbnailUrls}
 			/>
 			<div className="super-world-info-container">
@@ -39,9 +41,12 @@ function SuperWorldPreview(props: {
 					<p>{totalLikes.toLocaleString()}</p>
 					<PlayIcon style={{ color: 'var(--text-color)' }} />
 					<p>{totalPlays.toLocaleString()}</p>
+					<ClearRateIcon style={{ color: 'var(--text-color)' }} />
+					<p>{props.world.avgClearRate.toFixed(2)}%</p>
 					<LevelsIcon style={{ color: 'var(--text-color)' }} />
 					<p>{props.world.numLevels.toLocaleString()}</p>
 				</div>
+				<TagDisplay tags={props.world.prominentTags} />
 			</div>
 		</a>
 	);
