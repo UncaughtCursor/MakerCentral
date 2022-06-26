@@ -185,14 +185,14 @@ export default class NoteStructure extends Structure {
 			if (otherStruct.isExtendableUpwardsTo(thisTop)) {
 				otherStruct.extendUpwardsBy(thisTop - otherTop);
 			} else {
-				console.log('oof');
+				// console.log('oof');
 				return true;
 			}
 		} else if (thisTop < otherTop) {
 			if (this.isExtendableUpwardsTo(otherTop)) {
 				this.extendUpwardsBy(otherTop - thisTop);
 			} else {
-				console.log('oof');
+				// console.log('oof');
 				return true;
 			}
 		}

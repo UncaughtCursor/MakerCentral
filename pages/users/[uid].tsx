@@ -27,7 +27,6 @@ interface UserPageProps {
 function UserPage(props: UserPageProps) {
 	if (props.userDocData === null) return <Page404 />;
 	const userData = props.userDocData;
-	console.log(userData);
 
 	const formattedMakerCode = `${userData.id.substring(0, 3)}-${userData.id.substring(3, 6)}-${userData.id.substring(6, 9)}`;
 

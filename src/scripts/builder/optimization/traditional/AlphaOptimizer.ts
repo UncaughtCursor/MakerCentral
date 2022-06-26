@@ -95,7 +95,7 @@ export async function buildMusic(
 ):
 	Promise<{optResult: TraditionalOptimizationResult, config: ScrollBpbConfig}> {
 	const configs = getPossibleConfigs(targetGroups, bpm, levelWidth, scrollPref);
-	console.log(configs);
+	// console.log(configs);
 
 	let optResult: TraditionalOptimizationResult = {
 		type: 'traditional',
@@ -271,13 +271,13 @@ function getPossibleBpbs(
 ): number[] {
 	const availableWidth = levelWidth - marginWidth;
 	const minBpb = getQuantizationLevel(targetGroups);
-	console.log(`Min BPB ${minBpb}`);
+	// console.log(`Min BPB ${minBpb}`);
 	const beatDuration = getBeatDuration(targetGroups);
 	const possibleBpbs: number[] = [];
 
 	for (let i = 1; i <= Math.floor(appPPQN / minBpb); i++) {
 		const thisBpb = minBpb * i;
-		console.log(`${thisBpb}: ${beatDuration * thisBpb}/${availableWidth} tiles`);
+		// console.log(`${thisBpb}: ${beatDuration * thisBpb}/${availableWidth} tiles`);
 		const canFit = beatDuration * thisBpb <= availableWidth;
 		if (canFit) possibleBpbs.push(thisBpb);
 	}
@@ -346,11 +346,11 @@ export function handleAllConflicts() { // TODO: Let either colliding structure m
 				const attempt = entry.struct.tryAllSetups();
 				if (attempt.success) {
 					if (nodeCount > 1 && showSetupLogs) {
-						console.log(`success after ${nodeCount} attempts for struct ${struct.id}`);
+						// console.log(`success after ${nodeCount} attempts for struct ${struct.id}`);
 						for (let i = 0; i < entry.history.length; i++) {
 							console.log(`${i + 1}. Move ${entry.history[i].struct.id} to ${entry.history[i].setup.offset}`);
 						}
-						console.log(`${entry.history.length + 1}. Move ${entry.struct.id} to ${entry.struct.setup.offset}`);
+						// console.log(`${entry.history.length + 1}. Move ${entry.struct.id} to ${entry.struct.setup.offset}`);
 					}
 					break;
 				}
@@ -371,7 +371,7 @@ export function handleAllConflicts() { // TODO: Let either colliding structure m
 				}
 				entry.history.forEach((step) => step.struct.moveBySetup(step.origSetup));
 				if (nodeCount >= 1024) { // Quit if no solutions are found in time
-					console.log(`failed to find solution in time for struct ${struct.id}`);
+					// console.log(`failed to find solution in time for struct ${struct.id}`);
 					break;
 				}
 			}

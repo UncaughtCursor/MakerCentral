@@ -18,7 +18,6 @@ function Spinner(props: {
 		display: props.isActive! ? (props.style?.display ? props.style.display : '') : 'none',
 		top: `${props.yOfsPx!}px`,
 	};
-	console.log(spinnerStyle);
 	return (
 		<div
 			className="lds-dual-ring"

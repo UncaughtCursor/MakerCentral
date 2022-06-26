@@ -33,7 +33,6 @@ function LevelPage(props: {
 
 	const formattedLevelCode = `${props.level!.id.substring(0, 3)}-${props.level!.id.substring(3, 6)}-${props.level!.id.substring(6, 9)}`;
 
-	console.log(thumbnails);
 	const imgThumbnailUrl = Object.keys(thumbnails).length > 0 ? thumbnails[level.id].url! : '';
 
 	return (

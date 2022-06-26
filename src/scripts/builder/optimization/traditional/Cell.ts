@@ -49,7 +49,7 @@ export default class Cell {
 		if (this.members.length === 0) return;
 		for (let i = this.startX; i <= this.endX; i++) { // First Pass: Expanding
 			if (this.locationMap[i] === undefined) {
-				console.log('Missing structure in cell.');
+				// console.log('Missing structure in cell.');
 				continue;
 			}
 			this.locationMap[i].list.forEach((struct) => {
