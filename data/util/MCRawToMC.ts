@@ -68,7 +68,8 @@ export function MCRawUserDocToMCUserDoc(user: MCRawUserDoc): MCUserDocData {
 
 	// Extract into an array every tag with a proportion greater than 20%.
 	const prominentTags: MCTag[] = MCTagProportions !== null
-		? (Object.keys(MCTagProportions) as MCTag[]).filter((tag: MCTag) => MCTagProportions[tag] > 0.2)
+		? (Object.keys(MCTagProportions) as MCTag[])
+			.filter((tag: MCTag) => MCTagProportions[tag] >= 0.15)
 		: [];
 
 	const world: MCWorldPreview | null = user.super_world !== null ? {
@@ -109,6 +110,7 @@ export function MCRawUserToMCWorldDoc(user: MCRawUserDoc): MCWorldDocData | null
 
 	return {
 		makerId: user.code,
+		makerName: user.name,
 		numLevels: world.levels,
 		numWorlds: world.worlds,
 		levels: worldLevels,

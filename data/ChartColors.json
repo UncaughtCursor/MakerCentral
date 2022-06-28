@@ -1,0 +1,53 @@
+{
+	"difficulty": {
+		"Easy": "#17b2ab",
+		"Normal": "#39bc9c",
+		"Expert": "#b08855",
+		"Super Expert": "#7451b7"
+	},
+	"gameStyle": {
+		"SMB1": "#dc5819",
+		"SMB3": "#fed8a8",
+		"SMW": "#92fdff",
+		"NSMBU": "#fed818",
+		"SM3DW": "#1a93fd"
+	},
+	"theme": {
+		"Overworld": "#5ecd38",
+		"Underground": "#34717b",
+		"Castle": "#db2500",
+		"Airship": "#cdcdcd",
+		"Underwater": "#4444ff",
+		"Ghost house": "#7b5784",
+		"Snow": "#ffffff",
+		"Desert": "#ffb259",
+		"Sky": "#7686ff",
+		"Forest": "#1e843a"
+	},
+	"tag": {
+		"Standard": "#5ecd38",
+		"Puzzle": "#7b5784",
+		"Music": "#7451b7",
+		"Autoscroll": "#7686ff",
+		"Speedrun": "#b08855",
+		"Precision": "",
+		"Auto": "#17b2ab",
+		"Multiplayer": "#1a93fd",
+		"Themed": "#39bc9c",
+		"Boss Fight": "#db2500",
+		"Glitch": "",
+		"Technical": "#1e843a",
+		"Exploration": "",
+		"Troll": "",
+		"Story": "",
+		"One Screen": "",
+		"Kaizo": "",
+		"Link": "#4d4d4d",
+		"Minigame": "",
+		"Meme": "",
+		"Pixel Art": "#4444ff",
+		"Shooter": "#cdcdcd",
+		"Short": "#ffb259",
+		"One Player Only": "#fed8a8"
+	}
+}

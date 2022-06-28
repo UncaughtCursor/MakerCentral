@@ -74,6 +74,7 @@ export interface MCWorldPreview {
 
 export interface MCWorldDocData extends MCWorldLevelAggregation {
 	makerId: string;
+	makerName: string;
 	numLevels: number;
 	numWorlds: number;
 	created: number;

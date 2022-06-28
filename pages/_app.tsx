@@ -50,6 +50,7 @@ import '../styles/component/LevelListings.css';
 import '../styles/component/LandingPage.css';
 import '../styles/component/LevelThumbnail.css';
 import '../styles/component/SuperWorld.css';
+import '../styles/component/Charts.css';
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';

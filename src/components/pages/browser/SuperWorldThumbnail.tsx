@@ -10,10 +10,12 @@ const aspectRatio = 16 / 9;
  * * thumbnailUrls: The URLs of the thumbnails of the levels in the super world.
  * Empty URLs will be attempted to be generated.
  * * heightPx: The height of the grid in pixels.
+ * * style: (Optional) The style of the grid.
  */
 function SuperWorldThumbnail(props: {
 	thumbnailUrls: {[levelId: string]: string},
 	heightPx: number,
+	style?: React.CSSProperties,
 }) {
 	const initThumbnailStates: LevelThumbnailStates = {};
 
@@ -44,6 +46,7 @@ function SuperWorldThumbnail(props: {
 				width: `${props.heightPx * aspectRatio}px`,
 				gridTemplateRows: `repeat(2, ${thumbnailHeight}px)`,
 				gridTemplateColumns: `repeat(2, ${thumbnailWidth}px)`,
+				...props.style,
 			}}
 		>
 			{Object.keys(thumbnails).map((levelId) => {
@@ -62,5 +65,9 @@ function SuperWorldThumbnail(props: {
 		</div>
 	);
 }
+
+SuperWorldThumbnail.defaultProps = {
+	style: {},
+};
 
 export default SuperWorldThumbnail;
