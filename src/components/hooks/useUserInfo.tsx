@@ -54,7 +54,6 @@ function useUserInfo(): UserInfo | null {
 async function fetchInfo(user: User | null): Promise<UserInfo | null> {
 	if (user === null) return null;
 
-	console.log('fetching user info');
 	const uid = user.uid;
 	const userDocData = (await getDoc(doc(db, `/users/${uid}`))).data()!;
 	const userSocialData = (await getDoc(doc(db, `/users/${uid}/priv/social`))).data()!;

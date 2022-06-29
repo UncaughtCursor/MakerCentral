@@ -8,7 +8,7 @@ import {
 	MCWorldDocData, MCWorldLevelPreview, MCWorldPreview,
 } from '../types/MCBrowserTypes';
 import {
-	MCRawLevelDoc, MCRawUserDoc,
+	MCRawLevelDoc, MCRawUserDoc, MCRawWorldLevelPreview,
 } from '../types/MCRawTypes';
 
 /**
@@ -58,11 +58,28 @@ export function MCRawLevelDocToMCLevelDoc(level: MCRawLevelDoc): MCLevelDocData 
  * @returns The client-side user document.
  */
 export function MCRawUserDocToMCUserDoc(user: MCRawUserDoc): MCUserDocData {
+	// Convert tag proportions to MC tag proportions.
+	const MCTagProportions: {[key in MCTag]: number} | null = user.super_world !== null
+		? DBProportionToMCProportion(
+			user.super_world.aggregated_properties.avg_tags,
+			(val) => convertDBTagToMC(val),
+		)
+		: null;
+
+	// Extract into an array every tag with a proportion greater than 20%.
+	const prominentTags: MCTag[] = MCTagProportions !== null
+		? (Object.keys(MCTagProportions) as MCTag[])
+			.filter((tag: MCTag) => MCTagProportions[tag] >= 0.15)
+		: [];
+
 	const world: MCWorldPreview | null = user.super_world !== null ? {
 		numLevels: user.super_world.levels,
 		numWorlds: user.super_world.worlds,
 		avgPlays: user.super_world.aggregated_properties.avg_plays,
 		avgLikes: user.super_world.aggregated_properties.avg_likes,
+		avgClearRate: user.super_world.aggregated_properties.avg_clear_rate,
+		prominentTags,
+		showcasedLevelIds: getShowcasedLevelIds(user.super_world.level_info),
 	} : null;
 
 	return {
@@ -93,6 +110,7 @@ export function MCRawUserToMCWorldDoc(user: MCRawUserDoc): MCWorldDocData | null
 
 	return {
 		makerId: user.code,
+		makerName: user.name,
 		numLevels: world.levels,
 		numWorlds: world.worlds,
 		levels: worldLevels,
@@ -168,4 +186,13 @@ function DBProportionToMCProportion<DBType extends number, MCType extends string
 		if (MCKey !== null) newObj[MCKey] = DBObj[num];
 	});
 	return newObj;
+}
+
+/**
+ * Gets the IDs of the top 4 most popular levels in a world.
+ * @param level_info The level previews of the world.
+ */
+function getShowcasedLevelIds(level_info: MCRawWorldLevelPreview[]): string[] {
+	const sortedLevels = level_info.sort((a, b) => b.likes - a.likes);
+	return sortedLevels.slice(0, 4).map((level) => level.course_id);
 }

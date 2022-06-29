@@ -1,11 +1,14 @@
 import { getLevel } from '@scripts/browser/BrowserUtil';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
 import BookmarkButton from '@components/pages/browser/BookmarkButton';
-import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
+import { getLevelThumbnailUrl, initAnalytics } from '@scripts/site/FirebaseUtil';
 import { useRouter } from 'next/router';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import useCloudFn from '@components/hooks/useCloudFn';
+import useLevelThumbnails from '@components/hooks/useLevelThumbnails';
+import LevelThumbnail from '@components/pages/browser/LevelThumbnail';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -13,24 +16,30 @@ import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
  */
 function LevelPage(props: {
 	level: MCLevelDocData | null,
-	thumbnailUrl: string,
+	initThumbnailUrl: string | undefined,
 }) {
-	const [showReportDialog, setShowReportDialog] = useState(false);
-
-	const router = useRouter();
-
 	const level = props.level;
 	if (level === null) {
 		return <Page404 />;
 	}
 
+	const thumbnails = useLevelThumbnails({
+		[level.id]: {
+			state: props.initThumbnailUrl === undefined || props.initThumbnailUrl === ''
+				? 'Not Uploaded' : 'Loaded',
+			url: props.initThumbnailUrl !== undefined ? props.initThumbnailUrl : null,
+		},
+	});
+
 	const formattedLevelCode = `${props.level!.id.substring(0, 3)}-${props.level!.id.substring(3, 6)}-${props.level!.id.substring(6, 9)}`;
+
+	const imgThumbnailUrl = Object.keys(thumbnails).length > 0 ? thumbnails[level.id].url! : '';
 
 	return (
 		<AppFrame
 			title={`${props.level!.name} - MakerCentral Levels`}
 			description={`"${props.level!.description}" Tags: ${props.level!.tags.join(', ')}. ${props.level!.makerName}'s level on MakerCentral.`}
-			imageUrl={props.thumbnailUrl}
+			imageUrl={props.initThumbnailUrl}
 		>
 			<div className="level-page-content">
 				<div className="level-page-header">
@@ -39,10 +48,12 @@ function LevelPage(props: {
 						left="calc(100% - 50px)"
 						top="15px"
 					/>
-					<img
-						className="level-page-img"
-						src={props.thumbnailUrl}
-						alt={level.name}
+					<LevelThumbnail
+						url={imgThumbnailUrl}
+						status={thumbnails[level.id].state}
+						style={{
+							height: '50px',
+						}}
 					/>
 					<div>
 						<h3 className="level-page-title">{level.name}</h3>
@@ -124,7 +135,7 @@ export async function getServerSideProps(context: { params: {
 	return {
 		props: {
 			level: loadedLevel,
-			thumbnailUrl,
+			initThumbnailUrl: thumbnailUrl,
 		},
 	};
 }

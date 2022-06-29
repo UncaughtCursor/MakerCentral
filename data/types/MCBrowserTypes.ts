@@ -67,10 +67,14 @@ export interface MCWorldPreview {
 	numWorlds: number;
 	avgPlays: number;
 	avgLikes: number;
+	avgClearRate: number;
+	prominentTags: MCTag[];
+	showcasedLevelIds: string[];
 }
 
 export interface MCWorldDocData extends MCWorldLevelAggregation {
 	makerId: string;
+	makerName: string;
 	numLevels: number;
 	numWorlds: number;
 	created: number;

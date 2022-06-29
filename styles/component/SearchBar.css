@@ -51,7 +51,7 @@
 	background-color: var(--bg-darker);
 	width: calc(90vw + 24px);
 	max-width: 524px;
-	z-index: 0;
+	z-index: 1;
 	transition: box-shadow 0.2s, filter 0.2s;
 	border-bottom-left-radius: 24px;
 	border-bottom-right-radius: 24px;
@@ -84,4 +84,27 @@
 
 .search-settings-dropdown-container > div {
 	padding: 10px;
+}
+
+.count-badge {
+	position: absolute;
+	left: 18px;
+	top: 0px;
+	border-radius: 12px;
+	background-color: var(--hl-med);
+	min-width: 12px;
+	height: 12px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 4px;
+	pointer-events: none;
+}
+
+.count-badge > span {
+	font-size: 16px;
+	font-weight: bold;
+	user-select: none;
+	position: relative;
+	top: -1px;
 }

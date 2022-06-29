@@ -1,0 +1,28 @@
+.super-world-preview {
+	background-color: var(--bg-dark);
+	padding: 10px;
+	border-radius: 10px;
+	text-decoration: none;
+	transition: transform 0.2s;
+	display: flex;
+}
+
+.super-world-preview:hover {
+	transform: scale(1.05);
+}
+
+.super-world-thumbnail-container {
+	display: grid;
+	padding: 10px;
+}
+
+.super-world-info-container {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.super-world-info-container > h3 {
+	margin: 0;
+	text-align: left;
+}

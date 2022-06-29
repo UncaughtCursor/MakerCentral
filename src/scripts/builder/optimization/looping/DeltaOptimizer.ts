@@ -122,9 +122,6 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 	const currentTargetGroups = config.targetGroups.slice(0);
 	const trkMap = new TrackMap(mapWidth, mapHeight);
 
-	console.log('Optimizing with');
-	console.log(config.targetGroups);
-
 	let succeeded = true;
 	let messages: DeltaOptimizerMessage[] = [];
 	let notePlacements: {
@@ -179,7 +176,6 @@ export function buildMusic(config: DeltaOptimizerConfig): TrackOptimizationResul
 	}
 
 	const lastSection = sections[sections.length - 1];
-	console.log(sections);
 
 	const entityGrid = new GridEntityManager<MM2GameEntity>(mapWidth, mapHeight);
 
@@ -570,7 +566,6 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 
 	// Try all build combinations until success
 	const sumCombos = trackComboGen.getCombinations(buildTrackPeriod);
-	console.log(`${sumCombos.length} loop combos`);
 	for (let i = 0; i < sumCombos.length; i++) {
 		trkMap = new TrackMap(mapWidth, mapHeight);
 
@@ -596,7 +591,7 @@ function buildLoopSection(period: number): TrackOptimizationResult {
 		}
 
 		succeeded = buildRes.isSuccess;
-		if (succeeded) console.log(`Loop build succeeded attempt #${i + 1}`);
+		// if (succeeded) console.log(`Loop build succeeded attempt #${i + 1}`);
 		if (succeeded) break;
 	}
 

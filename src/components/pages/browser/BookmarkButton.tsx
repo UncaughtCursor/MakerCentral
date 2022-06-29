@@ -16,11 +16,13 @@ import { MCLevelDocData } from '@data/types/MCBrowserTypes';
  * * levelId: The level data to bookmark.
  * * left: The left CSS property.
  * * top: The top CSS property.
+ * * style: The style object to pass to the button.
  */
 function BookmarkButton(props: {
 	level: MCLevelDocData,
-	left: string,
-	top: string,
+	left?: string,
+	top?: string,
+	style?: React.CSSProperties,
 }) {
 	const [bookmarked, setBookmarked] = useState('Loading' as boolean | 'Loading');
 	const userInfo = useUserInfo();
@@ -44,7 +46,11 @@ function BookmarkButton(props: {
 	return (
 		<div
 			className="bookmark-button"
-			style={{ left: props.left, top: props.top }}
+			style={{
+				left: props.left,
+				top: props.top,
+				...props.style,
+			}}
 			onClick={() => {
 				setBookmarkStatus(!bookmarked);
 			}}
@@ -98,5 +104,11 @@ function BookmarkButton(props: {
 		}
 	}
 }
+
+BookmarkButton.defaultProps = {
+	left: '0px',
+	top: '0px',
+	style: {},
+};
 
 export default BookmarkButton;

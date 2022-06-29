@@ -114,7 +114,6 @@ function BuildSettingsPage() {
 		default:
 			console.error('Optimizer unavailable.');
 		}
-		console.log(ctx.project.buildInstances[0]);
 	}
 
 	/**

@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import { Readable } from 'stream';
 import { escape } from 'html-escaper';
-import { db } from './DBInterfacer';
+import { getDB } from './DBInterfacer';
 
 /**
  * An object that puts the results of a query into a CSV read stream.
@@ -35,7 +35,7 @@ export default class DBQueryStream extends Readable {
 	 */
 	_read() {
 		const thisSql = `${this.query} LIMIT ${this.chunkSize + 1} OFFSET ${this.chunksProcessed * this.chunkSize}`;
-		db.all(thisSql, (err: Error | null, res: any[]) => {
+		getDB().all(thisSql, (err: Error | null, res: any[]) => {
 			if (err) console.error(err);
 
 			if (this.fieldNames.length === 0) {

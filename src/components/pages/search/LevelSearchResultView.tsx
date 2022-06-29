@@ -1,3 +1,4 @@
+import useLevelThumbnails, { LevelThumbnailState, LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
 import { LevelSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
@@ -19,6 +20,23 @@ function LevelSearchResultView(props: {
 	isWidget?: boolean,
 	onPageChange?: (delta: number) => void,
 }) {
+	const initThumbnailStates: LevelThumbnailStates = {};
+	for (const levelId of Object.keys(props.thumbnailUrls)) {
+		const thumbnailUrl = props.thumbnailUrls[levelId];
+		if (thumbnailUrl === '') {
+			initThumbnailStates[levelId] = {
+				state: 'Not Uploaded',
+				url: null,
+			};
+		} else {
+			initThumbnailStates[levelId] = {
+				state: 'Loaded',
+				url: thumbnailUrl,
+			};
+		}
+	}
+	const thumbnails = useLevelThumbnails(initThumbnailStates);
+
 	return (
 		<div style={{
 			display: 'flex',
@@ -43,7 +61,8 @@ function LevelSearchResultView(props: {
 					.map((level) => (
 						<LevelPreview
 							level={level}
-							thumbnailUrl={props.thumbnailUrls[level.id]}
+							thumbnailUrl={thumbnails[level.id].url !== null ? thumbnails[level.id].url! : ''}
+							status={thumbnails[level.id].state}
 							key={level.id}
 						/>
 					))}

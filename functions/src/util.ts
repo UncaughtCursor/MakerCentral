@@ -1,5 +1,6 @@
 import { db } from '.';
 import { randomString } from './levels';
+import axios from 'axios';
 
 /* eslint-disable import/prefer-default-export */
 
@@ -14,6 +15,8 @@ interface UserDocData {
 	avatarUrl: string,
 	bio: string,
 }
+
+export const operationCollectionName = 'operations';
 
 /**
  * Sends a notification to a user.
@@ -42,4 +45,16 @@ export async function sendNotification(uid: string, data: NotificationData) {
 export async function getUserDoc(uid: string): Promise<UserDocData | null> {
 	const userData: UserDocData | undefined = (await db.doc(`/users/${uid}`).get()).data() as UserDocData | undefined;
 	return userData !== undefined ? userData : null;
+}
+
+
+/**
+ * Obtains the binary data of a file at a URL.
+ * @param url The url of the file.
+ * @returns The binary data of the file.
+ */
+export async function fetchBuffer(url: string): Promise<Buffer> {
+	return Buffer.from((await axios.get(url, {
+		responseType: 'arraybuffer',
+	})).data);
 }

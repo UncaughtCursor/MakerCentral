@@ -14,7 +14,6 @@ import { determineNoteBounds } from './SongBoundaryChooser';
 function TrackChooser(props: {onInputChange: (arg0: boolean) => void}) {
 	const ctx = useContext(EditorContext);
 	const buildInst = ctx.project.buildInstances[0];
-	console.log(buildInst);
 
 	const categoryEntries = getEntries();
 

@@ -56,6 +56,7 @@
 		"react/jsx-indent": ["error", "tab"],
 		"react/jsx-indent-props": ["error", "tab"],
 		"react/destructuring-assignment": "off",
-		"camelcase": "off"
+		"camelcase": "off",
+		"no-restricted-syntax": ["error", "ForInStatement", "LabeledStatement", "WithStatement"]
     }
 }

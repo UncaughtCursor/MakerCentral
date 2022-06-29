@@ -2,40 +2,33 @@
 /* eslint-disable import/prefer-default-export */
 import * as functions from 'firebase-functions';
 import chunk from 'chunk';
-import MeiliSearch from 'meilisearch';
-import { is } from 'typescript-is';
-import MeiliCredentials from './data/private/meilisearch-credentials.json';
+// import MeiliSearch from 'meilisearch';
+// import MeiliCredentials from './data/private/meilisearch-credentials.json';
 import {
 	MCRawLevelAggregation,
 	MCRawLevelAggregationUnit, MCRawLevelDoc, MCRawMedal, MCRawSuperWorld, MCRawUserDoc, MCRawUserPreview, MCRawWorldLevelPreview,
 } from './data/types/MCRawTypes';
-import { db, storageBucket } from '.';
+import { storageBucket } from '.';
 import {
 	DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme, DBUser,
 } from './data/types/DBTypes';
 import {
 	APIDifficulties, APIGameStyles, APITags, APIThemes,
 } from './data/APITypes';
+import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 
-const meilisearchClient = new MeiliSearch(MeiliCredentials);
+// /const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
 const maxLevelsToAdd = 10000;
 const levelsPerChunk = 1000;
 const usersPerChunk = 1000;
-const documentUploadChunkSize = 100;
+// const documentUploadChunkSize = 100;
 
 const progressFileLocations = 'admin/updater-progress.json';
 
-const meilisearchLevelIndex = meilisearchClient.index('levels');
-const meilisearchUserIndex = meilisearchClient.index('users');
-const meilisearchWorldIndex = meilisearchClient.index('worlds');
-
-const smm2APIBaseUrl = 'http://magic.makercentral.io';
-
-const maxDataIdEndpoint = 'newest_data_id';
-const levelEndpoint = 'level_info_multiple';
-const userEndpoint = 'user_info_multiple';
-const superWorldEndpoint = 'super_world';
+// const meilisearchLevelIndex = meilisearchClient.index('levels');
+// const meilisearchUserIndex = meilisearchClient.index('users');
+// const meilisearchWorldIndex = meilisearchClient.index('worlds');
 
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
@@ -43,16 +36,16 @@ interface UpdaterProgress {
 	isUserPidDownloaded: {[pid: string]: boolean};
 }
 
+// TODO: Run on a cron job after testing.
+/*export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {*/
+
 /**
  * Updates the levels in the database from Nintendo's servers.
  */
-export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {
+export const updateDB = functions.https.onCall(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 	console.log(progress);
-
-	// Throw off the Nintendo ninjas
-	await new Promise((resolve) => setTimeout(resolve, Math.random() * 20000));
 
 	// If it's possible to go over the cached max data ID, get the new max data ID.
 	const maxId = progress.lastDataIdDownloaded + maxLevelsToAdd >= progress.lastNewestDataId
@@ -113,7 +106,7 @@ async function downloadRawLevels(startId: number, endId: number): Promise<MCRawL
 	return docs;
 }
 
-type RawLevelChunkResponse = {
+interface RawLevelChunkResponse {
 	courses: DBLevel[];
 }
 
@@ -125,7 +118,7 @@ type RawLevelChunkResponse = {
 async function downloadRawLevelChunk(dataIds: number[]): Promise<MCRawLevelDoc[]> {
 	const url = `${smm2APIBaseUrl}/${levelEndpoint}/?data_id=${dataIds.join(',')}`;
 	const response = await getAPIResponse(url) as RawLevelChunkResponse;
-	if (!is<RawLevelChunkResponse>(response)) throw new Error('Invalid response type');
+	// if (!is<RawLevelChunkResponse>(response)) throw new Error('Invalid response type');
 
 	const res: MCRawLevelDoc[] = [];
 	for (let i = 0; i < response.courses.length; i++) {
@@ -164,7 +157,7 @@ async function downloadRawUserPreviews(pids: string[]): Promise<MCRawUserPreview
 
 		const url = `${smm2APIBaseUrl}/${userEndpoint}/${chunk.join(',')}`;
 		const response = await getAPIResponse(url) as RawUserChunkResponse;
-		if (!is<RawUserChunkResponse>(response)) throw new Error('Invalid response from API.');
+		// if (!is<RawUserChunkResponse>(response)) throw new Error('Invalid response from API.');
 
 		docs.push(...response.users.map((user) => ({
 			name: user.name,
@@ -196,11 +189,6 @@ async function downloadRawUsers(pids: string[]): Promise<MCRawUserDoc[]> {
 	// Download users in each chunk.
 	for (let i = 0; i < chunks.length; i++) {
 		const chunk = chunks[i];
-
-		const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}`;
-		const response = await getAPIResponse(url) as RawUserChunkResponse;
-		if (!is<RawUserChunkResponse>(response)) throw new Error('Invalid response from API.');
-
 		docs.push(...await downloadRawUserChunk(chunk));
 	}
 
@@ -223,7 +211,7 @@ type RawUserChunkResponse = {
 async function downloadRawUserChunk(pids: string[]): Promise<MCRawUserDoc[]> {
 	const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}`;
 	const response = await getAPIResponse(url) as RawUserChunkResponse;
-	if (!is<RawUserChunkResponse>(response)) throw new Error('Invalid response from API.');
+	// if (!is<RawUserChunkResponse>(response)) throw new Error('Invalid response from API.');
 
 	// Convert the response to the correct format.
 
@@ -260,7 +248,7 @@ type SuperWorldResponse = {
 async function downloadSuperWorld(worldId: string): Promise<MCRawSuperWorld> {
 	const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldId}`;
 	const response = await getAPIResponse(url) as SuperWorldResponse;
-	if (!is<SuperWorldResponse>(response)) throw new Error('Invalid response from API.');
+	// if (!is<SuperWorldResponse>(response)) throw new Error('Invalid response from API.');
 
 	// Convert the response to the correct format.
 	const world_id = response.id;
@@ -307,7 +295,7 @@ type MaxDataIDResponse = { data_id: number };
 async function getMaxDataID(): Promise<number> {
 	const url = `${smm2APIBaseUrl}/${maxDataIdEndpoint}`;
 	const response = await getAPIResponse(url) as MaxDataIDResponse;
-	if (!is<MaxDataIDResponse>(response)) throw new Error('Invalid response from API.');
+	// if (!is<MaxDataIDResponse>(response)) throw new Error('Invalid response from API.');
 	return response.data_id;
 }
 
@@ -317,7 +305,7 @@ async function getMaxDataID(): Promise<number> {
  * @param type The type of documents to upload.
  * @returns A promise that resolves when the upload completes.
  */
-async function uploadUsersOrLevels(
+/* async function uploadUsersOrLevels(
 	data: MCRawLevelDoc[] | MCRawUserDoc[],
 	type: 'Level' | 'User',
 ): Promise<void> {
@@ -345,7 +333,7 @@ async function uploadUsersOrLevels(
 		const dataChunk = dataChunks[i];
 		await uploadChunk(collectionName, dataChunk, idPropertyName);
 	}
-}
+} */
 
 /**
  * Uploads a chunk of documents to the database.
@@ -354,7 +342,7 @@ async function uploadUsersOrLevels(
  * @param idPropertyName The name of the property that contains the ID of the document.
  * @returns A promise that resolves when the upload completes.
  */
-async function uploadChunk(
+/* async function uploadChunk(
 	collectionName: string,
 	data: any[],
 	idPropertyName: string,
@@ -364,7 +352,7 @@ async function uploadChunk(
 		return db.doc(docPath).set(doc);
 	});
 	await Promise.all(promises);
-}
+} */
 
 /**
  * Loads the database updater's progress.

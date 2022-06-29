@@ -1,5 +1,3 @@
-import { ClearCondition } from '../LevelDataTypes';
-
 export interface DBLevel {
 	data_id: number;
     name: string;

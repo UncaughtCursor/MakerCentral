@@ -29,7 +29,6 @@ function InstrumentPicker(props: {
 
 	useEffect(() => {
 		const handleInstrumentPickerOpen = () => {
-			console.log('handle');
 			const dropup = dropupRef.current!;
 
 			if (typeof window !== 'undefined') {
@@ -66,7 +65,6 @@ function InstrumentPicker(props: {
 					});
 					if (!state.isOpen && typeof document !== 'undefined') {
 						const evt = new Event('instrument-picker-open');
-						console.log(evt);
 						document.dispatchEvent(evt);
 					}
 				}}

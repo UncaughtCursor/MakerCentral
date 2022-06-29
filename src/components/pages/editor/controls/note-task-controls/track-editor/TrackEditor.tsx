@@ -211,7 +211,6 @@ function TrackEditor() {
 	 */
 	function handleMouseDown(evt: React.SyntheticEvent) {
 		setHasMouseDown(true);
-		console.log('down');
 		if (state.selectedToolbarButton !== 'Add Note') handleMouseInteraction(evt);
 	}
 
@@ -219,7 +218,6 @@ function TrackEditor() {
 	 * Handles when the mouse button is released.
 	 */
 	function handleMouseUp() {
-		console.log('up');
 		setHasMouseDown(false);
 	}
 
