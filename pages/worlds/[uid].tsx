@@ -10,6 +10,7 @@ import { httpsCallable } from 'firebase/functions';
 import Page404 from 'pages/404';
 import React from 'react';
 import ChartColors from '@data/ChartColors.json';
+import SuperWorldLevelListings from '@components/pages/browser/SuperWorldLevelListings';
 
 interface SuperWorldPageProps {
 	world: MCWorldDocData | null,
@@ -34,7 +35,7 @@ function SuperWorldPage(props: SuperWorldPageProps) {
 	const featuredTags: MCTag[] = (Object.keys(world.avgTags) as MCTag[])
 		.filter((tag: MCTag) => world.avgTags[tag] >= 0.15);
 
-	const topFourLevelIds = world.levels.sort((a, b) => b.numLikes - a.numLikes)
+	const topFourLevelIds = world.levels.slice(0).sort((a, b) => b.numLikes - a.numLikes)
 		.slice(0, 4).map((level) => level.id);
 	const embedThumbnailUrl = props.thumbnailUrls[topFourLevelIds[0]];
 	const topFourLevelIdMap: { [levelId: string]: string } = {};
@@ -152,6 +153,12 @@ function SuperWorldPage(props: SuperWorldPageProps) {
 					>
 						<h4>Most Common Tags</h4>
 						<TagDisplay tags={featuredTags} />
+						<h4 style={{
+							marginTop: '20px',
+						}}
+						>Level Overview
+						</h4>
+						<SuperWorldLevelListings levels={world.levels} />
 					</div>
 				</div>
 				<div className="multi-doughnut-container">

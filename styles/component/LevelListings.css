@@ -9,3 +9,21 @@
 	max-width: 960px;
 	justify-content: center;
 }
+
+.level-preview-table-container {
+	overflow-x: auto;
+	max-height: 300px;
+}
+
+.level-preview-table {
+	color: var(--text-color);
+	border-collapse: collapse;
+}
+
+.level-preview-table > tbody > tr {
+	border-top: 1px solid var(--bg-lite);
+}
+
+.level-preview-table > tbody > tr > td {
+	padding: 5px;
+}
