@@ -1,9 +1,6 @@
 import axios from 'axios';
-import FirebaseCredentials from '../private/firebase-api-key.json';
 
 const firebaseProjectName = 'music-level-studio-dev';
-const apiKey = FirebaseCredentials.apiKey;
-
 /**
  * Executes a Firebase cloud function.
  * @param name The name of the function.
@@ -15,7 +12,7 @@ export default async function CloudFn<Input, Output>(name: string, input: Input)
 		result: Output,
 	}
 }> {
-	const url = `https://us-central1-${firebaseProjectName}.cloudfunctions.net/${name}?key=${apiKey}`;
+	const url = `https://us-central1-${firebaseProjectName}.cloudfunctions.net/${name}`;
 	const resp = await axios.post(url, {
 		data: input,
 	}, {
