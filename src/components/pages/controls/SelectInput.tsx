@@ -8,13 +8,17 @@ import React, { SyntheticEvent } from 'react';
  * * initSelectedIndex: The index of the choice selected by default.
  * * onSelect: The function to execute when the user makes a different selection.
  * The first argument is the selected index, and the second is the selection as a string.
+ * * selectedIndex (Optional): Overrides the selected index state.
  */
 function SelectInput(props: {
 	label: string,
 	choices: readonly string[],
 	initSelectedIndex: number,
-	onSelect: (arg0: number, arg1: string) => void
+	onSelect: (arg0: number, arg1: string) => void,
+	selectedIndex?: number | undefined,
 }) {
+	const usedSelectedIndex = props.selectedIndex !== undefined
+		? props.selectedIndex : props.initSelectedIndex;
 	return (
 		<div>
 			<p style={{
@@ -29,18 +33,19 @@ function SelectInput(props: {
 					props.onSelect(el.selectedIndex, el.value);
 				}}
 			>
-				{getOptions()}
+				{getOptions(usedSelectedIndex)}
 			</select>
 		</div>
 	);
 
 	/**
 	 * Generates all of the option elements for the select input.
+	 * @param selectedIndex The index of the selected option.
 	 * @returns The created elements.
 	 */
-	function getOptions() {
+	function getOptions(selectedIndex: number): JSX.Element[] {
 		return props.choices.map((choice, i) => {
-			const isSelected = i === props.initSelectedIndex;
+			const isSelected = i === selectedIndex;
 			return (
 				<option
 					value={choice}
@@ -52,5 +57,9 @@ function SelectInput(props: {
 		});
 	}
 }
+
+SelectInput.defaultProps = {
+	selectedIndex: undefined,
+};
 
 export default SelectInput;

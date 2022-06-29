@@ -62,8 +62,8 @@ function LevelSearchBar(props: SearchBarProps) {
 	const inputRef = useRef<HTMLInputElement>(null);
 
 	const valueRef = useRef<string>('');
-	const [value, setValue] = useState(props.initialVal);
-	valueRef.current = value;
+	const [inputText, setInputText] = useState(props.initialVal);
+	valueRef.current = inputText;
 
 	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
 	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
@@ -73,6 +73,15 @@ function LevelSearchBar(props: SearchBarProps) {
 		},
 	);
 	filterSettingsRef.current = filterSettings;
+
+	const numberOfNonDefaultSettings = Object.entries(filterSettings)
+		.filter(([key]) => key !== 'page')
+		.reduce((acc, [key, value]) => {
+			if (value !== defaultFilterSettings[key as keyof SearchFilterSettings]) {
+				return acc + 1;
+			}
+			return acc;
+		}, 0);
 
 	const [isDialogOpen, setDialogOpen] = useState(false);
 	const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -104,7 +113,10 @@ function LevelSearchBar(props: SearchBarProps) {
 				<LevelSearchOptions
 					initSettings={props.initialSettings}
 					onChange={(settings) => {
-						setFilterSettings(settings);
+						setFilterSettings({
+							...settings,
+							page: 0,
+						});
 						props.onSubmit(valueRef.current, settings);
 					}}
 					onClose={() => { setDialogOpen(false); }}
@@ -114,13 +126,27 @@ function LevelSearchBar(props: SearchBarProps) {
 				<div className={`search-bar${suggestions.length > 0 && isFocused ? ' open' : ''}`}>
 					<input
 						type="text"
-						value={value}
+						value={inputText}
 						onChange={handleChange}
 						ref={inputRef}
 						onFocus={() => { setIsFocused(true); }}
 						onBlur={() => { setIsFocused(false); }}
 					/>
-					<FilterListIcon className="search-bar-icon" onClick={() => { setDialogOpen(true); }} />
+					<div style={{
+						position: 'relative',
+						height: '34px',
+					}}
+					>
+						<div
+							className="count-badge"
+							style={{
+								display: numberOfNonDefaultSettings > 0 ? '' : 'none',
+							}}
+						>
+							<span>{numberOfNonDefaultSettings}</span>
+						</div>
+						<FilterListIcon className="search-bar-icon" onClick={() => { setDialogOpen(true); }} />
+					</div>
 					<SearchIcon
 						className="search-bar-icon"
 						onClick={() => { props.onSubmit(valueRef.current, filterSettingsRef.current); }}
@@ -140,7 +166,7 @@ function LevelSearchBar(props: SearchBarProps) {
 							onClick={() => {
 								props.onSubmit(suggestion, filterSettingsRef.current);
 								inputRef.current?.blur();
-								setValue(suggestion);
+								setInputText(suggestion);
 							}}
 							role="search"
 							tabIndex={i}
@@ -158,7 +184,7 @@ function LevelSearchBar(props: SearchBarProps) {
 	 */
 	function handleChange(e: any) {
 		const str = e.target.value;
-		setValue(str);
+		setInputText(str);
 		if (str !== '') {
 			getSuggestions(str).then((foundSuggestions) => {
 				setSuggestions(foundSuggestions);

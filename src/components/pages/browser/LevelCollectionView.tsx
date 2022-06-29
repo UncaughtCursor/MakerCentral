@@ -111,8 +111,6 @@ function LevelCollectionView(props: LevelCollectionViewProps) {
 
 		lastDocIdForPage.current[page + 1] = foundLevels.length > 1
 			? foundLevels[foundLevels.length - 2].id : null;
-		console.log(foundLevels);
-		console.log(lastDocIdForPage.current);
 
 		const levelIds = foundLevels.slice(0, props.batchSize!).map((level) => level.id);
 		const initThumbnailStates = await loadThumbnails(levelIds);

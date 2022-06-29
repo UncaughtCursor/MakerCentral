@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import SelectInput from '../controls/SelectInput';
 import TriggerButton from '../controls/TriggerButton';
 import {
+	defaultFilterSettings,
 	SearchFilterSettings, sortTypes,
 } from './LevelSearchBar';
 
@@ -62,6 +63,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={gameStyleOptions.indexOf(settings.gameStyle)}
 				/>
 				<SelectInput
 					label="Theme"
@@ -75,6 +77,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={themeOptions.indexOf(settings.theme)}
 				/>
 				<SelectInput
 					label="Difficulty"
@@ -88,6 +91,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={difficultyOptions.indexOf(settings.difficulty)}
 				/>
 				<SelectInput
 					label="Tag"
@@ -101,6 +105,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={tagOptions.indexOf(settings.tag)}
 				/>
 			</div>
 			<h3>Sort</h3>
@@ -117,6 +122,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={sortTypes.indexOf(settings.sortType)}
 				/>
 				<SelectInput
 					label="Sort Order"
@@ -130,6 +136,7 @@ function LevelSearchOptions(props: {
 						setSettings(newSettings);
 						props.onChange(newSettings);
 					}}
+					selectedIndex={sortOrders.indexOf(settings.sortOrder)}
 				/>
 			</div>
 			<div style={{ margin: '25px 0' }}>
@@ -137,6 +144,14 @@ function LevelSearchOptions(props: {
 					text="Done"
 					type="blue"
 					onClick={props.onClose}
+				/>
+				<TriggerButton
+					text="Reset"
+					type="dark"
+					onClick={() => {
+						setSettings(defaultFilterSettings);
+						props.onChange(defaultFilterSettings);
+					}}
 				/>
 			</div>
 		</div>
