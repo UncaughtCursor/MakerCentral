@@ -140,24 +140,4 @@ export async function getServerSideProps(context: { params: {
 	};
 }
 
-/**
- * Converts an string from the thumbnail cloud function output to a URL.
- * @param output The output from the cloud function.
- * @returns The URL of the thumbnail.
- */
-function convertThumbnailFnOutputToUrl(output: string): string {
-	// Input string can be one of three formats:
-	// 1. A base64 encoded string
-	// 2. 'Error'
-	// 3. 'Removed'
-
-	// Return empty string if the string is either 'Error' or 'Removed'.
-	if (output === 'Error' || output === 'Removed') {
-		return '';
-	}
-
-	// Otherwise, return the base64 encoded URL.
-	return `data:image/png;base64,${output}`;
-}
-
 export default LevelPage;

@@ -1,5 +1,4 @@
 import AppFrame from '@components/AppFrame';
-import LevelCategoryFeed from '@components/pages/browser/LevelCategoryFeed';
 import SuperWorldPreview from '@components/pages/browser/SuperWorldPreview';
 import LevelSearchResultWidget from '@components/pages/search/LevelSearchResultWidget';
 import { CloudFunction } from '@data/types/FirebaseUtilTypes';
