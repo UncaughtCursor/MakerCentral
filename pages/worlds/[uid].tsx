@@ -76,7 +76,7 @@ function SuperWorldPage(props: SuperWorldPageProps) {
 	return (
 		<AppFrame
 			title={`${worldName} - MakerCentral Levels`}
-			description={`${props.world!.makerName}'s super world with ${props.world!.levels} levels. Prominent tags: ${featuredTags.join(', ')}.`}
+			description={`${props.world!.makerName}'s super world with ${props.world!.numLevels} levels. Prominent tags: ${featuredTags.join(', ')}.`}
 			imageUrl={embedThumbnailUrl}
 		>
 			<div className="level-page-content">
