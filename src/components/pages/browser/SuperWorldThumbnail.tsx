@@ -42,10 +42,10 @@ function SuperWorldThumbnail(props: {
 		<div
 			className="super-world-thumbnail-container"
 			style={{
-				height: `${props.heightPx}px`,
-				width: `${props.heightPx * aspectRatio}px`,
-				gridTemplateRows: `repeat(2, ${thumbnailHeight}px)`,
-				gridTemplateColumns: `repeat(2, ${thumbnailWidth}px)`,
+				maxHeight: `${props.heightPx}px`,
+				maxWidth: `${props.heightPx * aspectRatio}px`,
+				gridTemplateRows: 'repeat(2, 1fr)',
+				gridTemplateColumns: 'repeat(2, 1fr)',
 				...props.style,
 			}}
 		>
@@ -56,8 +56,8 @@ function SuperWorldThumbnail(props: {
 						url={thumbnail.url!}
 						status={thumbnail.state}
 						style={{
-							width: `${thumbnailWidth}px`,
-							height: `${thumbnailHeight}px`,
+							maxWidth: `${thumbnailWidth}px`,
+							maxHeight: `${thumbnailHeight}px`,
 						}}
 					/>
 				);

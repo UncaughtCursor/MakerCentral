@@ -14,6 +14,7 @@
 .super-world-thumbnail-container {
 	display: grid;
 	padding: 10px;
+	flex-grow: 1;
 }
 
 .super-world-info-container {
@@ -25,4 +26,14 @@
 .super-world-info-container > h3 {
 	margin: 0;
 	text-align: left;
+}
+
+@media (max-width: 860px) {
+	.super-world-preview {
+		flex-direction: column;
+	}
+
+	.super-world-info-container {
+		margin-left: 10px;
+	}
 }

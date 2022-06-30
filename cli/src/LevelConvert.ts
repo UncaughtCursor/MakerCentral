@@ -149,9 +149,9 @@ function loadUserPreviewMap(
 }
 
 /**
- * Loads a map of pids to super world preview objects.
+ * Loads a map of maker IDs to super world objects.
  */
-function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
+function loadWorldMap(): Promise<Map<string, MCRawSuperWorld>> {
 	return new Promise(async (resolve) => {
 		const worldLevelsMap = await loadWorldLevelsMap();
 		const worldMap = new Map<string, MCRawSuperWorld>();
@@ -164,7 +164,9 @@ function loadWorldPreviewMap(): Promise<Map<string, MCRawSuperWorld>> {
 
 			const worldLevelInfo = worldLevelsMap.get(worldData.pid)!;
 
-			worldMap.set(worldData.pid, {
+			const makerPid = worldLevelInfo[0].uploader_pid;
+
+			worldMap.set(makerPid, {
 				world_id: worldData.world_id,
 				worlds: worldData.worlds,
 				levels: worldData.levels,
@@ -238,6 +240,7 @@ function loadRankLevelMap(): Promise<BigMap<number, MCRawLevelAggregationUnit>> 
 				plays: levelData.plays,
 				like_to_play_ratio: levelData.likes / levelData.unique_players_and_versus,
 				upload_time: levelData.upload_time,
+				uploader_pid: levelData.uploader_pid,
 			});
 		});
 		csvStream.on('end', () => {
@@ -279,9 +282,9 @@ function loadUserMedalMap(): Promise<Map<string, MCRawMedal[]>> {
 export async function compileUsers() {
 	const batchSize = 100000;
 
-	const worldPreviewMap = await loadWorldPreviewMap();
+	const worldMap = await loadWorldMap();
 	const medalMap = await loadUserMedalMap();
-	console.log(`Loaded worldPreviewMap - ${worldPreviewMap.size} entries`);
+	console.log(`Loaded worldPreviewMap - ${worldMap.size} entries`);
 
 	const spdTest = new SpeedTester(100000, (spd, _, totalRows) => {
 		console.log(`${spd} rows per sec; ${totalRows} processed.`);
@@ -293,7 +296,7 @@ export async function compileUsers() {
 
 	csvStream.on('data', (row) => {
 		const userData = JSON.parse(row) as UserCSVRow;
-		const super_world = worldPreviewMap.get(userData.pid);
+		const super_world = worldMap.get(userData.pid);
 		const medals = medalMap.get(userData.pid);
 		workingDocs.push({
 			name: userData.name,

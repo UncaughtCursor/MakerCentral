@@ -6,6 +6,7 @@ import PlayIcon from '@mui/icons-material/SportsEsports';
 import ClearRateIcon from '@mui/icons-material/FlagCircle';
 import SuperWorldThumbnail from './SuperWorldThumbnail';
 import TagDisplay from './TagDisplay';
+import IconValueRow from './IconValueRow';
 
 const superWorldSlug = '/worlds';
 
@@ -36,16 +37,25 @@ function SuperWorldPreview(props: {
 			/>
 			<div className="super-world-info-container">
 				<h3>Super {props.makerName} World</h3>
-				<div className="icon-count-row">
-					<LikeIcon style={{ color: 'var(--text-color)' }} />
-					<p>{totalLikes.toLocaleString()}</p>
-					<PlayIcon style={{ color: 'var(--text-color)' }} />
-					<p>{totalPlays.toLocaleString()}</p>
-					<ClearRateIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.world.avgClearRate.toFixed(2)}%</p>
-					<LevelsIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.world.numLevels.toLocaleString()}</p>
-				</div>
+				<IconValueRow values={[
+					{
+						icon: <LikeIcon style={{ color: 'var(--text-color)' }} />,
+						value: totalLikes.toLocaleString(),
+					},
+					{
+						icon: <PlayIcon style={{ color: 'var(--text-color)' }} />,
+						value: totalPlays.toLocaleString(),
+					},
+					{
+						icon: <ClearRateIcon style={{ color: 'var(--text-color)' }} />,
+						value: `${props.world.avgClearRate.toFixed(2)}%`,
+					},
+					{
+						icon: <LevelsIcon style={{ color: 'var(--text-color)' }} />,
+						value: props.world.numLevels.toLocaleString(),
+					},
+				]}
+				/>
 				<TagDisplay tags={props.world.prominentTags} />
 			</div>
 		</a>

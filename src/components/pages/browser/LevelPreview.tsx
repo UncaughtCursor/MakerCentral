@@ -9,6 +9,7 @@ import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
 import LevelThumbnail from './LevelThumbnail';
 import BookmarkButton from './BookmarkButton';
+import IconValueRow from './IconValueRow';
 
 const timeAgo = new TimeAgo('en-us');
 
@@ -37,7 +38,7 @@ function LevelPreview(props: {
 						height: '81px',
 					}}
 				/>
-				<div className="user-level-preview-details">
+				<div className="user-level-preview-title-container">
 					<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
 					<p><a
 						href={`/users/${props.level.makerId}`}
@@ -50,14 +51,21 @@ function LevelPreview(props: {
 				</div>
 			</div>
 			<div className="user-level-preview-details">
-				<div className="icon-count-row">
-					<LikeIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.level.numLikes.toLocaleString()}</p>
-					<PlayIcon style={{ color: 'var(--text-color)' }} />
-					<p>{props.level.numPlays.toLocaleString()}</p>
-					<ClearRateIcon style={{ color: 'var(--text-color)' }} />
-					<p>{(props.level.clearRate * 100).toFixed(2)}%</p>
-				</div>
+				<IconValueRow values={[
+					{
+						icon: <LikeIcon style={{ color: 'var(--text-color)' }} />,
+						value: props.level.numLikes.toLocaleString(),
+					},
+					{
+						icon: <PlayIcon style={{ color: 'var(--text-color)' }} />,
+						value: props.level.numPlays.toLocaleString(),
+					},
+					{
+						icon: <ClearRateIcon style={{ color: 'var(--text-color)' }} />,
+						value: `${(props.level.clearRate * 100).toFixed(2)}%`,
+					},
+				]}
+				/>
 				<TagDisplay tags={props.level.tags} />
 				<p style={{ overflowWrap: 'anywhere' }}>{props.level.description}</p>
 			</div>

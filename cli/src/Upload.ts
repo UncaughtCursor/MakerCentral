@@ -114,7 +114,7 @@ export async function uploadUsers() {
 
 			await Promise.all(promises);
 		}
-	});
+	}, 56);
 }
 
 interface UploadResult {
