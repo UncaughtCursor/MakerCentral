@@ -23,6 +23,11 @@ export async function createLevelSearchData() {
 	const levelFileIterator = new TextDirIterator(levelOutDir);
 	// await client.index('levels').deleteAllDocuments();
 
+	const unuploadedFileNumbers = [
+		25, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 202, 203, 204, 205, 206, 207, 208, 210, 211
+	];
+	const unuploadedFileNames = unuploadedFileNumbers.map(num => `${num}.json`);
+
 	await levelFileIterator.iterate(async (data: string, i: number) => {
 		console.log(`File #${i + 1}`);
 		const rawDocs = JSON.parse(data) as MCRawLevelDoc[];
@@ -30,7 +35,7 @@ export async function createLevelSearchData() {
 
 		const task = await client.index('levels').addDocuments(docs);
 		console.log(task);
-	}, 82); // TODO: Remove this argument when done uploading levels.
+	}, unuploadedFileNames);
 }
 
 /**

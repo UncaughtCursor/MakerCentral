@@ -164,7 +164,7 @@ function loadWorldMap(): Promise<Map<string, MCRawSuperWorld>> {
 
 			const worldLevelInfo = worldLevelsMap.get(worldData.pid)!;
 
-			const makerPid = worldLevelInfo[0].uploader_pid; // TODO: Get maker ID from the first level in the world.
+			const makerPid = worldLevelInfo[0].uploader_pid;
 
 			worldMap.set(makerPid, {
 				world_id: worldData.world_id,

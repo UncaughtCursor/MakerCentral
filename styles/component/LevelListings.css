@@ -18,6 +18,7 @@
 .level-preview-table {
 	color: var(--text-color);
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .level-preview-table > tbody > tr {

@@ -1,7 +1,7 @@
 .user-profile {
 	display: flex;
 	flex-direction: column;
-	width: 80vw;
+	width: 90vw;
 	max-width: 960px;
 	margin: 0 auto;
 }

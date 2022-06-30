@@ -156,7 +156,7 @@ function SuperWorldPage(props: SuperWorldPageProps) {
 						<h4 style={{
 							marginTop: '20px',
 						}}
-						>Level Overview
+						>Level List
 						</h4>
 						<SuperWorldLevelListings levels={world.levels} />
 					</div>
