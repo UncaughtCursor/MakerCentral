@@ -112,6 +112,7 @@ export interface MCRawLevelAggregationUnit {
 	like_to_play_ratio: number;
 	tags: DBTag[];
 	upload_time: number;
+	uploader_pid: string;
 }
 
 export interface MCRawSuperWorld {
