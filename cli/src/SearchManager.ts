@@ -23,8 +23,9 @@ export async function createLevelSearchData() {
 	const levelFileIterator = new TextDirIterator(levelOutDir);
 	// await client.index('levels').deleteAllDocuments();
 
+	// Original indexing
 	const unuploadedFileNumbers = [
-		25, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 202, 203, 204, 205, 206, 207, 208, 210, 211
+		12, 121, 122, 123, 124, 125, 126, 127, 128, 129, 13, 130, 131, 132, 133, 134, 135, 39, 40, 41, 42, 43, 44, 46, 47
 	];
 	const unuploadedFileNames = unuploadedFileNumbers.map(num => `${num}.json`);
 
@@ -119,4 +120,14 @@ export async function setSearchSettings() {
 	]));
 
 	console.log('Settings set.');
+}
+
+export async function search(query: string, indexName: string) {
+	const index = client.index(indexName);
+	return index.search(query);
+}
+
+export async function getDoc(id: string, indexName: string) {
+	const index = client.index(indexName);
+	return index.getDocument(id);
 }

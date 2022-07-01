@@ -1,9 +1,8 @@
 import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
-import { defaultFilterSettings } from '@components/pages/search/LevelSearchBar';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
-import { FullLevelSearchParams } from './SearchUtil';
+import { defaultFilterSettings, FullLevelSearchParams } from './SearchUtil';
 
 export interface LevelSearch {
 	query: string;
@@ -49,6 +48,7 @@ const filterParamNames = [
  */
 export async function searchLevels(
 	searchData: LevelSearchParams | FullLevelSearchParams,
+	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData },
 ): Promise<LevelSearchResults> {
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames.includes(paramName)
@@ -58,19 +58,11 @@ export async function searchLevels(
 		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof LevelSearchParams]}"`,
 	);
 	// Disable levels with less than 25 likes from showing up for now
-	filter.push('numLikes >= 25');
+	// filter.push('numLikes >= 25');
 
-	// eslint-disable-next-line consistent-return
-	const sortTypePropertyName = (() => {
-		switch (searchData.sortType) {
-		case 'By Clear Rate': return 'clearRate';
-		case 'By Date': return 'uploadTime';
-		case 'By Likes': return 'numLikes';
-		}
-	})();
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
-	const sort = [`${sortTypePropertyName}:${sortOrderAbbr}`];
+	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
 	const res = await client.index('levels').search(searchData.q, {
 		filter,

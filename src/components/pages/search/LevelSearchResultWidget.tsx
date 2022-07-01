@@ -1,4 +1,4 @@
-import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
+import { LevelSearchResults } from '@scripts/browser/MeilisearchUtil';
 import { FullLevelSearchParams, getLevelResultDisplayData } from '@scripts/browser/SearchUtil';
 import { LevelSearchParams } from 'pages/levels/search/[q]';
 import React, { useEffect, useState } from 'react';

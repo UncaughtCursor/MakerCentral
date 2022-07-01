@@ -7,7 +7,7 @@ import fs from 'fs';
 import yargs, { Argv } from 'yargs';
 import { createZCDLevelFileFromBCD, parseLevelDataFromCode, parseLevelFromZCDFile } from './level-reader/LevelReader';
 import {
-	compileLevels, compileUsers, streamTableToFile,
+	compileLevels, compileUsers, levelOutDir, streamTableToFile,
 } from './LevelConvert';
 import { createLevelSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
@@ -16,6 +16,9 @@ import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
 import CSVObjectStream from './csv/CSVObjectStream';
 import SpeedTester from './util/SpeedTester';
 import CloudFn from '../../data/util/CloudFn';
+import { runSearchTests, SearchTest } from './SearchTester';
+import { DBLevel } from '@data/types/DBTypes';
+import streamFileUntil from './util/SteamFileUntil';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -106,28 +109,21 @@ yargs.usage('$0 command')
 		console.log('Level rendered');
 	})
 	.command('test', 'Test', async () => {
-		const speedTester = new SpeedTester(1, ((_, ms) => {
-			console.log(`Completed in ${ms}ms`);
-		}));
-		const result = await CloudFn<{
-			levelIDs: string[];
-		}, { [levelID: string]: string }>('generateThumbnailsForLevelIDs', {
-			levelIDs: [
-				'9HCP7JRSG',
-				'00000C34G',
-				'7N1MVBWKF',
-				'LHBPC3FDG',
-				'MD2HM2BFG',
-				'HPGWPSHDG',
-				'V8FD0F5WF',
-				'NJWPK0JWG',
-				'Y2D6FMJ9G',
-				'Y09FKYGWF'
-			],
+		// Load each level JSON file and search for the first level in each
+		const fileNames = fs.readdirSync(levelOutDir);
+		const tests: SearchTest[] = [];
+		for (const fileName of fileNames) {
+			console.log(`Loading ${fileName}`);
+			if (fileName.endsWith('.json')) {
+				const firstLevelSubstr = await streamFileUntil(`${levelOutDir}/${fileName}`, '}},');
+				const level: DBLevel = JSON.parse(`${firstLevelSubstr}}}]`)[0];
+				tests.push({ label: fileName, query: level.course_id });
+			}
+		}
+		await runSearchTests(tests, {
+			isId: true,
+			onlyLogFailures: true,
 		});
-		speedTester.tick();
-
-		if (result !== null) console.log(result.data);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
