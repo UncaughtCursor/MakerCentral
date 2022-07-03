@@ -41,6 +41,7 @@ export interface FullLevelSearchParams extends LevelSearchParams {
 }
 
 export const defaultFullSearchParams: FullLevelSearchParams = {
+	type: 'Level',
 	q: '',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
@@ -65,7 +66,10 @@ export const SMM2Themes = [
 ] as const;
 export type SMM2Theme = typeof SMM2Themes[number];
 
-export type WorldSize = 'Small' | 'Medium' | 'Large';
+export const worldSizes = [
+	'Small', 'Medium', 'Large',
+] as const;
+export type WorldSize = typeof worldSizes[number];
 
 export type SearchType = 'Level' | 'User' | 'World';
 
@@ -77,19 +81,20 @@ export const sortTypes = {
 		'By Maker Points', 'By Number of Levels',
 	],
 	World: [
-		'By Likes', 'By Clear Rate',
+		'By Likes', 'By Date', 'By Clear Rate',
 	],
 } as const;
 export type LevelSortType = typeof sortTypes.Level[number];
 export type UserSortType = typeof sortTypes.User[number];
 export type WorldSortType = typeof sortTypes.World[number];
 
-interface SearchFilterSettings {
+interface BaseSearchFilterSettings {
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
 
-export interface LevelSearchFilterSettings extends SearchFilterSettings {
+export interface LevelSearchFilterSettings extends BaseSearchFilterSettings {
+	type: 'Level';
 	sortType: LevelSortType;
 	difficulty: MCDifficulty | 'Any';
 	theme: SMM2Theme | 'Any';
@@ -97,11 +102,13 @@ export interface LevelSearchFilterSettings extends SearchFilterSettings {
 	tag: MCTag | 'Any';
 }
 
-export interface UserSearchFilterSettings extends SearchFilterSettings {
+export interface UserSearchFilterSettings extends BaseSearchFilterSettings {
+	type: 'User';
 	sortType: UserSortType;
 }
 
-export interface WorldSearchFilterSettings extends SearchFilterSettings {
+export interface WorldSearchFilterSettings extends BaseSearchFilterSettings {
+	type: 'World';
 	sortType: WorldSortType;
 	difficulty: MCDifficulty | 'Any';
 	theme: SMM2Theme | 'Any';
@@ -110,7 +117,11 @@ export interface WorldSearchFilterSettings extends SearchFilterSettings {
 	worldSize: WorldSize | 'Any';
 }
 
+export type SearchFilterSettings = LevelSearchFilterSettings
+	| UserSearchFilterSettings | WorldSearchFilterSettings;
+
 export const defaultFilterSettings: LevelSearchFilterSettings = {
+	type: 'Level',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
 	difficulty: 'Any',
@@ -186,6 +197,83 @@ export const levelSortTypeMap: { [key in LevelSortType]: keyof MCLevelDocData } 
 	return res;
 })();
 
+export const userSearchTemplate: UserSearchOptionsTemplate = {
+	searchType: 'User',
+	filterOptions: [],
+	sortOptions: [
+		{
+			label: 'By Maker Points',
+			property: 'makerPoints',
+		},
+		{
+			label: 'By Number of Levels',
+			property: 'levels',
+		},
+	],
+};
+export const userSortTypeMap: { [key in UserSortType]: keyof MCUserDocData } = (() => {
+	const map: any = {};
+	for (const sort of userSearchTemplate.sortOptions) {
+		map[sort.label] = sort.property;
+	}
+	const res: { [key in UserSortType]: keyof MCUserDocData } = map;
+	return res;
+})();
+
+export const worldSearchTemplate: WorldSearchOptionsTemplate = {
+	searchType: 'World',
+	filterOptions: [
+		{
+			label: 'Game Style',
+			property: 'gameStyle',
+			options: ['Any', ...MCGameStyles],
+		},
+		{
+			label: 'Theme',
+			property: 'theme',
+			options: ['Any', ...MCThemes],
+		},
+		{
+			label: 'Difficulty',
+			property: 'difficulty',
+			options: ['Any', ...MCDifficulties],
+		},
+		{
+			label: 'Tag',
+			property: 'tag',
+			options: ['Any', ...MCTagOptions],
+		},
+		{
+			label: 'Size',
+			property: 'worldSize',
+			options: ['Any', ...worldSizes],
+
+		},
+	],
+	sortOptions: [
+		{
+			label: 'By Likes',
+			property: 'avgLikes',
+		},
+		{
+			label: 'By Date',
+			property: 'created',
+		},
+		{
+			label: 'By Clear Rate',
+			property: 'avgClearRate',
+		},
+	],
+};
+export const worldSortTypeMap: { [key in WorldSortType]: keyof MCWorldDocData } = (() => {
+	const map: any = {};
+	for (const sort of worldSearchTemplate.sortOptions) {
+		map[sort.label] = sort.property;
+	}
+	const res: { [key in WorldSortType]: keyof MCWorldDocData } = map;
+	return res;
+})();
+
 interface LevelSearchOptionsFilter {
 	label: string;
 	property: keyof LevelSearchFilterSettings;
@@ -221,13 +309,13 @@ export interface UserSearchOptionsTemplate {
 }
 
 interface WorldSearchOptionsFilter {
-	label: WorldSortType;
+	label: string;
 	property: keyof WorldSearchFilterSettings;
 	options: WorldSearchFilterSettings[WorldSearchOptionsFilter['property']][];
 }
 
 interface WorldSearchOptionsSort {
-	label: string;
+	label: WorldSortType;
 	property: keyof MCWorldDocData;
 }
 

@@ -246,6 +246,24 @@ export interface DBUser {
     unk16: number;
 }
 
+export interface DBSuperWorld {
+	id: string;
+	worlds: number;
+	levels: number;
+	planet_type: number;
+	created: number;
+	ninjis: number[];
+	unk5: number;
+	unk6: number;
+	unk7: number;
+	thumbnail: {
+		url: string;
+		size: number;
+		filename: string;
+	},
+	courses: number[];
+}
+
 export enum UserRegion {
 	'Asia' = 0,
 	'Americas' = 1,
