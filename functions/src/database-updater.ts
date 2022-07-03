@@ -11,7 +11,7 @@ import {
 import { db, storageBucket } from '.';
 import {
 	DBClearCondition,
-	DBDifficulty, DBGameStyle, DBLevel, DBSuperWorld, DBTag, DBTheme, DBUser,
+	DBDifficulty, DBGameStyle, APILevel, DBSuperWorld, DBTag, DBTheme, DBUser,
 } from './data/types/DBTypes';
 import {
 	APIDifficulties, APIGameStyles, APITags, APIThemes,
@@ -194,7 +194,7 @@ async function downloadRawLevels(startId: number, endId: number): Promise<MCRawL
 }
 
 interface RawLevelSetResponse {
-	courses: DBLevel[];
+	courses: APILevel[];
 }
 
 /**
@@ -209,8 +209,12 @@ async function downloadRawLevelSet(dataIds: number[]): Promise<MCRawLevelDocPre[
 	const res: MCRawLevelDocPre[] = [];
 	for (let i = 0; i < response.courses.length; i++) {
 		const level = response.courses[i];
+		const {game_style, ...rest} = level;
 
-		res.push(level);
+		res.push({
+			...rest,
+			gamestyle: game_style,
+		});
 	}
 
 	return res;
