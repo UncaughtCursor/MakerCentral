@@ -108,7 +108,7 @@ yargs.usage('$0 command')
 		renderLevel(level, `tmp/${testLevelCode}.png`);
 		console.log('Level rendered');
 	})
-	.command('test', 'Test', async () => {
+	.command('test-search-coverage', 'Test how many level files were uploaded to Meili.', async () => {
 		// Load each level JSON file and search for the first level in each
 		const fileNames = fs.readdirSync(levelOutDir);
 		const tests: SearchTest[] = [];
@@ -124,6 +124,10 @@ yargs.usage('$0 command')
 			isId: true,
 			onlyLogFailures: true,
 		});
+	})
+	.command('test', 'Test', async () => {
+		// Run the updateDB cloud function
+		await CloudFn('updateDB', {});
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

@@ -10,17 +10,18 @@ import {
 } from './data/types/MCRawTypes';
 import { db, storageBucket } from '.';
 import {
+	DBClearCondition,
 	DBDifficulty, DBGameStyle, DBLevel, DBSuperWorld, DBTag, DBTheme, DBUser,
 } from './data/types/DBTypes';
 import {
 	APIDifficulties, APIGameStyles, APITags, APIThemes,
 } from './data/APITypes';
 import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
-import { is } from 'typescript-is';
+import axios from 'axios';
 
 // const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
-const maxLevelsToAdd = 1000;
+const maxLevelsToAdd = 100;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
 const documentUploadChunkSize = 100;
@@ -36,13 +37,47 @@ interface UpdaterProgress {
 	lastNewestDataId: number;
 }
 
+interface MCRawLevelDocPre {
+	data_id: number,
+	name: string,
+	description: string,
+	uploaded: number,
+	course_id: string,
+	gamestyle: DBGameStyle,
+	theme: DBTheme,
+	difficulty: DBDifficulty,
+	tag1: DBTag,
+	tag2: DBTag,
+	world_record: number,
+	upload_time: number,
+	num_comments: number,
+	clear_condition: DBClearCondition,
+	clear_condition_magnitude: number,
+	clears: number,
+	attempts: number,
+	clear_rate: number,
+	plays: number,
+	versus_matches: number,
+	coop_matches: number,
+	likes: number,
+	boos: number,
+	unique_players_and_versus: number,
+	weekly_likes: number,
+	weekly_plays: number,
+	uploader_pid: string,
+	first_completer_pid?: string;
+    record_holder_pid?: string;
+}
+
 // TODO: Run on a cron job after testing.
 /*export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {*/
 
 /**
  * Updates the levels in the database from Nintendo's servers.
  */
-export const updateDB = functions.https.onCall(async () => {
+export const updateDB = functions.runWith({
+	timeoutSeconds: 540,
+}).https.onCall(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 	console.log(progress);
@@ -58,20 +93,74 @@ export const updateDB = functions.https.onCall(async () => {
 		? progress.lastDataIdDownloaded + maxLevelsToAdd : maxId;
 	console.log(`End ID: ${endId}`);
 
-	const levels = await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId);
-	console.log(`Downloaded ${levels.length} levels`);
-	console.log(levels[0]);
+	const levelsPre = await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId);
+	console.log(`Downloaded ${levelsPre.length} levels`);
 
 	// Get all user PIDs from levels.
-	const pids = levels.map((level) => level.uploader.pid);
+	const fullProfilePids = [];
+	const previewPids = [];
+	for (const levelPre of levelsPre) {
+		// Only the level uploader is added to the full profile PIDs.
+		fullProfilePids.push(levelPre.uploader_pid);
+		if (levelPre.first_completer_pid) previewPids.push(levelPre.first_completer_pid);
+		if (levelPre.record_holder_pid) previewPids.push(levelPre.record_holder_pid);
+	}
 
-	const users = await downloadRawUsers(pids);
-	console.log(`Downloaded ${users.length} users`);
-	console.log(users[0]);
+	const fullUserProfiles = await downloadRawUsers(fullProfilePids);
+	const fullProfilePidMap = new Map<string, MCRawUserDoc>();
+	for (const fullUserProfile of fullUserProfiles) {
+		fullProfilePidMap.set(fullUserProfile.pid, fullUserProfile);
+	}
+	console.log(`Downloaded ${fullUserProfiles.length} full profiles`);
+
+	const userPreviews = await downloadRawUserPreviews(previewPids);
+	const userPreviewPidMap = new Map<string, MCRawUserPreview>();
+	for (const userPreview of userPreviews) {
+		userPreviewPidMap.set(userPreview.pid, userPreview);
+	}
+	console.log(`Downloaded ${userPreviews.length} previews`);
+
+	const levels: MCRawLevelDoc[] = levelsPre.map(levelPre => {
+		const user = fullProfilePidMap.get(levelPre.uploader_pid);
+
+		const firstCompleter = levelPre.first_completer_pid ? userPreviewPidMap.get(levelPre.first_completer_pid) : null;
+		const recordHolder = levelPre.record_holder_pid ? userPreviewPidMap.get(levelPre.record_holder_pid) : null;
+		return {
+			data_id: levelPre.data_id,
+			name: levelPre.name,
+			description: levelPre.description,
+			uploaded: levelPre.uploaded,
+			course_id: levelPre.course_id,
+			gamestyle: levelPre.gamestyle,
+			theme: levelPre.theme,
+			difficulty: levelPre.difficulty,
+			tag1: levelPre.tag1,
+			tag2: levelPre.tag2,
+			world_record: levelPre.world_record,
+			upload_time: levelPre.upload_time,
+			num_comments: levelPre.num_comments,
+			clear_condition: levelPre.clear_condition,
+			clear_condition_magnitude: levelPre.clear_condition_magnitude,
+			clears: levelPre.clears,
+			attempts: levelPre.attempts,
+			clear_rate: levelPre.clear_rate,
+			plays: levelPre.plays,
+			versus_matches: levelPre.versus_matches,
+			coop_matches: levelPre.coop_matches,
+			likes: levelPre.likes,
+			boos: levelPre.boos,
+			unique_players_and_versus: levelPre.unique_players_and_versus,
+			weekly_likes: levelPre.weekly_likes,
+			weekly_plays: levelPre.weekly_plays,
+			uploader: getUserPreview(user!),
+			first_completer: firstCompleter ? firstCompleter : null,
+			record_holder: recordHolder ? recordHolder : null,
+		};
+	});
 
 	// Upload new documents to the database.
 	await uploadUsersOrLevels(levels, 'Level');
-	await uploadUsersOrLevels(users, 'User');
+	await uploadUsersOrLevels(fullUserProfiles, 'User');
 	// TODO: Upload to MeiliSearch
 
 	// Set the new progress.
@@ -90,8 +179,8 @@ export const updateDB = functions.https.onCall(async () => {
  * @param startId The ID to start downloading at.
  * @param endId The ID to end downloading at.
  */
-async function downloadRawLevels(startId: number, endId: number): Promise<MCRawLevelDoc[]> {
-	const docs: MCRawLevelDoc[] = [];
+async function downloadRawLevels(startId: number, endId: number): Promise<MCRawLevelDocPre[]> {
+	const docs: MCRawLevelDocPre[] = [];
 	const dataIdsToDownload = Array.from({ length: endId - startId + 1 }, (_, i) => startId + i);
 	const chunks = chunk(dataIdsToDownload, levelsPerChunk);
 
@@ -113,66 +202,34 @@ interface RawLevelSetResponse {
  * @param dataIds The data IDs of the levels to download.
  * @returns A promise that resolves with the downloaded level info.
  */
-async function downloadRawLevelSet(dataIds: number[]): Promise<MCRawLevelDoc[]> {
-	const url = `${smm2APIBaseUrl}/${levelEndpoint}/?data_id=${dataIds.join(',')}`;
+async function downloadRawLevelSet(dataIds: number[]): Promise<MCRawLevelDocPre[]> {
+	const url = `${smm2APIBaseUrl}/${levelEndpoint}/${dataIds.join(',')}`;
 	const response = await getAPIResponse(url) as RawLevelSetResponse;
-	if (!is<RawLevelSetResponse>(response)) throw new Error('Invalid response from API. [downloadRawLevelSet]');
 
-	const res: MCRawLevelDoc[] = [];
+	const res: MCRawLevelDocPre[] = [];
 	for (let i = 0; i < response.courses.length; i++) {
 		const level = response.courses[i];
-		const {
-			uploader_pid, first_completer_pid, record_holder_pid, ...rest
-		} = level;
 
-		const userPreviews = await downloadRawUserPreviews(
-			[uploader_pid, first_completer_pid, record_holder_pid],
-		);
-
-		res.push({
-			...rest,
-			uploader: userPreviews[0],
-			first_completer: userPreviews[1],
-			record_holder: userPreviews[2],
-		});
+		res.push(level);
 	}
 
 	return res;
 }
 
-/**
- * Downloads user previews from Nintendo's servers, sweeping through the PIDs specified.
- * @param pids The PIDs of the user previews to download.
- * @returns A promise that resolves with the downloaded user info.
- */
-async function downloadRawUserPreviews(pids: string[]): Promise<MCRawUserPreview[]> {
-	const docs: MCRawUserPreview[] = [];
-	const chunks = chunk(pids, usersPerChunk);
-
-	// Download users in each chunk.
-	for (let i = 0; i < chunks.length; i++) {
-		const chunk = chunks[i];
-
-		const url = `${smm2APIBaseUrl}/${userEndpoint}/${chunk.join(',')}`;
-		const response = await getAPIResponse(url) as RawUserSetResponse;
-		if (!is<RawUserSetResponse>(response)) throw new Error('Invalid response from API. [downloadRawUserPreviews]');
-
-		docs.push(...response.users.map((user) => ({
-			name: user.name,
-			pid: user.pid,
-			makerId: user.code,
-			region: user.region,
-			country: user.country,
-			medals: user.badges,
-			likes: user.likes,
-			maker_points: user.maker_points,
-			mii_image: user.mii_image,
-			mii_studio_code: user.mii_studio_code,
-			has_super_world: user.super_world_id !== '',
-		})));
-	}
-
-	return docs;
+function getUserPreview(user: MCRawUserDoc): MCRawUserPreview {
+	return {
+		name: user.name,
+		pid: user.pid,
+		makerId: user.code,
+		region: user.region,
+		country: user.country,
+		medals: user.medals,
+		likes: user.likes,
+		maker_points: user.maker_points,
+		mii_image: user.mii_image,
+		mii_studio_code: user.mii_studio_code,
+		has_super_world: user.super_world !== null,
+	};
 }
 
 /**
@@ -187,10 +244,23 @@ async function downloadRawUsers(pids: string[]): Promise<MCRawUserDoc[]> {
 	// Download users in each chunk.
 	for (let i = 0; i < chunks.length; i++) {
 		const chunk = chunks[i];
-		docs.push(...await downloadRawUserSet(chunk));
+		docs.push(...(await downloadRawUserSet(chunk, false)) as MCRawUserDoc[]);
 	}
 
 	return docs;
+}
+
+async function downloadRawUserPreviews(pids: string[]): Promise<MCRawUserPreview[]> {
+	const previews: MCRawUserPreview[] = [];
+	const chunks = chunk(pids, usersPerChunk);
+
+	// Download users in each chunk.
+	for (let i = 0; i < chunks.length; i++) {
+		const chunk = chunks[i];
+		previews.push(...(await downloadRawUserSet(chunk, true)) as MCRawUserPreview[]);
+	}
+
+	return previews;
 }
 
 interface RawUserSetResponseUser extends DBUser {
@@ -204,27 +274,54 @@ type RawUserSetResponse = {
 /**
  * Downloads a set of users from the SMM2 server.
  * @param pids The PIDs of the users to download.
+ * @param isPreview Whether or not to download previews instead of full user info.
  * @returns A promise that resolves with the downloaded user info.
  */
-async function downloadRawUserSet(pids: string[]): Promise<MCRawUserDoc[]> {
+async function downloadRawUserSet(pids: string[], isPreview = false): Promise<MCRawUserDoc[] | MCRawUserPreview[]> {
+	console.log(`Downloading ${pids.length} users`);
 	const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}`;
 	const response = await getAPIResponse(url) as RawUserSetResponse;
-	if (!is<RawUserSetResponse>(response)) throw new Error('Invalid response from API. [downloadRawUserSet]');
+	console.log(`Downloaded ${response.users.length} users`);
 
 	// Convert the response to the correct format.
 
-	const MCRawUserDocs: MCRawUserDoc[] = [];
-	for (let i = 0; i < response.users.length; i++) {
-		const user = response.users[i];
-		const { super_world_id, ...rest } = user;
-		MCRawUserDocs.push({
-			...rest,
-			super_world: await downloadSuperWorld(super_world_id, user.pid),
-			medals: user.badges,
-		});
+	let res: MCRawUserDoc[] | MCRawUserPreview[] = [];
+	if (isPreview) {
+		const userPreviews: MCRawUserPreview[] = [];
+		for (let i = 0; i < response.users.length; i++) {
+			const user = response.users[i];
+			userPreviews.push({
+				name: user.name,
+				pid: user.pid,
+				makerId: user.code,
+				region: user.region,
+				country: user.country,
+				medals: user.badges,
+				likes: user.likes,
+				maker_points: user.maker_points,
+				mii_image: user.mii_image,
+				mii_studio_code: user.mii_studio_code,
+				has_super_world: user.super_world_id !== '',
+			});
+		}
+		res = userPreviews;
+	}
+	else {
+		const MCRawUserDocs: MCRawUserDoc[] = [];
+		for (let i = 0; i < response.users.length; i++) {
+			const user = response.users[i];
+			const { super_world_id, ...rest } = user;
+			MCRawUserDocs.push({
+				...rest,
+				super_world: super_world_id !== ''
+					? await downloadSuperWorld(super_world_id, user.pid) : null,
+				medals: user.badges,
+			});
+		}
+		res = MCRawUserDocs;
 	}
 
-	return MCRawUserDocs;
+	return res;
 }
 
 /**
@@ -236,7 +333,6 @@ async function downloadRawUserSet(pids: string[]): Promise<MCRawUserDoc[]> {
 async function downloadSuperWorld(worldId: string, uploader_pid: string): Promise<MCRawSuperWorld> {
 	const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldId}`;
 	const response = await getAPIResponse(url) as DBSuperWorld;
-	if (!is<DBSuperWorld>(response)) throw new Error('Invalid response from API. [downloadSuperWorld]');
 
 	// Convert the response to the correct format.
 	const world_id = response.id;
@@ -286,7 +382,7 @@ type MaxDataIDResponse = { data_id: number };
 async function getMaxDataID(): Promise<number> {
 	const url = `${smm2APIBaseUrl}/${maxDataIdEndpoint}`;
 	const response = await getAPIResponse(url) as MaxDataIDResponse;
-	if (!is<MaxDataIDResponse>(response)) throw new Error('Invalid response from API. [getMaxDataID]');
+	
 	return response.data_id;
 }
 
@@ -370,8 +466,9 @@ async function saveProgress(progress: UpdaterProgress): Promise<void> {
  * @returns A promise that resolves to the response.
  */
 async function getAPIResponse(url: string): Promise<any> {
-	const response = await fetch(url);
-	return response.json();
+	const response = await axios.get(url);
+	console.log(`GET ${url}`);
+	return response.data;
 }
 
 /**

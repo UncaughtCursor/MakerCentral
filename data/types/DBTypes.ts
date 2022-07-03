@@ -34,8 +34,8 @@ export interface DBLevel {
     entire_thumbnail_size: number;
     entire_thumbnail_filename: string;
     uploader_pid: string;
-    first_completer_pid: string;
-    record_holder_pid: string;
+    first_completer_pid?: string;
+    record_holder_pid?: string;
     level_data: Buffer;
     unk2: number;
     unk3: Buffer;

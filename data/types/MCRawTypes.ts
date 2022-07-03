@@ -30,8 +30,8 @@ export interface MCRawLevelDoc {
 	weekly_likes: number,
 	weekly_plays: number,
 	uploader: MCRawUserPreview,
-	first_completer: MCRawUserPreview,
-	record_holder: MCRawUserPreview,
+	first_completer: MCRawUserPreview | null,
+	record_holder: MCRawUserPreview | null,
 }
 
 export interface MCRawUserPreview {
