@@ -48,7 +48,7 @@ interface MCRawLevelDocPre {
 	difficulty: DBDifficulty,
 	tag1: DBTag,
 	tag2: DBTag,
-	world_record: number,
+	world_record: number | null,
 	upload_time: number,
 	num_comments: number,
 	clear_condition: DBClearCondition,
@@ -214,6 +214,7 @@ async function downloadRawLevelSet(dataIds: number[]): Promise<MCRawLevelDocPre[
 		res.push({
 			...rest,
 			gamestyle: game_style,
+			world_record: level.world_record ? level.world_record : null,
 		});
 	}
 
@@ -439,7 +440,8 @@ async function uploadChunk(
 	data: any[],
 	idPropertyName: string,
 ): Promise<void> {
-	const promises = data.map((doc) => {
+	const promises = data.map((doc, i) => {
+		if (i === 0) console.log(doc);
 		const docPath = `${collectionName}/${doc[idPropertyName]}`;
 		return db.doc(docPath).set(doc);
 	});

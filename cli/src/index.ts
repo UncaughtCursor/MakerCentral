@@ -127,7 +127,10 @@ yargs.usage('$0 command')
 	})
 	.command('test', 'Test', async () => {
 		// Run the updateDB cloud function
+		console.log('Running cloud function');
+		const startTime = Date.now();
 		await CloudFn('updateDB', {});
+		console.log(`Cloud function finished in ${Date.now() - startTime}ms`);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

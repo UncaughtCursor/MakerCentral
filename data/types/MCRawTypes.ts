@@ -13,7 +13,7 @@ export interface MCRawLevelDoc {
 	difficulty: DBDifficulty,
 	tag1: DBTag,
 	tag2: DBTag,
-	world_record: number,
+	world_record: number | null,
 	upload_time: number,
 	num_comments: number,
 	clear_condition: DBClearCondition,

@@ -56,7 +56,7 @@ export interface APILevel {
     difficulty: DBDifficulty;
     tag1: DBTag;
     tag2: DBTag;
-    world_record: number;
+    world_record: number | undefined;
     upload_time: number;
     num_comments: number;
     clear_condition: DBClearCondition;
