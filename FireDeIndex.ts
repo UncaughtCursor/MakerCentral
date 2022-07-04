@@ -5,10 +5,10 @@ import config from './fire-deindex.json';
 // RUN USING:
 // npx ts-node --project ./node.tsconfig.json FireDeIndex.ts
 
-interface FireDeIndexConfig {
+/* interface FireDeIndexConfig {
 	defaultConfig: FirebaseIndexConfig;
 	deIndex: FireDeIndexEntry;
-}
+} */
 
 interface FireDeIndexEntry {
 	collectionId: string;
@@ -54,8 +54,10 @@ runMain();
  * The main function.
  */
 async function runMain() {
+	console.log('Generating Firebase index config...');
 	const firebaseConfig = await generateFirebaseIndexConfig();
 	fs.writeFileSync(firebaseConfigPath, JSON.stringify(firebaseConfig, null, 2));
+	console.log(`Wrote Firebase index config to ${firebaseConfigPath}`);
 }
 
 /**

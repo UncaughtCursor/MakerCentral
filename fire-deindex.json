@@ -43,13 +43,13 @@
 	},
 	"deIndex": [
 		{
-			"collectionId": "raw-levels",
+			"collectionId": "levels-raw",
 			"sourceFile": "data/types/MCRawTypes.ts",
 			"interfaceName": "MCRawLevelDoc",
 			"whitelistedProperties": []
 		},
 		{
-			"collectionId": "raw-users",
+			"collectionId": "users-raw",
 			"sourceFile": "data/types/MCRawTypes.ts",
 			"interfaceName": "MCRawUserDoc",
 			"whitelistedProperties": []
