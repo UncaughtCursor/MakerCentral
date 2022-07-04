@@ -24,6 +24,7 @@ import axios from 'axios';
 const maxLevelsToAdd = 500;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
+const worldsPerChunk = 500;
 const documentUploadChunkSize = 100;
 
 const progressFileLocation = 'admin/updater-progress.json';
@@ -112,7 +113,7 @@ interface MCRawUserDocPre {
 	comments_enabled: number,
 	tags_enabled: number,
 	medals: MCRawMedal[],
-	super_world: DBSuperWorld | null,
+	super_world_id: string,
 }
 
 // TODO: Run on a cron job after testing.
@@ -153,10 +154,20 @@ export const updateDB = functions.runWith({
 	}
 
 	const fullUserProfilesPre = await downloadRawUsers(fullProfilePids);
+	const superWorldIds = fullUserProfilesPre.reduce((acc, userPre) => {
+		if (userPre.super_world_id !== '') acc.push(userPre.super_world_id);
+		return acc;
+	}, [] as string[]);
+	const superWorlds = await downloadSuperWorlds(superWorldIds);
+	const superWorldMap: Map<string, DBSuperWorld> = new Map();
+	for (const superWorld of superWorlds) {
+		superWorldMap.set(superWorld.id, superWorld);
+	}
 
 	const worldLevelDataIds = fullUserProfilesPre.reduce((acc, profile) => {
-		if (profile.super_world) {
-			acc.push(...profile.super_world.courses);
+		if (profile.super_world_id !== '') {
+			const superWorld = superWorldMap.get(profile.super_world_id)!;
+			acc.push(...superWorld.courses);
 		}
 		return acc;
 	}, [] as number[]);
@@ -166,7 +177,8 @@ export const updateDB = functions.runWith({
 		worldLevelMap.set(level.data_id, level);
 	}
 	const fullUserProfiles = await Promise.all(fullUserProfilesPre.map(async (profile) => {
-		const { super_world, ...rest } = profile;
+		const { super_world_id, ...rest } = profile;
+		const super_world = super_world_id !== '' ? superWorldMap.get(super_world_id)! : null;
 		return {
 			...rest,
 			super_world: super_world ? await DBSuperWorldToMCRawSuperWorld(super_world, profile.pid, worldLevelMap) : null,
@@ -390,12 +402,10 @@ async function downloadRawUserSet(pids: string[], isPreview = false): Promise<MC
 		const MCRawUserDocPres: MCRawUserDocPre[] = [];
 		for (let i = 0; i < response.users.length; i++) {
 			const user = response.users[i];
-			const { super_world_id, ...rest } = user;
+			const { badges, ...rest } = user;
 			MCRawUserDocPres.push({
 				...rest,
-				super_world: super_world_id !== ''
-					? await downloadSuperWorld(super_world_id) : null,
-				medals: user.badges,
+				medals: badges,
 			});
 		}
 		res = MCRawUserDocPres;
@@ -404,52 +414,24 @@ async function downloadRawUserSet(pids: string[], isPreview = false): Promise<MC
 	return res;
 }
 
+interface RawSuperWorldResponse {
+	super_worlds: DBSuperWorld[];
+}
+
 /**
- * Downloads the data for a Super World from the SMM2 server.
- * @param worldId The ID of the Super World to download.
+ * Downloads the data for Super Worlds from the SMM2 server.
+ * @param worldIds The ID of the Super Worlds to download.
  * @returns A promise that resolves with the downloaded Super World info.
  */
-async function downloadSuperWorld(worldId: string): Promise<DBSuperWorld> {
-	const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldId}`;
-	const response = await getAPIResponse(url) as DBSuperWorld;
-	return response;
-
-	// Convert the response to the correct format.
-	/* const world_id = response.id;
-
-	const levels = await downloadRawLevelSet(response.courses);
-
-	const level_info: MCRawWorldLevelPreview[] = levels.map((level) => ({
-		name: level.name,
-		course_id: level.course_id,
-		plays: level.plays,
-		likes: level.likes,
-	}));
-
-	const aggregationUnits: MCRawLevelAggregationUnit[] = levels.map((level) => ({
-		name: level.name,
-		code: level.course_id,
-		uploaded: level.uploaded,
-		difficulty: level.difficulty,
-		clear_rate: level.clear_rate,
-		gamestyle: level.gamestyle,
-		theme: level.theme,
-		likes: level.likes,
-		plays: level.plays,
-		like_to_play_ratio: level.likes / level.unique_players_and_versus,
-		upload_time: level.upload_time,
-		tags: [level.tag1, level.tag2],
-		uploader_pid,
-	}));
-
-	const aggregated_properties = aggregateLevelInfo(aggregationUnits);
-
-	return {
-		...response,
-		world_id,
-		level_info,
-		aggregated_properties,
-	}; */
+async function downloadSuperWorlds(worldIds: string[]): Promise<DBSuperWorld[]> {
+	const worldIdChunks = chunk(worldIds, worldsPerChunk);
+	const worlds: DBSuperWorld[] = [];
+	for (const worldIdChunk of worldIdChunks) {
+		const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldIdChunk.join(',')}`;
+		const response = await getAPIResponse(url) as RawSuperWorldResponse;
+		worlds.push(...response.super_worlds);
+	}
+	return worlds;
 }
 
 /**
@@ -487,9 +469,10 @@ async function DBSuperWorldToMCRawSuperWorld(world: DBSuperWorld,
 	}));
 
 	const aggregated_properties = aggregateLevelInfo(aggregationUnits);
+	const { courses, ...rest } = world;
 
 	return {
-		...world,
+		...rest,
 		world_id,
 		level_info,
 		aggregated_properties,
