@@ -21,7 +21,7 @@ import axios from 'axios';
 
 // const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
-const maxLevelsToAdd = 500;
+const maxLevelsToAdd = 2000;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
 const worldsPerChunk = 50;
@@ -117,13 +117,14 @@ interface MCRawUserDocPre {
 }
 
 // TODO: Run on a cron job after testing.
-/*export const updateDB = functions.pubsub.schedule('every 5 minutes').onRun(async () => {*/
+/*export const updateDB = functions.pubsub.schedule('every 10 minutes').onRun(async () => {*/
 
 /**
  * Updates the levels in the database from Nintendo's servers.
  */
 export const updateDB = functions.runWith({
 	timeoutSeconds: 540,
+	maxInstances: 1,
 }).https.onCall(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');

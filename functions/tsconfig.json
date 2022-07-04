@@ -16,5 +16,6 @@
     ],
   },
   "compileOnSave": true,
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["FireDeIndex.ts"],
 }

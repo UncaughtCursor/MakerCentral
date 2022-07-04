@@ -22,24 +22,6 @@ export interface MCLevelDocData {
 	isPromotedByPatron: boolean;
 }
 
-export interface MCLevelPreprocessData {
-	name: string;
-	id: string;
-	uploadTime: number;
-	addedTime: number;
-	makerPid: string;
-	difficulty: MCDifficulty;
-	clearRate: number;
-	gameStyle: APIGameStyle;
-	theme: APITheme;
-	numLikes: number;
-	numPlays: number;
-	likeToPlayRatio: number;
-	numComments: number;
-	description: string;
-	tags: MCTag[];
-}
-
 export type MCWorldLevelAggregation = {
 	avgUploadTime: number;
 	avgDifficulty: {[key in MCDifficulty]: number};
@@ -79,6 +61,16 @@ export interface MCWorldDocData extends MCWorldLevelAggregation {
 	numWorlds: number;
 	created: number;
 	levels: MCWorldLevelPreview[];
+}
+
+// Meilisearch does not support arrays of objects, so we need to use strings.
+export interface MCWorldDocSearchData extends MCWorldLevelAggregation {
+	makerId: string;
+	makerName: string;
+	numLevels: number;
+	numWorlds: number;
+	created: number;
+	levelText: string;
 }
 
 export interface MCWorldLevelPreview {
