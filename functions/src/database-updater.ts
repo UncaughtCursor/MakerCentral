@@ -24,7 +24,7 @@ import axios from 'axios';
 const maxLevelsToAdd = 500;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
-const worldsPerChunk = 500;
+const worldsPerChunk = 50;
 const documentUploadChunkSize = 100;
 
 const progressFileLocation = 'admin/updater-progress.json';
