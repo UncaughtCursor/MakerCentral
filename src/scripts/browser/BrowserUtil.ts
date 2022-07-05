@@ -1,5 +1,7 @@
 import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { MCRawLevelDoc } from '@data/types/MCRawTypes';
+import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
 import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
 	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
@@ -59,16 +61,10 @@ export async function queryLevels(
 			if (!isLink) {
 				return mainDocData as MCLevelDocData;
 			}
-			const levelDataDoc = await getDoc(doc(db, `game-levels/${levelDoc.id}`));
-			if (!levelDataDoc.exists()) {
-			// Delete dead links
-				await deleteDoc(levelDoc.ref);
-				return null;
-			}
-			return {
-				...levelDataDoc.data(),
-				id: levelDoc.id,
-			} as MCLevelDocData;
+			const levelDataDoc = await getDoc(doc(db, `levels-raw/${levelDoc.id}`));
+
+			const rawDoc = levelDataDoc.data() as MCRawLevelDoc;
+			return MCRawLevelDocToMCLevelDoc(rawDoc);
 		},
 	));
 
