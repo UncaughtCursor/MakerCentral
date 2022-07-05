@@ -1,0 +1,402 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "notifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "read",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "data_id",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "name",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "description",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "uploaded",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "course_id",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "gamestyle",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "theme",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "difficulty",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "tag1",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "tag2",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "world_record",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "upload_time",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "num_comments",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "clear_condition",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "clear_condition_magnitude",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "clears",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "attempts",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "clear_rate",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "plays",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "versus_matches",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "coop_matches",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "likes",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "boos",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "unique_players_and_versus",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "weekly_likes",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "weekly_plays",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "uploader",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "first_completer",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "levels-raw",
+      "fieldPath": "record_holder",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "pid",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "data_id",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "code",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "region",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "name",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "country",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "last_active",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "mii_image",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "mii_studio_code",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "courses_played",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "courses_cleared",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "courses_attempted",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "courses_deaths",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "likes",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "maker_points",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "easy_highscore",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "normal_highscore",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "expert_highscore",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "super_expert_highscore",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_rating",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_rank",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_won",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_lost",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_win_streak",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_lose_streak",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_plays",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_disconnected",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "coop_clears",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "coop_plays",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "recent_performance",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_kills",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "versus_killed_by_others",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "first_clears",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "world_records",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "unique_super_world_clears",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "uploaded_levels",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "weekly_maker_points",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "last_uploaded_level",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "is_nintendo_employee",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "comments_enabled",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "tags_enabled",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "medals",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "users-raw",
+      "fieldPath": "super_world",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "priv",
+      "fieldPath": "points",
+      "indexes": [
+        {
+          "queryScope": "COLLECTION",
+          "order": "ASCENDING"
+        },
+        {
+          "queryScope": "COLLECTION",
+          "order": "DESCENDING"
+        },
+        {
+          "queryScope": "COLLECTION",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "queryScope": "COLLECTION_GROUP",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ]
+}

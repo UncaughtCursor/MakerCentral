@@ -60,6 +60,7 @@ function UserPage(props: UserPageProps) {
 				)}
 				<h2 className="user-profile-header">Levels ({userData.levels})</h2>
 				<LevelSearchResultWidget searchParams={{
+					type: 'Level',
 					q: '',
 					sortType: 'By Date',
 					sortOrder: 'Descending',

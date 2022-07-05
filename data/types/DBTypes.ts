@@ -34,8 +34,55 @@ export interface DBLevel {
     entire_thumbnail_size: number;
     entire_thumbnail_filename: string;
     uploader_pid: string;
-    first_completer_pid: string;
-    record_holder_pid: string;
+    first_completer_pid?: string;
+    record_holder_pid?: string;
+    level_data: Buffer;
+    unk2: number;
+    unk3: Buffer;
+    unk9: number;
+    unk10: number;
+    unk11: number;
+    unk12: number;
+}
+
+export interface APILevel {
+	data_id: number;
+    name: string;
+    description: string;
+    uploaded: number;
+    course_id: string;
+    game_style: DBGameStyle;
+    theme: DBTheme;
+    difficulty: DBDifficulty;
+    tag1: DBTag;
+    tag2: DBTag;
+    world_record: number | undefined;
+    upload_time: number;
+    num_comments: number;
+    clear_condition: DBClearCondition;
+    clear_condition_magnitude: number;
+    clears: number;
+    attempts: number;
+    clear_rate: number;
+    plays: number;
+    versus_matches: number;
+    coop_matches: number;
+    likes: number;
+    boos: number;
+    unique_players_and_versus: number;
+    weekly_likes: number;
+    weekly_plays: number;
+    one_screen_thumbnail: Buffer;
+    one_screen_thumbnail_url: string;
+    one_screen_thumbnail_size: number;
+    one_screen_thumbnail_filename: string;
+    entire_thumbnail: Buffer;
+    entire_thumbnail_url: string;
+    entire_thumbnail_size: number;
+    entire_thumbnail_filename: string;
+    uploader_pid: string;
+    first_completer_pid?: string;
+    record_holder_pid?: string;
     level_data: Buffer;
     unk2: number;
     unk3: Buffer;
@@ -244,6 +291,24 @@ export interface DBUser {
     unk3: number;
     unk12: number;
     unk16: number;
+}
+
+export interface DBSuperWorld {
+	id: string;
+	worlds: number;
+	levels: number;
+	planet_type: number;
+	created: number;
+	ninjis: number[];
+	unk5: number;
+	unk6: number;
+	unk7: number;
+	thumbnail: {
+		url: string;
+		size: number;
+		filename: string;
+	},
+	courses: number[];
 }
 
 export enum UserRegion {

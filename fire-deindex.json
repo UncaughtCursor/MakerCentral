@@ -1,0 +1,58 @@
+{
+	"defaultConfig": {
+		"indexes": [
+			{
+				"collectionGroup": "notifications",
+				"queryScope": "COLLECTION",
+				"fields": [
+					{
+						"fieldPath": "read",
+						"order": "ASCENDING"
+					},
+					{
+						"fieldPath": "timestamp",
+						"order": "DESCENDING"
+					}
+				]
+			}
+		],
+		"fieldOverrides": [
+			{
+				"collectionGroup": "priv",
+				"fieldPath": "points",
+				"indexes": [
+					{
+						"queryScope": "COLLECTION",
+						"order": "ASCENDING"
+					},
+					{
+						"queryScope": "COLLECTION",
+						"order": "DESCENDING"
+					},
+					{
+						"queryScope": "COLLECTION",
+						"arrayConfig": "CONTAINS"
+					},
+					{
+						"queryScope": "COLLECTION_GROUP",
+						"order": "DESCENDING"
+					}
+				]
+			}
+		]
+	},
+	"deIndex": [
+		{
+			"collectionId": "levels-raw",
+			"sourceFile": "data/types/MCRawTypes.ts",
+			"interfaceName": "MCRawLevelDoc",
+			"whitelistedProperties": []
+		},
+		{
+			"collectionId": "users-raw",
+			"sourceFile": "data/types/MCRawTypes.ts",
+			"interfaceName": "MCRawUserDoc",
+			"whitelistedProperties": []
+		}
+	]
+}

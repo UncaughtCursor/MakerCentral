@@ -44,6 +44,7 @@
     "react-overlays": "^5.1.1",
     "serialize-javascript": "^6.0.0",
     "typescript-is": "^0.19.0",
+    "typescript-parser": "^2.6.1",
     "use-interval": "^1.4.0"
   },
   "devDependencies": {

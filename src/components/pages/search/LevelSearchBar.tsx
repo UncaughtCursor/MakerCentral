@@ -5,53 +5,14 @@ import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Dialog from '@components/main/Dialog';
 import { getSuggestions } from '@scripts/browser/MeilisearchUtil';
-import { MCDifficulty, MCTag } from '@data/types/MCBrowserTypes';
-import LevelSearchOptions from './LevelSearchOptions';
-
-export const SMM2GameStyles = [
-	'SMB1', 'SMB3', 'SMW', 'NSMBU', 'SM3DW',
-] as const;
-export type SMM2GameStyle = typeof SMM2GameStyles[number];
-
-export const SMM2Themes = [
-	'Overworld', 'Underground',
-	'Castle', 'Airship',
-	'Underwater', 'Ghost house',
-	'Snow', 'Desert',
-	'Sky', 'Forest',
-] as const;
-export type SMM2Theme = typeof SMM2Themes[number];
-
-export const sortTypes = [
-	'By Likes', 'By Date', 'By Clear Rate',
-] as const;
-type SortType = typeof sortTypes[number];
-
-export interface SearchFilterSettings {
-	sortType: SortType;
-	sortOrder: 'Ascending' | 'Descending';
-	difficulty: MCDifficulty | 'Any';
-	theme: SMM2Theme | 'Any';
-	gameStyle: SMM2GameStyle | 'Any';
-	tag: MCTag | 'Any';
-	page: number;
-}
+import { defaultFilterSettings, LevelSearchFilterSettings, levelSearchTemplate } from '@scripts/browser/SearchUtil';
+import SearchOptionsModal from './SearchOptionsModal';
 
 interface SearchBarProps {
 	initialVal: string;
-	initialSettings: SearchFilterSettings;
-	onSubmit: (value: string, filterSettings: SearchFilterSettings) => void;
+	initialSettings: LevelSearchFilterSettings;
+	onSubmit: (value: string, filterSettings: LevelSearchFilterSettings) => void;
 }
-
-export const defaultFilterSettings: SearchFilterSettings = {
-	sortType: 'By Likes',
-	sortOrder: 'Descending',
-	difficulty: 'Any',
-	theme: 'Any',
-	gameStyle: 'Any',
-	tag: 'Any',
-	page: 0,
-};
 
 /**
  * A text field input.
@@ -65,8 +26,8 @@ function LevelSearchBar(props: SearchBarProps) {
 	const [inputText, setInputText] = useState(props.initialVal);
 	valueRef.current = inputText;
 
-	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
-	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
+	const filterSettingsRef = useRef<LevelSearchFilterSettings>(props.initialSettings);
+	const [filterSettings, setFilterSettings] =	useState<LevelSearchFilterSettings>(
 		{
 			...props.initialSettings,
 			page: 0,
@@ -77,7 +38,7 @@ function LevelSearchBar(props: SearchBarProps) {
 	const numberOfNonDefaultSettings = Object.entries(filterSettings)
 		.filter(([key]) => key !== 'page')
 		.reduce((acc, [key, value]) => {
-			if (value !== defaultFilterSettings[key as keyof SearchFilterSettings]) {
+			if (value !== defaultFilterSettings[key as keyof LevelSearchFilterSettings]) {
 				return acc + 1;
 			}
 			return acc;
@@ -110,7 +71,8 @@ function LevelSearchBar(props: SearchBarProps) {
 				open={isDialogOpen}
 				onCloseEvent={() => { setDialogOpen(false); }}
 			>
-				<LevelSearchOptions
+				<SearchOptionsModal
+					template={levelSearchTemplate}
 					initSettings={props.initialSettings}
 					onChange={(settings) => {
 						setFilterSettings({
@@ -199,7 +161,7 @@ function LevelSearchBar(props: SearchBarProps) {
  * @param filterSettings The filter settings.
  * @returns The generated URL.
  */
-export function getSearchUrl(query: string, filterSettings: SearchFilterSettings) {
+export function getSearchUrl(query: string, filterSettings: LevelSearchFilterSettings) {
 	const root = `/levels/search/${query !== '' ? query : '_'}`;
 
 	const segments = Object.keys(filterSettings)

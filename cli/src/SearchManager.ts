@@ -1,41 +1,97 @@
 /* eslint-disable import/prefer-default-export */
 import MeiliSearch from 'meilisearch';
-import fs from 'fs';
-import chunk from 'chunk';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
-import { MCRawLevelDoc } from '@data/types/MCRawTypes';
-import { loadJSON, sleep } from './util/Util';
-import { loadRawLevelDocs } from './LevelStats';
-import { levelOutDir } from './LevelConvert';
+import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
+import { loadJSON } from './util/Util';
+import { levelOutDir, userOutDir } from './LevelConvert';
 import TextDirIterator from './TextDirIterator';
-import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
+import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc } from '@data/util/MCRawToMC';
+import { MCLevelDocData, MCUserDocData, MCWorldDocSearchData } from '@data/types/MCBrowserTypes';
 
 const wordDataOutputName = 'out/stats/wordData.json';
 
+const popularLevelLikeThreshold = 25;
 const client = new MeiliSearch(MeiliCredentials);
 
 /**
  * Creates and uploads search data to Meilisearch.
  */
-export async function createLevelSearchData() {
-
+export async function createLevelSearchData(onlyPopular: boolean = false) {
 	console.log('Loading levels...');
 	const levelFileIterator = new TextDirIterator(levelOutDir);
-	// await client.index('levels').deleteAllDocuments();
-
-	const unuploadedFileNumbers = [
-		25, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 202, 203, 204, 205, 206, 207, 208, 210, 211
-	];
-	const unuploadedFileNames = unuploadedFileNumbers.map(num => `${num}.json`);
-
+	const indexName = onlyPopular ? 'popular-levels' : 'levels';
+	
+	let pool: MCLevelDocData[] = [];
 	await levelFileIterator.iterate(async (data: string, i: number) => {
 		console.log(`File #${i + 1}`);
 		const rawDocs = JSON.parse(data) as MCRawLevelDoc[];
 		const docs = rawDocs.map(rawDoc => MCRawLevelDocToMCLevelDoc(rawDoc));
+		if (onlyPopular) {
+			const popularDocs = docs.filter(doc => doc.numLikes >= popularLevelLikeThreshold);
+			pool.push(...popularDocs);
+		}
+		else {
+			pool.push(...docs);
+		}
 
-		const task = await client.index('levels').addDocuments(docs);
+		if (pool.length > 2000) {
+			const task = await client.index(indexName).addDocuments(pool);
+			console.log(task);
+			pool = [];
+		}
+		console.log(`${pool.length} levels in pool`);
+	}, 179);
+	if (pool.length > 0) {
+		const task = await client.index(indexName).addDocuments(pool);
 		console.log(task);
-	}, unuploadedFileNames);
+		pool = [];
+	}
+	console.log('Done.');
+}
+
+export async function createUserSearchData() {
+	console.log('Loading users...');
+	const userFileIterator = new TextDirIterator(userOutDir);
+
+	await userFileIterator.iterate(async (data: string, i: number) => {
+		console.log(`File #${i + 1}`);
+		const rawDocs = JSON.parse(data) as MCRawUserDoc[];
+		const docs = rawDocs.map(rawDoc => MCRawUserDocToMCUserDoc(rawDoc));
+		
+		const task = await client.index('users').addDocuments(docs);
+		console.log(task);
+	});
+}
+
+export async function createWorldSearchData() {
+	console.log('Loading worlds...');
+	const worldFileIterator = new TextDirIterator(userOutDir);
+
+	let pool: MCWorldDocSearchData[] = [];
+	await worldFileIterator.iterate(async (data: string, i: number) => {
+		console.log(`File #${i + 1}`);
+		const rawDocs = JSON.parse(data) as MCRawUserDoc[];
+		const docs: MCWorldDocSearchData[] = rawDocs.map(rawDoc => MCRawUserToMCWorldDoc(rawDoc))
+			.filter((world) => world !== null).map((world) => {
+				const {levels, ...rest} = world!;
+				return {
+					...rest,
+					levelText: levels.reduce((acc, level) => {
+						return `${acc}; ${level.name}`;
+					}, ''),
+				};
+			});
+		pool.push(...docs);
+		if (pool.length >= 20000) {
+			const task = await client.index('worlds').addDocuments(pool);
+			console.log(task);
+			pool = [];
+		}
+	});
+	if (pool.length > 0) {
+		const task = await client.index('worlds').addDocuments(pool);
+		console.log(task);
+	}
 }
 
 /**
@@ -64,10 +120,11 @@ export async function setSearchSuggestions() {
  */
 export async function setSearchSettings() {
 	const levelIndex = client.index('levels');
+	const popularLevelIndex = client.index('popular-levels');
 
 	console.log('Setting settings...');
 
-	console.log(await levelIndex.updateFilterableAttributes([
+	const levelFilterableAttributes = [
 		'uploadTime',
 		'addedTime',
 		'makerName',
@@ -81,9 +138,12 @@ export async function setSearchSettings() {
 		'clearRate',
 		'tags',
 		'isPromotedByPatron',
-	]));
+	];
 
-	console.log(await levelIndex.updateSortableAttributes([
+	console.log(await levelIndex.updateFilterableAttributes(levelFilterableAttributes));
+	console.log(await popularLevelIndex.updateFilterableAttributes(levelFilterableAttributes));
+
+	const levelSortableAttributes = [
 		'uploadTime',
 		'addedTime',
 		'difficulty',
@@ -93,9 +153,11 @@ export async function setSearchSettings() {
 		'numPlays',
 		'likeToPlayRatio',
 		'clearRate',
-	]));
+	];
+	console.log(await levelIndex.updateSortableAttributes(levelSortableAttributes));
+	console.log(await popularLevelIndex.updateSortableAttributes(levelSortableAttributes));
 
-	console.log(await levelIndex.updateRankingRules([
+	const levelRankingRules = [
 		'words',
 		'typo',
 		'sort',
@@ -104,7 +166,10 @@ export async function setSearchSettings() {
 		'attribute',
 		'proximity',
 		'exactness',
-	]));
+	];
+
+	console.log(await levelIndex.updateRankingRules(levelRankingRules));
+	console.log(await popularLevelIndex.updateRankingRules(levelRankingRules));
 
 	const suggestionsIndex = client.index('level-suggestions');
 
@@ -119,4 +184,14 @@ export async function setSearchSettings() {
 	]));
 
 	console.log('Settings set.');
+}
+
+export async function search(query: string, indexName: string) {
+	const index = client.index(indexName);
+	return index.search(query);
+}
+
+export async function getDoc(id: string, indexName: string) {
+	const index = client.index(indexName);
+	return index.getDocument(id);
 }

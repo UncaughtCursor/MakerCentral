@@ -1,13 +1,12 @@
 import AppFrame from '@components/AppFrame';
 import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
-import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
-import { LevelSearchResults, searchLevels } from '@scripts/browser/MeilisearchUtil';
+import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSearchBar';
+import { LevelSearchResults } from '@scripts/browser/MeilisearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
-import { getLevelResultDisplayData } from '@scripts/browser/SearchUtil';
+import { defaultFilterSettings, getLevelResultDisplayData, LevelSearchFilterSettings } from '@scripts/browser/SearchUtil';
 
-export interface LevelSearchParams extends SearchFilterSettings {
+export interface LevelSearchParams extends LevelSearchFilterSettings {
 	q: string;
 }
 
@@ -30,7 +29,7 @@ function SearchResultsPage(props: {
 				.results.searchParams[key as keyof typeof props.results.searchParams];
 			return obj;
 		}, {} as {[key: string]: any});
-	})() as SearchFilterSettings;
+	})() as LevelSearchFilterSettings;
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>

@@ -13,7 +13,7 @@ export interface MCRawLevelDoc {
 	difficulty: DBDifficulty,
 	tag1: DBTag,
 	tag2: DBTag,
-	world_record: number,
+	world_record: number | null,
 	upload_time: number,
 	num_comments: number,
 	clear_condition: DBClearCondition,
@@ -30,8 +30,8 @@ export interface MCRawLevelDoc {
 	weekly_likes: number,
 	weekly_plays: number,
 	uploader: MCRawUserPreview,
-	first_completer: MCRawUserPreview,
-	record_holder: MCRawUserPreview,
+	first_completer: MCRawUserPreview | null,
+	record_holder: MCRawUserPreview | null,
 }
 
 export interface MCRawUserPreview {

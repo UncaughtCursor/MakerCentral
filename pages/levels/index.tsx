@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import AppFrame from '@components/AppFrame';
-import LevelSearchBar, { defaultFilterSettings, getSearchUrl, SearchFilterSettings } from '@components/pages/search/LevelSearchBar';
+import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSearchBar';
 import { useRouter } from 'next/router';
+import { defaultFilterSettings } from '@scripts/browser/SearchUtil';
 
 /**
  * The user level browsing view.

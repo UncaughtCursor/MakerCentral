@@ -1,8 +1,9 @@
 import { LevelSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
+import { LevelSearchFilterSettings } from '@scripts/browser/SearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
 import TriggerButton from '../controls/TriggerButton';
-import { getSearchUrl, SearchFilterSettings } from './LevelSearchBar';
+import { getSearchUrl } from './LevelSearchBar';
 
 /**
  * Displays pagination controls for a search result page.
@@ -70,7 +71,8 @@ function LevelSearchPageControl(props: {
 		if (props.curSearchResults) {
 			const query = props.curSearchResults.searchParams.q;
 			const searchParams = props.curSearchResults.searchParams;
-			const newSearchSettings: SearchFilterSettings = {
+			const newSearchSettings: LevelSearchFilterSettings = {
+				type: searchParams.type,
 				sortType: searchParams.sortType,
 				sortOrder: searchParams.sortOrder,
 				difficulty: searchParams.difficulty,
