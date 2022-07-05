@@ -3,7 +3,6 @@ import fs from 'fs';
 import chunk from 'chunk';
 import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
 import { db, storage } from './FirebaseUtil';
-import { loadRawLevelDocs } from './LevelStats';
 import {
 	generalOutDir, levelOutDir, thumbOutDir, userOutDir,
 } from './LevelConvert';

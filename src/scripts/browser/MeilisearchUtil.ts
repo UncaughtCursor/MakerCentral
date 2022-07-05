@@ -44,11 +44,16 @@ const filterParamNames = [
 /**
  * Searches for levels based on the provided search data.
  * @param searchData The data to search based off of.
+ * @param sortTypeMap A map of sort types to their corresponding sort properties.
+ * @param popularOnly (Optional) Whether to only search for popular levels.
+ * The popular search is much faster than the regular search,
+ * but only returns levels with at least 25 likes.
  * @returns A promise that resolves with a search results object.
  */
 export async function searchLevels(
 	searchData: LevelSearchParams | FullLevelSearchParams,
 	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData },
+	popularOnly: boolean = false,
 ): Promise<LevelSearchResults> {
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames.includes(paramName)
@@ -57,14 +62,14 @@ export async function searchLevels(
 	).map(
 		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof LevelSearchParams]}"`,
 	);
-	// Disable levels with less than 25 likes from showing up for now
-	// filter.push('numLikes >= 25');
 
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
-	const res = await client.index('levels').search(searchData.q, {
+	const indexName = popularOnly ? 'popular-levels' : 'levels';
+
+	const res = await client.index(indexName).search(searchData.q, {
 		filter,
 		sort,
 		offset: searchData.page * numResultsPerPage,

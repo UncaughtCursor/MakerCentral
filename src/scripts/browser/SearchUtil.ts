@@ -18,7 +18,7 @@ export async function getLevelResultDisplayData(
 	results: LevelSearchResults,
 	thumbnailUrlObj: {[key: string]: string},
 }> {
-	const results = await searchLevels(searchParams, levelSortTypeMap);
+	const results = await searchLevels(searchParams, levelSortTypeMap, true);
 
 	const thumbnailUrls = await Promise.all(results.results.map(
 		async (level) => ({
