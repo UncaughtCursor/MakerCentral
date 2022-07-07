@@ -189,6 +189,7 @@ export async function getServerSideProps(
 		const data = (await worldFn({
 			userId: context.params.uid,
 		})).data;
+		console.log('data', data);
 		if (!data) {
 			throw new Error('No world data found.');
 		}

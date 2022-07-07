@@ -20,6 +20,7 @@ export interface MCLevelDocData {
 	description: string;
 	tags: MCTag[];
 	isPromotedByPatron: boolean;
+	updatedTime?: number;
 }
 
 export type MCWorldLevelAggregation = {
@@ -42,6 +43,7 @@ export interface MCUserDocData {
 	makerPoints: number;
 	levels: number;
 	world: MCWorldPreview | null;
+	updatedTime?: number;
 }
 
 export interface MCWorldPreview {
@@ -62,6 +64,7 @@ export interface MCWorldDocData extends MCWorldLevelAggregation {
 	created: number;
 	levelText: string;
 	levels: MCWorldLevelPreview[];
+	updatedTime?: number;
 }
 
 export interface MCWorldLevelPreview {
