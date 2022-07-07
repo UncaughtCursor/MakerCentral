@@ -5,7 +5,7 @@ import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
 import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
 	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
-	OrderByDirection, query, QueryConstraint, startAfter, where, WhereFilterOp,
+	OrderByDirection, query, QueryConstraint, startAfter, WhereFilterOp,
 } from 'firebase/firestore/lite';
 import { httpsCallable } from 'firebase/functions';
 
@@ -79,7 +79,7 @@ export async function queryLevels(
 export async function getLevel(id: string): Promise<MCLevelDocData | null> {
 	const levelFn: CloudFunction<{
 		levelId: string,
-	}, MCLevelDocData> = httpsCallable(functions, 'getLevel');
+	}, MCLevelDocData | null> = httpsCallable(functions, 'getLevel');
 
 	try {
 		const data = (await levelFn({

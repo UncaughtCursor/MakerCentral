@@ -1,5 +1,5 @@
 import AppFrame from '@components/AppFrame';
-import useLevelThumbnails, { LevelThumbnailState, LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
 import ProportionChart, { ProportionChartProportion } from '@components/pages/browser/ProportionChart';
 import SuperWorldThumbnail from '@components/pages/browser/SuperWorldThumbnail';
 import TagDisplay from '@components/pages/browser/TagDisplay';
@@ -182,13 +182,16 @@ export async function getServerSideProps(
 ): Promise<{props: SuperWorldPageProps}> {
 	const worldFn: CloudFunction<{
 		userId: string,
-	}, MCWorldDocData> = httpsCallable(functions, 'getWorld');
+	}, MCWorldDocData | null> = httpsCallable(functions, 'getWorld');
 
 	try {
 		// Get the world data.
 		const data = (await worldFn({
 			userId: context.params.uid,
 		})).data;
+		if (!data) {
+			throw new Error('No world data found.');
+		}
 
 		const levelIds = data.levels.map((level) => level.id);
 
