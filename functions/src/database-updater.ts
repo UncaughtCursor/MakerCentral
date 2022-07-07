@@ -18,6 +18,8 @@ import {
 } from './data/APITypes';
 import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 import axios from 'axios';
+import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc } from './data/util/MCRawToMC';
+import { MCLevelDocData, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
 
 // const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
@@ -26,6 +28,8 @@ const levelsPerChunk = 500;
 const usersPerChunk = 500;
 const worldsPerChunk = 50;
 const documentUploadChunkSize = 100;
+const maxIndexBatchSize = 50000;
+const minutesBetweenIndexing = 30;
 
 const progressFileLocation = 'admin/updater-progress.json';
 
@@ -36,6 +40,12 @@ const progressFileLocation = 'admin/updater-progress.json';
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
 	lastNewestDataId: number;
+	lastUserIndexTime: number;
+	lastLevelIndexTime: number;
+	lastWorldIndexTime: number;
+	levelDocPool: MCLevelDocData[];
+	userDocPool: MCUserDocData[];
+	worldDocPool: MCWorldDocData[];
 }
 
 interface MCRawLevelDocPre {
@@ -240,14 +250,65 @@ export const updateDB = functions.runWith({
 	// Upload new documents to the database.
 	await uploadUsersOrLevels(levels, 'Level');
 	await uploadUsersOrLevels(fullUserProfiles, 'User');
+
+	const MCBrowserLevels = levels.map(level => {
+		return MCRawLevelDocToMCLevelDoc(level);
+	});
+	progress.levelDocPool.push(...MCBrowserLevels);
+
+	const MCBrowserUsers = fullUserProfiles.map(user => {
+		return MCRawUserDocToMCUserDoc(user);
+	});
+	progress.userDocPool.push(...MCBrowserUsers);
+
+	const MCBrowserWorlds: MCWorldDocData[] = fullUserProfiles.filter(user => user.super_world).map(user => {
+		return MCRawUserToMCWorldDoc(user)!;
+	});
+	progress.worldDocPool.push(...MCBrowserWorlds);
+
 	// TODO: Upload to MeiliSearch
+	const time = Date.now();
+	const shouldIndexLevels = time - progress.lastLevelIndexTime > minutesBetweenIndexing * 60 * 1000
+		|| progress.levelDocPool.length >= maxIndexBatchSize;
+	if (shouldIndexLevels) {
+		await indexDocs('levels', progress.levelDocPool);
+		progress.lastLevelIndexTime = time;
+		progress.levelDocPool = [];
+	
+		const popularLevelLikeThreshold = 25;
+		const popularLevels = MCBrowserLevels.filter(level => level.numLikes >= popularLevelLikeThreshold);
+		await indexDocs('popular-levels', popularLevels);
+	}
+
+	const shouldIndexUsers = time - progress.lastUserIndexTime > minutesBetweenIndexing * 60 * 1000
+		|| progress.userDocPool.length >= maxIndexBatchSize;
+	if (shouldIndexUsers) {
+		await indexDocs('users', progress.userDocPool);
+		progress.lastUserIndexTime = time;
+		progress.userDocPool = [];
+	}
+
+	const shouldIndexWorlds = time - progress.lastWorldIndexTime > minutesBetweenIndexing * 60 * 1000
+		|| progress.worldDocPool.length >= maxIndexBatchSize;
+	if (shouldIndexWorlds) {
+		await indexDocs('worlds', progress.worldDocPool);
+		progress.lastWorldIndexTime = time;
+		progress.worldDocPool = [];
+	}
 
 	// Set the new progress.
 	progress.lastDataIdDownloaded = endId;
 	progress.lastNewestDataId = maxId;
 
-	console.log('New progress', progress);
-
+	console.log(`Last data id downloaded: ${progress.lastDataIdDownloaded}`);
+	console.log(`Last newest data id: ${progress.lastNewestDataId}`);
+	console.log(`Last level index time: ${progress.lastLevelIndexTime}`);
+	console.log(`Last user index time: ${progress.lastUserIndexTime}`);
+	console.log(`Last world index time: ${progress.lastWorldIndexTime}`);
+	console.log(`Level doc pool size: ${progress.levelDocPool.length}`);
+	console.log(`User doc pool size: ${progress.userDocPool.length}`);
+	console.log(`World doc pool size: ${progress.worldDocPool.length}`);
+	
 	// Save the progress.
 	await saveProgress(progress);
 });
@@ -629,4 +690,17 @@ function aggregateLevelInfo(levelInfo: MCRawLevelAggregationUnit[]): MCRawLevelA
 		avg_tags: sum_tags.map((n) => n / total_tags) as unknown as {[key in DBTag]: number},
 		avg_upload_time: sum_upload_time / levelInfo.length,
 	};
+}
+
+type IndexName = 'levels' | 'popular-levels' | 'users' | 'worlds';
+type IndexableDocuments = MCLevelDocData[] | MCUserDocData[] | MCWorldDocData[];
+
+/**
+ * Indexes a set of documents in Meilisearch.
+ * @param indexName The name of the index to index into.
+ * @param docs The documents to index.
+ * @returns A promise that resolves when the indexing is enqueued.
+ */
+async function indexDocs(indexName: IndexName, docs: IndexableDocuments): Promise<void> {
+	
 }

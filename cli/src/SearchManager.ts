@@ -6,7 +6,7 @@ import { loadJSON } from './util/Util';
 import { levelOutDir, userOutDir } from './LevelConvert';
 import TextDirIterator from './TextDirIterator';
 import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc } from '@data/util/MCRawToMC';
-import { MCLevelDocData, MCUserDocData, MCWorldDocSearchData } from '@data/types/MCBrowserTypes';
+import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
 
 const wordDataOutputName = 'out/stats/wordData.json';
 
@@ -67,20 +67,12 @@ export async function createWorldSearchData() {
 	console.log('Loading worlds...');
 	const worldFileIterator = new TextDirIterator(userOutDir);
 
-	let pool: MCWorldDocSearchData[] = [];
+	let pool: MCWorldDocData[] = [];
 	await worldFileIterator.iterate(async (data: string, i: number) => {
 		console.log(`File #${i + 1}`);
 		const rawDocs = JSON.parse(data) as MCRawUserDoc[];
-		const docs: MCWorldDocSearchData[] = rawDocs.map(rawDoc => MCRawUserToMCWorldDoc(rawDoc))
-			.filter((world) => world !== null).map((world) => {
-				const {levels, ...rest} = world!;
-				return {
-					...rest,
-					levelText: levels.reduce((acc, level) => {
-						return `${acc}; ${level.name}`;
-					}, ''),
-				};
-			});
+		const docs: MCWorldDocData[] = rawDocs.filter(userDoc => userDoc.super_world !== null)
+			.map(rawDoc => MCRawUserToMCWorldDoc(rawDoc)!);
 		pool.push(...docs);
 		if (pool.length >= 20000) {
 			const task = await client.index('worlds').addDocuments(pool);

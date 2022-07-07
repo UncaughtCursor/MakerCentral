@@ -114,6 +114,7 @@ export function MCRawUserToMCWorldDoc(user: MCRawUserDoc): MCWorldDocData | null
 		numLevels: world.levels,
 		numWorlds: world.worlds,
 		levels: worldLevels,
+		levelText: worldLevels.reduce((acc, level) => `${acc}; ${level.name}`, ''),
 		created: world.created,
 		avgUploadTime: world.aggregated_properties.avg_upload_time,
 		avgClearRate: world.aggregated_properties.avg_clear_rate,
