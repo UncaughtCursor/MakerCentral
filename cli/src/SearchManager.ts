@@ -11,7 +11,7 @@ import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBro
 const wordDataOutputName = 'out/stats/wordData.json';
 
 const popularLevelLikeThreshold = 25;
-const client = new MeiliSearch(MeiliCredentials);
+export const meilisearch = new MeiliSearch(MeiliCredentials);
 
 /**
  * Creates and uploads search data to Meilisearch.
@@ -35,14 +35,14 @@ export async function createLevelSearchData(onlyPopular: boolean = false) {
 		}
 
 		if (pool.length > 2000) {
-			const task = await client.index(indexName).addDocuments(pool);
+			const task = await meilisearch.index(indexName).addDocuments(pool);
 			console.log(task);
 			pool = [];
 		}
 		console.log(`${pool.length} levels in pool`);
 	}, 179);
 	if (pool.length > 0) {
-		const task = await client.index(indexName).addDocuments(pool);
+		const task = await meilisearch.index(indexName).addDocuments(pool);
 		console.log(task);
 		pool = [];
 	}
@@ -58,7 +58,7 @@ export async function createUserSearchData() {
 		const rawDocs = JSON.parse(data) as MCRawUserDoc[];
 		const docs = rawDocs.map(rawDoc => MCRawUserDocToMCUserDoc(rawDoc));
 		
-		const task = await client.index('users').addDocuments(docs);
+		const task = await meilisearch.index('users').addDocuments(docs);
 		console.log(task);
 	});
 }
@@ -75,13 +75,13 @@ export async function createWorldSearchData() {
 			.map(rawDoc => MCRawUserToMCWorldDoc(rawDoc)!);
 		pool.push(...docs);
 		if (pool.length >= 20000) {
-			const task = await client.index('worlds').addDocuments(pool);
+			const task = await meilisearch.index('worlds').addDocuments(pool);
 			console.log(task);
 			pool = [];
 		}
 	});
 	if (pool.length > 0) {
-		const task = await client.index('worlds').addDocuments(pool);
+		const task = await meilisearch.index('worlds').addDocuments(pool);
 		console.log(task);
 	}
 }
@@ -97,8 +97,8 @@ export async function setSearchSuggestions() {
 	}[];
 	console.log(`${suggestions.length} suggestions loaded`);
 
-	await client.index('level-suggestions').deleteAllDocuments();
-	const task2 = await client.index('level-suggestions').addDocuments(
+	await meilisearch.index('level-suggestions').deleteAllDocuments();
+	const task2 = await meilisearch.index('level-suggestions').addDocuments(
 		suggestions.map((suggestion, i) => ({
 			...suggestion,
 			id: i,
@@ -111,8 +111,8 @@ export async function setSearchSuggestions() {
  * Sets the index settings. Use when they get reset.
  */
 export async function setSearchSettings() {
-	const levelIndex = client.index('levels');
-	const popularLevelIndex = client.index('popular-levels');
+	const levelIndex = meilisearch.index('levels');
+	const popularLevelIndex = meilisearch.index('popular-levels');
 
 	console.log('Setting settings...');
 
@@ -163,7 +163,7 @@ export async function setSearchSettings() {
 	console.log(await levelIndex.updateRankingRules(levelRankingRules));
 	console.log(await popularLevelIndex.updateRankingRules(levelRankingRules));
 
-	const suggestionsIndex = client.index('level-suggestions');
+	const suggestionsIndex = meilisearch.index('level-suggestions');
 
 	console.log(await suggestionsIndex.updateRankingRules([
 		'words',
@@ -179,11 +179,11 @@ export async function setSearchSettings() {
 }
 
 export async function search(query: string, indexName: string) {
-	const index = client.index(indexName);
+	const index = meilisearch.index(indexName);
 	return index.search(query);
 }
 
 export async function getDoc(id: string, indexName: string) {
-	const index = client.index(indexName);
+	const index = meilisearch.index(indexName);
 	return index.getDocument(id);
 }

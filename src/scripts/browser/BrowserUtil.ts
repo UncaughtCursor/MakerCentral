@@ -53,22 +53,21 @@ export async function queryLevels(
 
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
+	console.log(queryDocs.docs);
 
-	const rawLevelData = await Promise.all(queryDocs.docs.map(
+	const levelDocData = await Promise.all(queryDocs.docs.map(
 		async (levelDoc): Promise<MCLevelDocData | null> => {
 			const mainDocData = levelDoc.data();
 
 			if (!isLink) {
 				return mainDocData as MCLevelDocData;
 			}
-			const levelDataDoc = await getDoc(doc(db, `levels-raw/${levelDoc.id}`));
-
-			const rawDoc = levelDataDoc.data() as MCRawLevelDoc;
-			return MCRawLevelDocToMCLevelDoc(rawDoc);
+			const levelDataDoc = await getLevel(levelDoc.id);
+			return levelDataDoc;
 		},
 	));
 
-	return rawLevelData.filter((levelData) => levelData !== null) as MCLevelDocData[];
+	return levelDocData.filter((levelData) => levelData !== null) as MCLevelDocData[];
 }
 
 /**

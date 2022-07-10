@@ -11,7 +11,7 @@ import {
 	DBDifficulty, DBGameStyle, APILevel, DBTag, DBTheme,
 } from './data/types/DBTypes';
 import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl } from './constants';
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 // const meilisearchClient = new MeiliSearch(MeiliCredentials);
 
@@ -361,12 +361,41 @@ async function saveProgress(progress: UpdaterProgress): Promise<void> {
 /**
  * Obtains a response from an API call.
  * @param url The URL to request.
+ * @param persistent Whether or not to keep requesting
+ * the same URL until a response is received.
  * @returns A promise that resolves to the response.
  */
-async function getAPIResponse(url: string): Promise<any> {
-	const response = await axios.get(url);
-	console.log(`GET ${url}`);
-	return response.data;
+async function getAPIResponse(url: string, persistent = true): Promise<any> {
+	let response: AxiosResponse;
+	let done = false;
+	while (!done) {
+		try {
+			response = await axios.get(url);
+			if (response.status !== 200) {
+				console.log(`Error: HTTP ${response.status}`);
+				console.log(`From request: GET ${url}`);
+				if (persistent) {
+					console.log(`Retrying...`);
+				}
+				else {
+					done = true;
+				}
+			}
+			else {
+				done = true;
+			}
+		}
+		catch (e) {
+			console.log(`Error: ${e}`);
+			console.log(`From request: GET ${url}`);
+			if (persistent) {
+				console.log(`Retrying...`);
+			} else {
+				done = true;
+			}
+		}
+	}
+	return response!.data;
 }
 
 /**
