@@ -113,6 +113,20 @@ function LevelPage(props: {
 						<br />
 						<h4>Tags</h4>
 						<TagDisplay tags={level.tags} />
+						<br />
+						<h4>Level Viewer</h4>
+						<a
+							style={{
+								display: 'block',
+								width: '100%',
+								textAlign: 'left',
+								margin: '5px',
+							}}
+							target="_blank"
+							href={`https://smm2.wizul.us/smm2/level/${level.id}`}
+							rel="noreferrer"
+						>View in Wizulus's SMM2 Viewer
+						</a>
 					</div>
 				</div>
 			</div>

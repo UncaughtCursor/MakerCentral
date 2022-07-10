@@ -20,6 +20,7 @@ export interface MCLevelDocData {
 	description: string;
 	tags: MCTag[];
 	isPromotedByPatron: boolean;
+	updatedTime?: number;
 }
 
 export type MCWorldLevelAggregation = {
@@ -42,6 +43,7 @@ export interface MCUserDocData {
 	makerPoints: number;
 	levels: number;
 	world: MCWorldPreview | null;
+	updatedTime?: number;
 }
 
 export interface MCWorldPreview {
@@ -60,17 +62,9 @@ export interface MCWorldDocData extends MCWorldLevelAggregation {
 	numLevels: number;
 	numWorlds: number;
 	created: number;
-	levels: MCWorldLevelPreview[];
-}
-
-// Meilisearch does not support arrays of objects, so we need to use strings.
-export interface MCWorldDocSearchData extends MCWorldLevelAggregation {
-	makerId: string;
-	makerName: string;
-	numLevels: number;
-	numWorlds: number;
-	created: number;
 	levelText: string;
+	levels: MCWorldLevelPreview[];
+	updatedTime?: number;
 }
 
 export interface MCWorldLevelPreview {

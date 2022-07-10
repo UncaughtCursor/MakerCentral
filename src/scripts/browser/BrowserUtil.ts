@@ -5,7 +5,7 @@ import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
 import { db, functions } from '@scripts/site/FirebaseUtil';
 import {
 	collection, deleteDoc, doc, FieldPath, getDoc, getDocs, limit,
-	OrderByDirection, query, QueryConstraint, startAfter, where, WhereFilterOp,
+	OrderByDirection, query, QueryConstraint, startAfter, WhereFilterOp,
 } from 'firebase/firestore/lite';
 import { httpsCallable } from 'firebase/functions';
 
@@ -53,22 +53,21 @@ export async function queryLevels(
 
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
+	console.log(queryDocs.docs);
 
-	const rawLevelData = await Promise.all(queryDocs.docs.map(
+	const levelDocData = await Promise.all(queryDocs.docs.map(
 		async (levelDoc): Promise<MCLevelDocData | null> => {
 			const mainDocData = levelDoc.data();
 
 			if (!isLink) {
 				return mainDocData as MCLevelDocData;
 			}
-			const levelDataDoc = await getDoc(doc(db, `levels-raw/${levelDoc.id}`));
-
-			const rawDoc = levelDataDoc.data() as MCRawLevelDoc;
-			return MCRawLevelDocToMCLevelDoc(rawDoc);
+			const levelDataDoc = await getLevel(levelDoc.id);
+			return levelDataDoc;
 		},
 	));
 
-	return rawLevelData.filter((levelData) => levelData !== null) as MCLevelDocData[];
+	return levelDocData.filter((levelData) => levelData !== null) as MCLevelDocData[];
 }
 
 /**
@@ -79,7 +78,7 @@ export async function queryLevels(
 export async function getLevel(id: string): Promise<MCLevelDocData | null> {
 	const levelFn: CloudFunction<{
 		levelId: string,
-	}, MCLevelDocData> = httpsCallable(functions, 'getLevel');
+	}, MCLevelDocData | null> = httpsCallable(functions, 'getLevel');
 
 	try {
 		const data = (await levelFn({

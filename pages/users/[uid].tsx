@@ -3,10 +3,7 @@ import SuperWorldPreview from '@components/pages/browser/SuperWorldPreview';
 import LevelSearchResultWidget from '@components/pages/search/LevelSearchResultWidget';
 import { CloudFunction } from '@data/types/FirebaseUtilTypes';
 import { MCUserDocData } from '@data/types/MCBrowserTypes';
-import { db, functions, getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
-import {
-	doc, getDoc, QueryConstraint, where,
-} from 'firebase/firestore/lite';
+import { functions, getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { httpsCallable } from 'firebase/functions';
 import Page404 from 'pages/404';
 import React from 'react';
@@ -87,13 +84,14 @@ export async function getServerSideProps(
 ): Promise<{props: UserPageProps}> {
 	const userFn: CloudFunction<{
 		userId: string,
-	}, MCUserDocData> = httpsCallable(functions, 'getUser');
+	}, MCUserDocData | null> = httpsCallable(functions, 'getUser');
 
 	try {
 		// Get the user's data.
 		const data = (await userFn({
 			userId: context.params.uid,
 		})).data;
+		if (!data) throw new Error('User not found.');
 
 		// Load the the thumbnails of the user's most popular super world levels.
 		const superWorldThumbnailUrls: { [levelId: string]: string } = {};
