@@ -4,28 +4,19 @@ import chalk from 'chalk';
 import clear from 'clear';
 import figlet from 'figlet';
 import fs from 'fs';
-import yargs, { Argv } from 'yargs';
-import { createZCDLevelFileFromBCD, parseLevelDataFromCode, parseLevelFromZCDFile } from './level-reader/LevelReader';
+import yargs from 'yargs';
+import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reader/LevelReader';
 import {
 	compileLevels, compileUsers, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createLevelSearchData, createUserSearchData, createWorldSearchData, meilisearch, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createLevelSearchData, createUserSearchData, createWorldSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
-import CSVObjectStream from './csv/CSVObjectStream';
-import SpeedTester from './util/SpeedTester';
 import CloudFn from '../../data/util/CloudFn';
 import { runSearchTests, SearchTest } from './SearchTester';
-import { APILevel, DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBSuperWorld, DBTag, DBTheme, DBUser, UserRegion, VersusRank } from '@data/types/DBTypes';
+import { DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme } from '@data/types/DBTypes';
 import streamFileUntil from './util/SteamFileUntil';
-import { storage } from './FirebaseUtil';
-import chunk from 'chunk';
-import { MCRawLevelAggregation, MCRawLevelAggregationUnit, MCRawLevelDoc, MCRawMedal, MCRawSuperWorld, MCRawUserDoc, MCRawUserPreview, MCRawWorldLevelPreview } from '@data/types/MCRawTypes';
-import axios, { AxiosResponse } from 'axios';
-import { APIDifficulties, APIGameStyles, APITags, APIThemes } from '@data/APITypes';
-import { MCLevelDocData } from '@data/types/MCBrowserTypes';
-import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -188,31 +179,6 @@ yargs.usage('$0 command')
 		const startTime = Date.now();
 		await CloudFn('updateDB', {});
 		console.log(`Cloud function finished in ${Date.now() - startTime}ms`);
-	})
-	.command('run', 'Run the current hardcoded program.', async () => {
-		// Program: Index all of the levels in meilisearch
-		const levelsDir = 'tmp/mc-raw-level';
-		const levelFiles = fs.readdirSync(levelsDir);
-		let levelPool: MCLevelDocData[] = [];
-		for (const levelFile of levelFiles) {
-			console.log(`Loading ${levelFile}`);
-			const rawLevels = JSON.parse(fs.readFileSync(`${levelsDir}/${levelFile}`, 'utf8')) as MCRawLevelDoc[];
-			const levels: MCLevelDocData[] = rawLevels.map(rawLevel => MCRawLevelDocToMCLevelDoc(rawLevel));
-			levelPool.push(...levels);
-			if (levelPool.length >= 200000) {
-				await meilisearch.index('levels').addDocuments(levelPool);
-				const popularLevels = levelPool.filter(level => level.numLikes >= 25);
-				await meilisearch.index('popular-levels').addDocuments(popularLevels);
-				console.log(`Indexed ${levelPool.length} levels`);
-				levelPool = [];
-			}
-		}
-		if (levelPool.length > 0) {
-			await meilisearch.index('levels').addDocuments(levelPool);
-			const popularLevels = levelPool.filter(level => level.numLikes >= 25);
-			await meilisearch.index('popular-levels').addDocuments(popularLevels);
-			console.log(`Indexed ${levelPool.length} levels`);
-		}
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
