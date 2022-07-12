@@ -129,7 +129,7 @@ interface MCRawUserDocPre {
 export const updateDB = functions.runWith({
 	timeoutSeconds: 540,
 	maxInstances: 1,
-}).pubsub.schedule('every 9 minutes').onRun(async () => {
+}).pubsub.schedule('every 60 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 	console.log(progress);
