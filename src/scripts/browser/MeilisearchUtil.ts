@@ -2,7 +2,10 @@ import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import { SearchParams } from 'pages/levels/search/[q]';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
-import { defaultFilterSettings, FullSearchParams, SearchResults } from './SearchUtil';
+import {
+	defaultFilterSettings, FullSearchParams,
+	levelSearchTemplate, SearchMode, SearchResults, userSearchTemplate, worldSearchTemplate,
+} from './SearchUtil';
 
 export interface LevelSearch {
 	query: string;
@@ -33,14 +36,6 @@ const client = new MeiliSearch(MeilisearchConfig);
 
 export const numResultsPerPage = 10;
 
-const filterParamNames = [
-	'difficulty',
-	'theme',
-	'gameStyle',
-	'tag',
-	'makerId',
-];
-
 /**
  * Searches for levels based on the provided search data.
  * @param searchData The data to search based off of.
@@ -56,18 +51,30 @@ export async function searchLevels(
 		| keyof MCUserDocData | keyof MCWorldDocData },
 	popularOnly: boolean = false,
 ): Promise<SearchResults> {
+	const filterParamNames: {[key in SearchMode]: string[]} = {
+		Level: levelSearchTemplate.filterOptions.map((option) => option.property),
+		User: userSearchTemplate.filterOptions.map((option) => option.property),
+		World: worldSearchTemplate.filterOptions.map((option) => option.property),
+	};
+
+	// Get the search parameters to use. This is done by filtering out the
+	// parameters that don't apply to the search mode, then mapping the
+	// remaining parameters to equality strings for the search.
 	const filter = Object.keys(searchData).filter(
-		(paramName) => filterParamNames.includes(paramName)
+		(paramName) => filterParamNames[searchData.searchMode].includes(paramName)
 			&& searchData[paramName as keyof SearchParams]
 			!== defaultFilterSettings[paramName as keyof typeof defaultFilterSettings],
 	).map(
-		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof SearchParams]}"`,
+		(paramName) => `${paramName} = "${searchData[paramName as keyof SearchParams]}"`,
 	);
 
+	// Abbreviation used for ascending/descending sort order.
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
+	// Sort substring to use for the search.
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
+	// Index name for the search.
 	const indexName = (() => {
 		switch (searchData.searchMode) {
 		case 'Level':
@@ -84,9 +91,11 @@ export async function searchLevels(
 		}
 	})();
 
+	// Perform the search and return the results.
 	const res = await client.index(indexName).search(searchData.q, {
-		filter,
-		sort,
+		// TODO: Enable filtering and sorting for the other search modes.
+		filter: searchData.searchMode === 'Level' ? filter : undefined,
+		sort: searchData.searchMode === 'Level' ? sort : undefined,
 		offset: searchData.page * numResultsPerPage,
 		limit: numResultsPerPage + 1,
 	});

@@ -69,10 +69,12 @@ Dialog.defaultProps = {
 export default Dialog;
 
 /**
- * Determines if the specified element is a descendant of a parent that passes the specified filter.
+ * Determines if the specified element is a descendant of a parent that passes
+ * the specified filter, or if the element itself passes the filter.
  * @param el The element to check.
  * @param filterFn The filter function to use.
- * @returns True if the element is a descendant of a parent that passes the filter, false otherwise.
+ * @returns True if the element is a descendant of a parent
+ * that passes the filter, or if the element itself passes the filter. False otherwise.
  */
 function containedByElement(
 	el: HTMLElement | Element,

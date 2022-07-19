@@ -1,13 +1,15 @@
-import useLevelThumbnails, { LevelThumbnailState, LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import useLevelThumbnails, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
-import { MeiliSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
+import { numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
 import { SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
+import SuperWorldPreview from '../browser/SuperWorldPreview';
 import LevelSearchPageControl from './LevelSearchPageControl';
 
+// A property for each search result data type to be used to identify the type of result.
 const uniqueProperty: {[key in SearchMode]: string} = {
-	Level: 'makerId',
+	Level: 'theme',
 	User: 'world',
 	World: 'levelText',
 };
@@ -89,7 +91,15 @@ function LevelSearchResultView(props: {
 						// If the result is a world...
 						if ((result as MCWorldDocData)[uniqueProperty.World as keyof MCWorldDocData]) {
 							const world = result as MCWorldDocData;
-							return null; // TODO: Implement world search results.
+							return (
+								<SuperWorldPreview
+									world={world}
+									makerName={world.makerName}
+									makerId={world.makerId}
+									thumbnailUrls={{}} // TODO: Implement world thumbnail URLs.
+									key={world.makerId}
+								/>
+							);
 						}
 
 						return null;

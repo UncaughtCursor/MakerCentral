@@ -63,7 +63,7 @@ function UserPage(props: UserPageProps) {
 					sortOrder: 'Descending',
 					gameStyle: 'Any',
 					difficulty: 'Any',
-					tag: 'Any',
+					tags: 'Any',
 					theme: 'Any',
 					page: 0,
 					makerId: userData.id,

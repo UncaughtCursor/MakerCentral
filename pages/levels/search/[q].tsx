@@ -13,7 +13,7 @@ export interface SearchParams extends SearchFilterSettings {
 
 interface SearchResultsPageProps {
 	results: SearchResults;
-	thumbnailUrls?: {[key: string]: string};
+	thumbnailUrls: {[key: string]: string};
 }
 
 /**
@@ -59,10 +59,6 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 	);
 }
 
-SearchResultsPage.defaultProps = {
-	thumbnailUrls: {},
-};
-
 export default SearchResultsPage;
 
 /**
@@ -79,7 +75,7 @@ export async function getServerSideProps(context: { query: any }) {
 	return {
 		props: {
 			results: displayRes.results,
-			thumbnailUrls: displayRes.thumbnailUrlObj,
+			thumbnailUrls: displayRes.thumbnailUrlObj ? displayRes.thumbnailUrlObj : {},
 		},
 	};
 }

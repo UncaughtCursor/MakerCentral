@@ -79,7 +79,7 @@ function LevelSearchPageControl(props: {
 				difficulty: searchParams.difficulty,
 				theme: searchParams.theme,
 				gameStyle: searchParams.gameStyle,
-				tag: searchParams.tag,
+				tags: searchParams.tags,
 				page: curPage! + delta,
 			};
 			if (props.goToPage!) {

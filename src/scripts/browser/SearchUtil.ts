@@ -51,7 +51,7 @@ export const defaultFullSearchParams: FullSearchParams = {
 	difficulty: 'Any',
 	theme: 'Any',
 	gameStyle: 'Any',
-	tag: 'Any',
+	tags: 'Any',
 	page: 0,
 };
 
@@ -99,8 +99,9 @@ export interface SearchFilterSettings {
 	difficulty: MCDifficulty | 'Any';
 	theme: SMM2Theme | 'Any';
 	gameStyle: SMM2GameStyle | 'Any';
-	tag: MCTag | 'Any';
+	tags: MCTag | 'Any';
 	worldSize?: WorldSize | 'Any';
+	makerId?: string;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
@@ -112,7 +113,7 @@ export const defaultFilterSettings: SearchFilterSettings = {
 	difficulty: 'Any',
 	theme: 'Any',
 	gameStyle: 'Any',
-	tag: 'Any',
+	tags: 'Any',
 	page: 0,
 };
 
@@ -151,6 +152,9 @@ function getSortTypeMap(template: SearchOptionsTemplate): { [key in SortType]: k
 }
 
 // TODO: Different properties for each search mode.
+
+// Describes the filtering and sorting options for a search.
+// In this case, for levels.
 export const levelSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
 		{
@@ -170,8 +174,14 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 		},
 		{
 			label: 'Tag',
-			property: 'tag',
+			property: 'tags',
 			options: ['Any', ...MCTagOptions],
+		},
+		{
+			label: 'Maker ID',
+			property: 'makerId',
+			options: ['Any'],
+			userVisible: false,
 		},
 	],
 	sortOptions: [
@@ -225,7 +235,7 @@ export const worldSearchTemplate: SearchOptionsTemplate = {
 		},
 		{
 			label: 'Tag',
-			property: 'tag',
+			property: 'tags',
 			options: ['Any', ...MCTagOptions],
 		},
 		{
@@ -256,11 +266,13 @@ interface SearchOptionsFilter {
 	label: string;
 	property: keyof SearchFilterSettings;
 	options: (SearchFilterSettings[SearchOptionsFilter['property']] | 'Any')[];
+	userVisible?: boolean;
 }
 
 interface SearchOptionsSort {
 	label: SortType;
 	property: keyof MCLevelDocData | keyof MCUserDocData | keyof MCWorldDocData;
+	userVisible?: boolean;
 }
 
 export interface SearchOptionsTemplate {

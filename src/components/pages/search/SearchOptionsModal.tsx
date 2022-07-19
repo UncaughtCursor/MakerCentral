@@ -24,33 +24,30 @@ function SearchOptionsModal(props: {
 }) {
 	const [settings, setSettings] = useState(props.initSettings);
 
-	/*
-	const themeOptions = ['Any', ...MCThemes] as const;
-	const difficultyOptions = ['Any', ...MCDifficulties] as const;
-	const gameStyleOptions = ['Any', ...MCGameStyles] as const;
-	const tagOptions = ['Any', ...MCTagOptions] as const; */
-
 	return (
 		<div className="search-settings">
 			<h3>Filters</h3>
 			<div className="search-settings-dropdown-container">
-				{props.template.filterOptions.map((option) => (
-					<SelectInput
-						key={option.property}
-						label={option.label}
-						choices={option.options as string[]}
-						initSelectedIndex={option.options.indexOf(props.initSettings[option.property])}
-						onSelect={(index) => {
-							const newSettings: SearchFilterSettings = {
-								...settings,
-								[option.property]: option.options[index],
-							};
-							setSettings(newSettings);
-							props.onChange(newSettings);
-						}}
-						selectedIndex={option.options.indexOf(settings[option.property])}
-					/>
-				))}
+				{props.template.filterOptions.filter(
+					(filter) => filter.userVisible === true || filter.userVisible === undefined,
+				)
+					.map((option) => (
+						<SelectInput
+							key={option.property}
+							label={option.label}
+							choices={option.options as string[]}
+							initSelectedIndex={option.options.indexOf(props.initSettings[option.property])}
+							onSelect={(index) => {
+								const newSettings: SearchFilterSettings = {
+									...settings,
+									[option.property]: option.options[index],
+								};
+								setSettings(newSettings);
+								props.onChange(newSettings);
+							}}
+							selectedIndex={option.options.indexOf(settings[option.property])}
+						/>
+					))}
 			</div>
 			<h3>Sort</h3>
 			<div className="search-settings-dropdown-container">
