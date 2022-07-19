@@ -3,7 +3,7 @@ import React, { SyntheticEvent } from 'react';
 /**
  * A UI element that allows the user to choose from a set of options.
  * @param props The props:
- * * label: The label for the control.
+ * * label: (Optional) The label for the control.
  * * choices: The list of selections that the user is able to make.
  * * initSelectedIndex: The index of the choice selected by default.
  * * onSelect: The function to execute when the user makes a different selection.
@@ -11,7 +11,7 @@ import React, { SyntheticEvent } from 'react';
  * * selectedIndex (Optional): Overrides the selected index state.
  */
 function SelectInput(props: {
-	label: string,
+	label?: string,
 	choices: readonly string[],
 	initSelectedIndex: number,
 	onSelect: (arg0: number, arg1: string) => void,
@@ -21,11 +21,13 @@ function SelectInput(props: {
 		? props.selectedIndex : props.initSelectedIndex;
 	return (
 		<div>
-			<p style={{
-				margin: 0, marginBottom: '4px', fontSize: '15px', fontWeight: 'bold',
-			}}
-			>{props.label}
-			</p>
+			{props.label !== '' && (
+				<p style={{
+					margin: 0, marginBottom: '4px', fontSize: '15px', fontWeight: 'bold',
+				}}
+				>{props.label}
+				</p>
+			)}
 			<select
 				className="select-input"
 				onChange={(e: SyntheticEvent) => {
@@ -59,6 +61,7 @@ function SelectInput(props: {
 }
 
 SelectInput.defaultProps = {
+	label: '',
 	selectedIndex: undefined,
 };
 

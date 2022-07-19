@@ -1,13 +1,19 @@
 import AppFrame from '@components/AppFrame';
 import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
 import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSearchBar';
-import { LevelSearchResults } from '@scripts/browser/MeilisearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { defaultFilterSettings, getLevelResultDisplayData, LevelSearchFilterSettings } from '@scripts/browser/SearchUtil';
+import {
+	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchResults,
+} from '@scripts/browser/SearchUtil';
 
-export interface LevelSearchParams extends LevelSearchFilterSettings {
+export interface SearchParams extends SearchFilterSettings {
 	q: string;
+}
+
+interface SearchResultsPageProps {
+	results: SearchResults;
+	thumbnailUrls?: {[key: string]: string};
 }
 
 /**
@@ -16,10 +22,7 @@ export interface LevelSearchParams extends LevelSearchFilterSettings {
  * * results: The search results.
  * * thumbnailUrls: An object matching level IDs with thumbnail URLs.
  */
-function SearchResultsPage(props: {
-	results: LevelSearchResults,
-	thumbnailUrls: {[key: string]: string},
-}) {
+function SearchResultsPage(props: SearchResultsPageProps) {
 	const history = useRouter();
 	const initSettings = (() => {
 		const validKeys = Object.keys(props.results.searchParams).filter((key) => key !== 'q');
@@ -29,7 +32,7 @@ function SearchResultsPage(props: {
 				.results.searchParams[key as keyof typeof props.results.searchParams];
 			return obj;
 		}, {} as {[key: string]: any});
-	})() as LevelSearchFilterSettings;
+	})() as SearchFilterSettings;
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
@@ -56,6 +59,10 @@ function SearchResultsPage(props: {
 	);
 }
 
+SearchResultsPage.defaultProps = {
+	thumbnailUrls: {},
+};
+
 export default SearchResultsPage;
 
 /**
@@ -64,10 +71,10 @@ export default SearchResultsPage;
  * @returns The props to render at request time.
  */
 export async function getServerSideProps(context: { query: any }) {
-	const queryData = { ...defaultFilterSettings, ...context.query } as LevelSearchParams;
+	const queryData = { ...defaultFilterSettings, ...context.query } as SearchParams;
 	if (queryData.q === '_') queryData.q = '';
 
-	const displayRes = await getLevelResultDisplayData(queryData);
+	const displayRes = await getLevelResultData(queryData);
 
 	return {
 		props: {

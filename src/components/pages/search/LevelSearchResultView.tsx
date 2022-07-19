@@ -1,28 +1,36 @@
 import useLevelThumbnails, { LevelThumbnailState, LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
-import { LevelSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
+import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import { MeiliSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
+import { SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
 import LevelSearchPageControl from './LevelSearchPageControl';
+
+const uniqueProperty: {[key in SearchMode]: string} = {
+	Level: 'makerId',
+	User: 'world',
+	World: 'levelText',
+};
 
 /**
  * Displays level search results.
  * @param props The props:
  * - results: The results of the search.
- * - thumbnailUrls: An object matching level IDs with thumbnail URLs.
+ * - thumbnailUrls: An object matching level IDs with thumbnail URLs if applicable.
  * - isWidget: (Optional) Whether or not the component should be able to dynamically
  * update and trigger callbacks for user events. Defaults to true.
  * - onPageChange (Optional) Function to be called when the page has changed.
  * The parameter is the change in the page index.
  */
 function LevelSearchResultView(props: {
-	results: LevelSearchResults,
-	thumbnailUrls: {[key: string]: string},
+	results: SearchResults,
+	thumbnailUrls?: {[key: string]: string},
 	isWidget?: boolean,
 	onPageChange?: (delta: number) => void,
 }) {
 	const initThumbnailStates: LevelThumbnailStates = {};
-	for (const levelId of Object.keys(props.thumbnailUrls)) {
-		const thumbnailUrl = props.thumbnailUrls[levelId];
+	for (const levelId of Object.keys(props.thumbnailUrls!)) {
+		const thumbnailUrl = props.thumbnailUrls![levelId];
 		if (thumbnailUrl === '') {
 			initThumbnailStates[levelId] = {
 				state: 'Not Uploaded',
@@ -58,14 +66,34 @@ function LevelSearchResultView(props: {
 			) : null}
 			<div className="level-results">
 				{props.results.results.slice(0, numResultsPerPage)
-					.map((level) => (
-						<LevelPreview
-							level={level}
-							thumbnailUrl={thumbnails[level.id].url !== null ? thumbnails[level.id].url! : ''}
-							status={thumbnails[level.id].state}
-							key={level.id}
-						/>
-					))}
+					.map((result) => {
+						// If the result is a level...
+						if ((result as MCLevelDocData)[uniqueProperty.Level as keyof MCLevelDocData]) {
+							const level = result as MCLevelDocData;
+							return (
+								<LevelPreview
+									level={level}
+									thumbnailUrl={thumbnails[level.id].url !== null ? thumbnails[level.id].url! : ''}
+									status={thumbnails[level.id].state}
+									key={level.id}
+								/>
+							);
+						}
+
+						// If the result is a user...
+						if ((result as MCUserDocData)[uniqueProperty.User as keyof MCUserDocData]) {
+							const user = result as MCUserDocData;
+							return null; // TODO: Implement user search results.
+						}
+
+						// If the result is a world...
+						if ((result as MCWorldDocData)[uniqueProperty.World as keyof MCWorldDocData]) {
+							const world = result as MCWorldDocData;
+							return null; // TODO: Implement world search results.
+						}
+
+						return null;
+					})}
 			</div>
 			<LevelSearchPageControl
 				goToPage={!props.isWidget!}
@@ -79,6 +107,7 @@ function LevelSearchResultView(props: {
 LevelSearchResultView.defaultProps = {
 	isWidget: true,
 	onPageChange: () => {},
+	thumbnailUrls: {},
 };
 
 export default LevelSearchResultView;

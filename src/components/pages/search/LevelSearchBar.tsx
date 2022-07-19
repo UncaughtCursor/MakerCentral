@@ -5,13 +5,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Dialog from '@components/main/Dialog';
 import { getSuggestions } from '@scripts/browser/MeilisearchUtil';
-import { defaultFilterSettings, LevelSearchFilterSettings, levelSearchTemplate } from '@scripts/browser/SearchUtil';
+import {
+	defaultFilterSettings, SearchFilterSettings, levelSearchTemplate,
+	SearchModes, userSearchTemplate, worldSearchTemplate,
+} from '@scripts/browser/SearchUtil';
 import SearchOptionsModal from './SearchOptionsModal';
+import SelectInput from '../controls/SelectInput';
 
 interface SearchBarProps {
 	initialVal: string;
-	initialSettings: LevelSearchFilterSettings;
-	onSubmit: (value: string, filterSettings: LevelSearchFilterSettings) => void;
+	initialSettings: SearchFilterSettings;
+	onSubmit: (value: string, filterSettings: SearchFilterSettings) => void;
 }
 
 /**
@@ -26,8 +30,8 @@ function LevelSearchBar(props: SearchBarProps) {
 	const [inputText, setInputText] = useState(props.initialVal);
 	valueRef.current = inputText;
 
-	const filterSettingsRef = useRef<LevelSearchFilterSettings>(props.initialSettings);
-	const [filterSettings, setFilterSettings] =	useState<LevelSearchFilterSettings>(
+	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
+	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
 		{
 			...props.initialSettings,
 			page: 0,
@@ -36,9 +40,9 @@ function LevelSearchBar(props: SearchBarProps) {
 	filterSettingsRef.current = filterSettings;
 
 	const numberOfNonDefaultSettings = Object.entries(filterSettings)
-		.filter(([key]) => key !== 'page')
+		.filter(([key]) => key !== 'page' && key !== 'searchMode')
 		.reduce((acc, [key, value]) => {
-			if (value !== defaultFilterSettings[key as keyof LevelSearchFilterSettings]) {
+			if (value !== defaultFilterSettings[key as keyof SearchFilterSettings]) {
 				return acc + 1;
 			}
 			return acc;
@@ -64,6 +68,15 @@ function LevelSearchBar(props: SearchBarProps) {
 		};
 	}, []);
 
+	const optionsTemplate = (() => {
+		switch (filterSettings.searchMode) {
+		case 'Level': return levelSearchTemplate;
+		case 'User': return userSearchTemplate;
+		case 'World': return worldSearchTemplate;
+		default: return levelSearchTemplate;
+		}
+	})();
+
 	return (
 		<>
 			<Dialog
@@ -72,7 +85,7 @@ function LevelSearchBar(props: SearchBarProps) {
 				onCloseEvent={() => { setDialogOpen(false); }}
 			>
 				<SearchOptionsModal
-					template={levelSearchTemplate}
+					template={optionsTemplate}
 					initSettings={props.initialSettings}
 					onChange={(settings) => {
 						setFilterSettings({
@@ -93,6 +106,16 @@ function LevelSearchBar(props: SearchBarProps) {
 						ref={inputRef}
 						onFocus={() => { setIsFocused(true); }}
 						onBlur={() => { setIsFocused(false); }}
+					/>
+					<SelectInput
+						initSelectedIndex={0}
+						choices={SearchModes}
+						onSelect={(index) => {
+							setFilterSettings({
+								...filterSettings,
+								searchMode: SearchModes[index],
+							});
+						}}
 					/>
 					<div style={{
 						position: 'relative',
@@ -161,7 +184,7 @@ function LevelSearchBar(props: SearchBarProps) {
  * @param filterSettings The filter settings.
  * @returns The generated URL.
  */
-export function getSearchUrl(query: string, filterSettings: LevelSearchFilterSettings) {
+export function getSearchUrl(query: string, filterSettings: SearchFilterSettings) {
 	const root = `/levels/search/${query !== '' ? query : '_'}`;
 
 	const segments = Object.keys(filterSettings)

@@ -1,8 +1,8 @@
 import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
-import { LevelSearchParams } from 'pages/levels/search/[q]';
-import { MCLevelDocData } from '@data/types/MCBrowserTypes';
-import { defaultFilterSettings, FullLevelSearchParams } from './SearchUtil';
+import { SearchParams } from 'pages/levels/search/[q]';
+import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import { defaultFilterSettings, FullSearchParams, SearchResults } from './SearchUtil';
 
 export interface LevelSearch {
 	query: string;
@@ -21,12 +21,12 @@ export interface LevelSearchFilter {
 
 export type LevelSearchFilterOperator = '==' | '!=' | '>' | '>=' | '<' | '<=' | 'contains' | 'does not contain';
 
-export interface LevelSearchResults {
-	results: MCLevelDocData[];
+export interface MeiliSearchResults<T> {
+	results: T[];
 	numResults: number;
 	isNumResultsExact: boolean;
 	computeTimeMs: number;
-	searchParams: LevelSearchParams;
+	searchParams: SearchParams;
 }
 
 const client = new MeiliSearch(MeilisearchConfig);
@@ -51,23 +51,38 @@ const filterParamNames = [
  * @returns A promise that resolves with a search results object.
  */
 export async function searchLevels(
-	searchData: LevelSearchParams | FullLevelSearchParams,
-	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData },
+	searchData: SearchParams | FullSearchParams,
+	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData
+		| keyof MCUserDocData | keyof MCWorldDocData },
 	popularOnly: boolean = false,
-): Promise<LevelSearchResults> {
+): Promise<SearchResults> {
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames.includes(paramName)
-			&& searchData[paramName as keyof LevelSearchParams]
+			&& searchData[paramName as keyof SearchParams]
 			!== defaultFilterSettings[paramName as keyof typeof defaultFilterSettings],
 	).map(
-		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof LevelSearchParams]}"`,
+		(paramName) => `${paramName !== 'tag' ? paramName : 'tags'} = "${searchData[paramName as keyof SearchParams]}"`,
 	);
 
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
-	const indexName = popularOnly ? 'popular-levels' : 'levels';
+	const indexName = (() => {
+		switch (searchData.searchMode) {
+		case 'Level':
+			if (popularOnly) {
+				return 'popular-levels';
+			}
+			return 'levels';
+		case 'User':
+			return 'users';
+		case 'World':
+			return 'worlds';
+		default:
+			throw new Error(`Invalid search mode: ${searchData.searchMode}`);
+		}
+	})();
 
 	const res = await client.index(indexName).search(searchData.q, {
 		filter,

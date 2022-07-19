@@ -4,31 +4,34 @@ import {
 	MCLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
 } from '@data/types/MCBrowserTypes';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
-import { LevelSearchParams } from 'pages/levels/search/[q]';
-import { LevelSearchResults, searchLevels } from './MeilisearchUtil';
+import { SearchParams } from 'pages/levels/search/[q]';
+import { MeiliSearchResults, searchLevels } from './MeilisearchUtil';
 
 /**
  * Performs a level search and returns the results and thumbnails for each level.
  * @param searchParams The search parameters for the search.
- * @returns The results and thumbnails for each level.
+ * @returns The results and thumbnails for each level if applicable.
  */
-export async function getLevelResultDisplayData(
-	searchParams: FullLevelSearchParams | LevelSearchParams,
+export async function getLevelResultData(
+	searchParams: FullSearchParams | SearchParams,
 ): Promise<{
-	results: LevelSearchResults,
-	thumbnailUrlObj: {[key: string]: string},
+	results: SearchResults,
+	thumbnailUrlObj?: {[key: string]: string},
 }> {
-	const results = await searchLevels(searchParams, levelSortTypeMap, true);
+	const results = await searchLevels(searchParams, levelSortTypeMap, false);
+	let thumbnailUrlObj: {[key: string]: string} | undefined;
 
-	const thumbnailUrls = await Promise.all(results.results.map(
-		async (level) => ({
-			id: level.id, url: await getLevelThumbnailUrl(level.id),
-		}),
-	));
-	const thumbnailUrlObj: {[key: string]: string} = {};
-	thumbnailUrls.forEach((urlEntry) => {
-		thumbnailUrlObj[urlEntry.id] = urlEntry.url;
-	});
+	if (searchParams.searchMode === 'Level') {
+		const thumbnailUrls = await Promise.all((results.results as MCLevelDocData[]).map(
+			async (level) => ({
+				id: level.id, url: await getLevelThumbnailUrl(level.id),
+			}),
+		));
+		thumbnailUrlObj = {};
+		thumbnailUrls.forEach((urlEntry) => {
+			thumbnailUrlObj![urlEntry.id] = urlEntry.url;
+		});
+	}
 
 	return {
 		results,
@@ -36,12 +39,12 @@ export async function getLevelResultDisplayData(
 	};
 }
 
-export interface FullLevelSearchParams extends LevelSearchParams {
+export interface FullSearchParams extends SearchParams {
 	makerId?: string;
 }
 
-export const defaultFullSearchParams: FullLevelSearchParams = {
-	type: 'Level',
+export const defaultFullSearchParams: FullSearchParams = {
+	searchMode: 'Level',
 	q: '',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
@@ -71,7 +74,10 @@ export const worldSizes = [
 ] as const;
 export type WorldSize = typeof worldSizes[number];
 
-export type SearchType = 'Level' | 'User' | 'World';
+export const SearchModes = [
+	'Level', 'User', 'World',
+] as const;
+export type SearchMode = typeof SearchModes[number];
 
 export const sortTypes = {
 	Level: [
@@ -84,44 +90,23 @@ export const sortTypes = {
 		'By Likes', 'By Date', 'By Clear Rate',
 	],
 } as const;
-export type LevelSortType = typeof sortTypes.Level[number];
-export type UserSortType = typeof sortTypes.User[number];
-export type WorldSortType = typeof sortTypes.World[number];
+export type SortType = typeof sortTypes.Level[number]
+	| typeof sortTypes.User[number] | typeof sortTypes.World[number];
 
-interface BaseSearchFilterSettings {
+export interface SearchFilterSettings {
+	searchMode: 'Level' | 'User' | 'World';
+	sortType: SortType;
+	difficulty: MCDifficulty | 'Any';
+	theme: SMM2Theme | 'Any';
+	gameStyle: SMM2GameStyle | 'Any';
+	tag: MCTag | 'Any';
+	worldSize?: WorldSize | 'Any';
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
 
-export interface LevelSearchFilterSettings extends BaseSearchFilterSettings {
-	type: 'Level';
-	sortType: LevelSortType;
-	difficulty: MCDifficulty | 'Any';
-	theme: SMM2Theme | 'Any';
-	gameStyle: SMM2GameStyle | 'Any';
-	tag: MCTag | 'Any';
-}
-
-export interface UserSearchFilterSettings extends BaseSearchFilterSettings {
-	type: 'User';
-	sortType: UserSortType;
-}
-
-export interface WorldSearchFilterSettings extends BaseSearchFilterSettings {
-	type: 'World';
-	sortType: WorldSortType;
-	difficulty: MCDifficulty | 'Any';
-	theme: SMM2Theme | 'Any';
-	gameStyle: SMM2GameStyle | 'Any';
-	tag: MCTag | 'Any';
-	worldSize: WorldSize | 'Any';
-}
-
-export type SearchFilterSettings = LevelSearchFilterSettings
-	| UserSearchFilterSettings | WorldSearchFilterSettings;
-
-export const defaultFilterSettings: LevelSearchFilterSettings = {
-	type: 'Level',
+export const defaultFilterSettings: SearchFilterSettings = {
+	searchMode: 'Level',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
 	difficulty: 'Any',
@@ -149,8 +134,24 @@ const MCTagOptions: MCTag[] = [
 	'Themed',
 ];
 
-export const levelSearchTemplate: LevelSearchOptionsTemplate = {
-	searchType: 'Level',
+/**
+ * Generates a sort type map for the given search options template.
+ * @param template The search options template.
+ * @returns The sort type map.
+ */
+function getSortTypeMap(template: SearchOptionsTemplate): { [key in SortType]: keyof MCLevelDocData
+	| keyof MCUserDocData | keyof MCWorldDocData } {
+	const map: any = {};
+	for (const sort of template.sortOptions) {
+		map[sort.label] = sort.property;
+	}
+	const res: { [key in SortType]: keyof MCLevelDocData
+		| keyof MCUserDocData | keyof MCWorldDocData } = map;
+	return res;
+}
+
+// TODO: Different properties for each search mode.
+export const levelSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
 		{
 			label: 'Game Style',
@@ -188,17 +189,9 @@ export const levelSearchTemplate: LevelSearchOptionsTemplate = {
 		},
 	],
 };
-export const levelSortTypeMap: { [key in LevelSortType]: keyof MCLevelDocData } = (() => {
-	const map: any = {};
-	for (const sort of levelSearchTemplate.sortOptions) {
-		map[sort.label] = sort.property;
-	}
-	const res: { [key in LevelSortType]: keyof MCLevelDocData } = map;
-	return res;
-})();
+export const levelSortTypeMap = getSortTypeMap(levelSearchTemplate);
 
-export const userSearchTemplate: UserSearchOptionsTemplate = {
-	searchType: 'User',
+export const userSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [],
 	sortOptions: [
 		{
@@ -211,17 +204,9 @@ export const userSearchTemplate: UserSearchOptionsTemplate = {
 		},
 	],
 };
-export const userSortTypeMap: { [key in UserSortType]: keyof MCUserDocData } = (() => {
-	const map: any = {};
-	for (const sort of userSearchTemplate.sortOptions) {
-		map[sort.label] = sort.property;
-	}
-	const res: { [key in UserSortType]: keyof MCUserDocData } = map;
-	return res;
-})();
+export const userSortTypeMap = getSortTypeMap(userSearchTemplate);
 
-export const worldSearchTemplate: WorldSearchOptionsTemplate = {
-	searchType: 'World',
+export const worldSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
 		{
 			label: 'Game Style',
@@ -265,67 +250,25 @@ export const worldSearchTemplate: WorldSearchOptionsTemplate = {
 		},
 	],
 };
-export const worldSortTypeMap: { [key in WorldSortType]: keyof MCWorldDocData } = (() => {
-	const map: any = {};
-	for (const sort of worldSearchTemplate.sortOptions) {
-		map[sort.label] = sort.property;
-	}
-	const res: { [key in WorldSortType]: keyof MCWorldDocData } = map;
-	return res;
-})();
+export const worldSortTypeMap = getSortTypeMap(worldSearchTemplate);
 
-interface LevelSearchOptionsFilter {
+interface SearchOptionsFilter {
 	label: string;
-	property: keyof LevelSearchFilterSettings;
-	options: (LevelSearchFilterSettings[LevelSearchOptionsFilter['property']] | 'Any')[];
+	property: keyof SearchFilterSettings;
+	options: (SearchFilterSettings[SearchOptionsFilter['property']] | 'Any')[];
 }
 
-interface LevelSearchOptionsSort {
-	label: LevelSortType;
-	property: keyof MCLevelDocData;
+interface SearchOptionsSort {
+	label: SortType;
+	property: keyof MCLevelDocData | keyof MCUserDocData | keyof MCWorldDocData;
 }
 
-export interface LevelSearchOptionsTemplate {
-	searchType: 'Level';
-	filterOptions: LevelSearchOptionsFilter[];
-	sortOptions: LevelSearchOptionsSort[];
+export interface SearchOptionsTemplate {
+	filterOptions: SearchOptionsFilter[];
+	sortOptions: SearchOptionsSort[];
 }
 
-interface UserSearchOptionsFilter {
-	label: string;
-	property: keyof UserSearchFilterSettings;
-	options: UserSearchFilterSettings[UserSearchOptionsFilter['property']][];
-}
-
-interface UserSearchOptionsSort {
-	label: UserSortType;
-	property: keyof MCUserDocData;
-}
-
-export interface UserSearchOptionsTemplate {
-	searchType: 'User';
-	filterOptions: UserSearchOptionsFilter[];
-	sortOptions: UserSearchOptionsSort[];
-}
-
-interface WorldSearchOptionsFilter {
-	label: string;
-	property: keyof WorldSearchFilterSettings;
-	options: WorldSearchFilterSettings[WorldSearchOptionsFilter['property']][];
-}
-
-interface WorldSearchOptionsSort {
-	label: WorldSortType;
-	property: keyof MCWorldDocData;
-}
-
-export interface WorldSearchOptionsTemplate {
-	searchType: 'World';
-	filterOptions: WorldSearchOptionsFilter[];
-	sortOptions: WorldSearchOptionsSort[];
-}
-
-export type SearchOptionsTemplate = LevelSearchOptionsTemplate
-	| UserSearchOptionsTemplate | WorldSearchOptionsTemplate;
+export type SearchResults = MeiliSearchResults<MCLevelDocData>
+	| MeiliSearchResults<MCUserDocData> | MeiliSearchResults<MCWorldDocData>;
 
 export const sortOrders = ['Ascending', 'Descending'] as const;

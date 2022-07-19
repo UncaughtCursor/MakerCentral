@@ -1,7 +1,7 @@
 import {
 	defaultFilterSettings,
-	LevelSearchFilterSettings,
-	LevelSearchOptionsTemplate,
+	SearchFilterSettings,
+	SearchOptionsTemplate,
 	sortOrders,
 } from '@scripts/browser/SearchUtil';
 import React, { useState } from 'react';
@@ -17,9 +17,9 @@ import TriggerButton from '../controls/TriggerButton';
  * * onClose: The function to execute whenever the settings are closed.
  */
 function SearchOptionsModal(props: {
-	template: LevelSearchOptionsTemplate;
-	initSettings: LevelSearchFilterSettings,
-	onChange: (settings: LevelSearchFilterSettings) => void,
+	template: SearchOptionsTemplate;
+	initSettings: SearchFilterSettings,
+	onChange: (settings: SearchFilterSettings) => void,
 	onClose: () => void,
 }) {
 	const [settings, setSettings] = useState(props.initSettings);
@@ -41,7 +41,7 @@ function SearchOptionsModal(props: {
 						choices={option.options as string[]}
 						initSelectedIndex={option.options.indexOf(props.initSettings[option.property])}
 						onSelect={(index) => {
-							const newSettings: LevelSearchFilterSettings = {
+							const newSettings: SearchFilterSettings = {
 								...settings,
 								[option.property]: option.options[index],
 							};
@@ -61,7 +61,7 @@ function SearchOptionsModal(props: {
 						(option) => option.label === props.initSettings.sortType,
 					)}
 					onSelect={(idx) => {
-						const newSettings: LevelSearchFilterSettings = {
+						const newSettings: SearchFilterSettings = {
 							...settings,
 							sortType: props.template.sortOptions[idx].label,
 						};
@@ -77,7 +77,7 @@ function SearchOptionsModal(props: {
 					choices={sortOrders}
 					initSelectedIndex={sortOrders.indexOf(props.initSettings.sortOrder)}
 					onSelect={(idx) => {
-						const newSettings: LevelSearchFilterSettings = {
+						const newSettings: SearchFilterSettings = {
 							...settings,
 							sortOrder: sortOrders[idx],
 						};
