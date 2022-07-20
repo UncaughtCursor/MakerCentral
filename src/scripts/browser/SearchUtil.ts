@@ -21,7 +21,7 @@ export async function getLevelResultData(
 	const results = await searchLevels(searchParams, levelSortTypeMap, false);
 	let thumbnailUrlObj: {[key: string]: string} | undefined;
 
-	if (searchParams.searchMode === 'Level') {
+	if (searchParams.searchMode === 'Levels') {
 		const thumbnailUrls = await Promise.all((results.results as MCLevelDocData[]).map(
 			async (level) => ({
 				id: level.id, url: await getLevelThumbnailUrl(level.id),
@@ -44,7 +44,7 @@ export interface FullSearchParams extends SearchParams {
 }
 
 export const defaultFullSearchParams: FullSearchParams = {
-	searchMode: 'Level',
+	searchMode: 'Levels',
 	q: '',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
@@ -75,7 +75,7 @@ export const worldSizes = [
 export type WorldSize = typeof worldSizes[number];
 
 export const SearchModes = [
-	'Level', 'User', 'World',
+	'Levels', 'Users', 'Worlds',
 ] as const;
 export type SearchMode = typeof SearchModes[number];
 
@@ -94,7 +94,7 @@ export type SortType = typeof sortTypes.Level[number]
 	| typeof sortTypes.User[number] | typeof sortTypes.World[number];
 
 export interface SearchFilterSettings {
-	searchMode: 'Level' | 'User' | 'World';
+	searchMode: 'Levels' | 'Users' | 'Worlds';
 	sortType: SortType;
 	difficulty: MCDifficulty | 'Any';
 	theme: SMM2Theme | 'Any';
@@ -107,7 +107,7 @@ export interface SearchFilterSettings {
 }
 
 export const defaultFilterSettings: SearchFilterSettings = {
-	searchMode: 'Level',
+	searchMode: 'Levels',
 	sortType: 'By Likes',
 	sortOrder: 'Descending',
 	difficulty: 'Any',

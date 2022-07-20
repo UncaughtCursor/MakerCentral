@@ -1,4 +1,4 @@
-import useLevelThumbnails, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import useLevelThumbnailStates, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
 import React from 'react';
 import LevelThumbnail from './LevelThumbnail';
 
@@ -36,7 +36,7 @@ function SuperWorldThumbnail(props: {
 			};
 		}
 	}
-	const thumbnails = useLevelThumbnails(initThumbnailStates);
+	const thumbnails = useLevelThumbnailStates(initThumbnailStates);
 
 	return (
 		<div

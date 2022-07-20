@@ -52,9 +52,9 @@ export async function searchLevels(
 	popularOnly: boolean = false,
 ): Promise<SearchResults> {
 	const filterParamNames: {[key in SearchMode]: string[]} = {
-		Level: levelSearchTemplate.filterOptions.map((option) => option.property),
-		User: userSearchTemplate.filterOptions.map((option) => option.property),
-		World: worldSearchTemplate.filterOptions.map((option) => option.property),
+		Levels: levelSearchTemplate.filterOptions.map((option) => option.property),
+		Users: userSearchTemplate.filterOptions.map((option) => option.property),
+		Worlds: worldSearchTemplate.filterOptions.map((option) => option.property),
 	};
 
 	// Get the search parameters to use. This is done by filtering out the
@@ -77,14 +77,14 @@ export async function searchLevels(
 	// Index name for the search.
 	const indexName = (() => {
 		switch (searchData.searchMode) {
-		case 'Level':
+		case 'Levels':
 			if (popularOnly) {
 				return 'popular-levels';
 			}
 			return 'levels';
-		case 'User':
+		case 'Users':
 			return 'users';
-		case 'World':
+		case 'Worlds':
 			return 'worlds';
 		default:
 			throw new Error(`Invalid search mode: ${searchData.searchMode}`);
@@ -94,8 +94,8 @@ export async function searchLevels(
 	// Perform the search and return the results.
 	const res = await client.index(indexName).search(searchData.q, {
 		// TODO: Enable filtering and sorting for the other search modes.
-		filter: searchData.searchMode === 'Level' ? filter : undefined,
-		sort: searchData.searchMode === 'Level' ? sort : undefined,
+		filter: searchData.searchMode === 'Levels' ? filter : undefined,
+		sort: searchData.searchMode === 'Levels' ? sort : undefined,
 		offset: searchData.page * numResultsPerPage,
 		limit: numResultsPerPage + 1,
 	});

@@ -1,4 +1,4 @@
-import useLevelThumbnails, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import useLevelThumbnailStates, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
 import { numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
 import { SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
@@ -9,9 +9,9 @@ import LevelSearchPageControl from './LevelSearchPageControl';
 
 // A property for each search result data type to be used to identify the type of result.
 const uniqueProperty: {[key in SearchMode]: string} = {
-	Level: 'theme',
-	User: 'world',
-	World: 'levelText',
+	Levels: 'theme',
+	Users: 'world',
+	Worlds: 'levelText',
 };
 
 /**
@@ -45,7 +45,7 @@ function LevelSearchResultView(props: {
 			};
 		}
 	}
-	const thumbnails = useLevelThumbnails(initThumbnailStates);
+	const thumbnails = useLevelThumbnailStates(initThumbnailStates);
 
 	return (
 		<div style={{
@@ -70,7 +70,7 @@ function LevelSearchResultView(props: {
 				{props.results.results.slice(0, numResultsPerPage)
 					.map((result) => {
 						// If the result is a level...
-						if ((result as MCLevelDocData)[uniqueProperty.Level as keyof MCLevelDocData]) {
+						if ((result as MCLevelDocData)[uniqueProperty.Levels as keyof MCLevelDocData]) {
 							const level = result as MCLevelDocData;
 							return (
 								<LevelPreview
@@ -83,13 +83,13 @@ function LevelSearchResultView(props: {
 						}
 
 						// If the result is a user...
-						if ((result as MCUserDocData)[uniqueProperty.User as keyof MCUserDocData]) {
+						if ((result as MCUserDocData)[uniqueProperty.Users as keyof MCUserDocData]) {
 							const user = result as MCUserDocData;
 							return null; // TODO: Implement user search results.
 						}
 
 						// If the result is a world...
-						if ((result as MCWorldDocData)[uniqueProperty.World as keyof MCWorldDocData]) {
+						if ((result as MCWorldDocData)[uniqueProperty.Worlds as keyof MCWorldDocData]) {
 							const world = result as MCWorldDocData;
 							return (
 								<SuperWorldPreview

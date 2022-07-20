@@ -1,5 +1,5 @@
 import AppFrame from '@components/AppFrame';
-import { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
 import ProportionChart, { ProportionChartProportion } from '@components/pages/browser/ProportionChart';
 import SuperWorldThumbnail from '@components/pages/browser/SuperWorldThumbnail';
 import TagDisplay from '@components/pages/browser/TagDisplay';

@@ -70,9 +70,9 @@ function LevelSearchBar(props: SearchBarProps) {
 
 	const optionsTemplate = (() => {
 		switch (filterSettings.searchMode) {
-		case 'Level': return levelSearchTemplate;
-		case 'User': return userSearchTemplate;
-		case 'World': return worldSearchTemplate;
+		case 'Levels': return levelSearchTemplate;
+		case 'Users': return userSearchTemplate;
+		case 'Worlds': return worldSearchTemplate;
 		default: return levelSearchTemplate;
 		}
 	})();
@@ -107,8 +107,9 @@ function LevelSearchBar(props: SearchBarProps) {
 						onFocus={() => { setIsFocused(true); }}
 						onBlur={() => { setIsFocused(false); }}
 					/>
+					{/* TODO: Reset the settings appropriately when the search mode changes. */}
 					<SelectInput
-						initSelectedIndex={0}
+						initSelectedIndex={SearchModes.indexOf(filterSettings.searchMode)}
 						choices={SearchModes}
 						onSelect={(index) => {
 							setFilterSettings({
