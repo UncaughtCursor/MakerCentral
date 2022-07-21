@@ -52,7 +52,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			</div>
 			<LevelSearchResultView
 				results={props.results}
-				thumbnailUrls={props.thumbnailUrls}
+				levelThumbnailUrls={props.thumbnailUrls}
 				isWidget={false}
 			/>
 		</AppFrame>
@@ -75,7 +75,7 @@ export async function getServerSideProps(context: { query: any }) {
 	return {
 		props: {
 			results: displayRes.results,
-			thumbnailUrls: displayRes.thumbnailUrlObj ? displayRes.thumbnailUrlObj : {},
+			thumbnailUrls: displayRes.levelThumbnailUrlObj ? displayRes.levelThumbnailUrlObj : {},
 		},
 	};
 }

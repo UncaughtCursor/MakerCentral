@@ -16,26 +16,56 @@ export async function getLevelResultData(
 	searchParams: FullSearchParams | SearchParams,
 ): Promise<{
 	results: SearchResults,
-	thumbnailUrlObj?: {[key: string]: string},
+	levelThumbnailUrlObj?: {[key: string]: string},
+	worldThumbnailUrlObjs?: {[key: string]: string}[],
 }> {
 	const results = await searchLevels(searchParams, levelSortTypeMap, false);
-	let thumbnailUrlObj: {[key: string]: string} | undefined;
+	let levelThumbnailUrlObj: {[key: string]: string} | undefined;
+	let worldThumbnailUrlObj: {[key: string]: string}[] | undefined;
+
+	let levelIds: string[] | null = null;
+	let worldLevelIds: string[][] | null = null;
+	if (searchParams.searchMode === 'Levels') {
+		levelIds = (results.results as MCLevelDocData[]).map((level) => level.id);
+	} else if (searchParams.searchMode === 'Worlds') {
+		worldLevelIds = (results.results as MCWorldDocData[]).map((world) => (() => {
+			const topFourLevelIds = world.levels.sort((a, b) => b.numLikes - a.numLikes)
+				.slice(0, 4).map((level) => level.id);
+			return topFourLevelIds;
+		})());
+	}
 
 	if (searchParams.searchMode === 'Levels') {
-		const thumbnailUrls = await Promise.all((results.results as MCLevelDocData[]).map(
-			async (level) => ({
-				id: level.id, url: await getLevelThumbnailUrl(level.id),
+		const thumbnailUrls = await Promise.all(levelIds!.map(
+			async (levelId) => ({
+				id: levelId, url: await getLevelThumbnailUrl(levelId),
 			}),
 		));
-		thumbnailUrlObj = {};
+		levelThumbnailUrlObj = {};
 		thumbnailUrls.forEach((urlEntry) => {
-			thumbnailUrlObj![urlEntry.id] = urlEntry.url;
+			levelThumbnailUrlObj![urlEntry.id] = urlEntry.url;
+		});
+	} else if (searchParams.searchMode === 'Worlds') {
+		const thumbnailUrls = await Promise.all(worldLevelIds!.map(
+			async (thisWorldLevelIds) => Promise.all(thisWorldLevelIds.map(
+				async (levelId) => ({
+					id: levelId, url: await getLevelThumbnailUrl(levelId),
+				}),
+			)),
+		));
+		worldThumbnailUrlObj = thumbnailUrls.map((urlGroup) => {
+			const obj: {[key: string]: string} = {};
+			urlGroup.forEach((urlEntry) => {
+				obj[urlEntry.id] = urlEntry.url;
+			});
+			return obj;
 		});
 	}
 
 	return {
 		results,
-		thumbnailUrlObj,
+		levelThumbnailUrlObj,
+		worldThumbnailUrlObjs: worldThumbnailUrlObj,
 	};
 }
 

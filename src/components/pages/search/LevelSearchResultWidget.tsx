@@ -16,7 +16,8 @@ function LevelSearchResultWidget(props: {
 }) {
 	const [searchResults, setSearchResults] = useState<{
 		results: SearchResults,
-		thumbnailUrlObj?: {[key: string]: string},
+		levelThumbnailUrlObj?: {[key: string]: string},
+		worldThumbnailUrlObjs?: {[key: string]: string}[],
 	} | null>(null);
 
 	const [curSearchParams, setCurSearchParams]	= useState<SearchParams | FullSearchParams>(
@@ -34,7 +35,8 @@ function LevelSearchResultWidget(props: {
 		return (
 			<LevelSearchResultView
 				results={searchResults.results}
-				thumbnailUrls={searchResults.thumbnailUrlObj}
+				levelThumbnailUrls={searchResults.levelThumbnailUrlObj}
+				worldThumbnailUrls={searchResults.worldThumbnailUrlObjs}
 				isWidget
 				onPageChange={(delta) => {
 					setCurSearchParams({

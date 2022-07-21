@@ -26,13 +26,14 @@ const uniqueProperty: {[key in SearchMode]: string} = {
  */
 function LevelSearchResultView(props: {
 	results: SearchResults,
-	thumbnailUrls?: {[key: string]: string},
+	levelThumbnailUrls?: {[key: string]: string},
+	worldThumbnailUrls?: {[key: string]: string}[],
 	isWidget?: boolean,
 	onPageChange?: (delta: number) => void,
 }) {
 	const initThumbnailStates: LevelThumbnailStates = {};
-	for (const levelId of Object.keys(props.thumbnailUrls!)) {
-		const thumbnailUrl = props.thumbnailUrls![levelId];
+	for (const levelId of Object.keys(props.levelThumbnailUrls!)) {
+		const thumbnailUrl = props.levelThumbnailUrls![levelId];
 		if (thumbnailUrl === '') {
 			initThumbnailStates[levelId] = {
 				state: 'Not Uploaded',
@@ -45,7 +46,16 @@ function LevelSearchResultView(props: {
 			};
 		}
 	}
-	const thumbnails = useLevelThumbnailStates(initThumbnailStates);
+
+	const mergedWorldThumbnailUrls: {[key: string]: string} = {};
+	for (const levelIds of props.worldThumbnailUrls!) {
+		for (const levelId of Object.keys(levelIds)) {
+			const thumbnailUrl = levelIds[levelId];
+			mergedWorldThumbnailUrls[levelId] = thumbnailUrl;
+		}
+	}
+
+	const levelThumbnails = useLevelThumbnailStates(initThumbnailStates);
 
 	return (
 		<div style={{
@@ -75,8 +85,8 @@ function LevelSearchResultView(props: {
 							return (
 								<LevelPreview
 									level={level}
-									thumbnailUrl={thumbnails[level.id].url !== null ? thumbnails[level.id].url! : ''}
-									status={thumbnails[level.id].state}
+									thumbnailUrl={levelThumbnails[level.id].url !== null ? levelThumbnails[level.id].url! : ''}
+									status={levelThumbnails[level.id].state}
 									key={level.id}
 								/>
 							);
@@ -91,12 +101,19 @@ function LevelSearchResultView(props: {
 						// If the result is a world...
 						if ((result as MCWorldDocData)[uniqueProperty.Worlds as keyof MCWorldDocData]) {
 							const world = result as MCWorldDocData;
+							const showcasedLevelIds = world.levels
+								.sort((a, b) => b.numLikes - a.numLikes).slice(0, 4).map((level) => level.id);
+							const thumbnailUrlObj: {[key: string]: string} = {};
+							for (const levelId of showcasedLevelIds) {
+								thumbnailUrlObj[levelId] = mergedWorldThumbnailUrls[levelId] !== undefined
+									? mergedWorldThumbnailUrls[levelId]! : '';
+							}
 							return (
 								<SuperWorldPreview
 									world={world}
 									makerName={world.makerName}
 									makerId={world.makerId}
-									thumbnailUrls={{}} // TODO: Implement world thumbnail URLs.
+									thumbnailUrls={thumbnailUrlObj}
 									key={world.makerId}
 								/>
 							);
@@ -117,7 +134,8 @@ function LevelSearchResultView(props: {
 LevelSearchResultView.defaultProps = {
 	isWidget: true,
 	onPageChange: () => {},
-	thumbnailUrls: {},
+	levelThumbnailUrls: {},
+	worldThumbnailUrls: [],
 };
 
 export default LevelSearchResultView;
