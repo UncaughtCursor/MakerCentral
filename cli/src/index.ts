@@ -7,9 +7,9 @@ import fs from 'fs';
 import yargs from 'yargs';
 import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reader/LevelReader';
 import {
-	compileLevels, compileUsers, levelOutDir, streamTableToFile,
+	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createLevelSearchData, createUserSearchData, createWorldSearchData, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -17,6 +17,8 @@ import CloudFn from '../../data/util/CloudFn';
 import { runSearchTests, SearchTest } from './SearchTester';
 import { DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme } from '@data/types/DBTypes';
 import streamFileUntil from './util/SteamFileUntil';
+import { downloadStorageDir } from './StorageManager';
+import path from 'path';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -122,7 +124,9 @@ yargs.usage('$0 command')
 		await createLevelSearchData();
 	})
 	.command('create-popular-level-search', 'Upload the compiled popular level data to Meilisearch', async () => {
-		await createLevelSearchData(true);
+		await createLevelSearchData({
+			onlyPopular: true,
+		});
 	})
 	.command('create-user-search', 'Upload the compiled user data to Meilisearch', async () => {
 		await createUserSearchData();
@@ -156,6 +160,15 @@ yargs.usage('$0 command')
 		renderLevel(level, `tmp/${testLevelCode}.png`);
 		console.log('Level rendered');
 	})
+	.command('dump-level-index', 'Dump the full Meilisearch level index to the local output location.', async () => {
+		await dumpIndexDocs('levels');
+		console.log('Done');
+	})
+	.command('download-updatedb-dumps', 'Download the dumps collected by the updateDB cloud function.', async () => {
+		const localDir = `${generalOutDir}/updatedb-dumps/${Date.now()}`;
+		const storageDir = 'admin/dump';
+		await downloadStorageDir(storageDir, localDir);
+	})
 	.command('test-search-coverage', 'Test how many level files were uploaded to Meili.', async () => {
 		// Load each level JSON file and search for the first level in each
 		const fileNames = fs.readdirSync(levelOutDir);
@@ -179,6 +192,42 @@ yargs.usage('$0 command')
 		const startTime = Date.now();
 		await CloudFn('updateDB', {});
 		console.log(`Cloud function finished in ${Date.now() - startTime}ms`);
+	})
+	.command('extract-dump-levels', 'Extract the new levels from the dumps collected by the updateDB cloud function.', async () => {
+		const timeOfDump = 1658536344617;
+		const dataDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}`;
+		const outDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}/extracted-levels`;
+		const minFileNumber = 130;
+
+		const files = fs.readdirSync(dataDir);
+		fs.mkdirSync(outDir, { recursive: true });
+
+		for (const file of files) {
+			// Parse the file's number
+			const baseNameNumber = parseInt(path.basename(file, '.json'), 10);
+			const newNumber = baseNameNumber - minFileNumber;
+			
+			// Skip files whose number is too low
+			if (newNumber < 0) continue;
+
+			console.log(`Processing ${file}`);
+
+			// Extract the level data
+			const levelData = JSON.parse(fs.readFileSync(`${dataDir}/${file}`, 'utf8')).levels;
+			fs.writeFileSync(`${outDir}/${newNumber}.json`, JSON.stringify(levelData));
+		}
+	})
+	.command('reset-level-search', 'Clears all documents in the Meilisearch levels index and reuploads all of the backed up ones.', async () => {
+		const backupDir = `E:/backup/raw-levels`;
+
+		// Subdirectories are '1', '2', and '3'
+		for (const subdir of ['1', '2', '3']) {
+			console.log(`Processing subdirectory ${subdir}`);
+			await createLevelSearchData({
+				inputDataDir: `${backupDir}/${subdir}`,
+				batchSize: 200000,
+			});
+		}
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

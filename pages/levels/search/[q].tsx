@@ -14,6 +14,7 @@ export interface SearchParams extends SearchFilterSettings {
 interface SearchResultsPageProps {
 	results: SearchResults;
 	thumbnailUrls: {[key: string]: string};
+	worldThumbnailUrls: {[key: string]: string}[];
 }
 
 /**
@@ -53,6 +54,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			<LevelSearchResultView
 				results={props.results}
 				levelThumbnailUrls={props.thumbnailUrls}
+				worldThumbnailUrls={props.worldThumbnailUrls}
 				isWidget={false}
 			/>
 		</AppFrame>
@@ -76,6 +78,7 @@ export async function getServerSideProps(context: { query: any }) {
 		props: {
 			results: displayRes.results,
 			thumbnailUrls: displayRes.levelThumbnailUrlObj ? displayRes.levelThumbnailUrlObj : {},
+			worldThumbnailUrls: displayRes.worldThumbnailUrlObjs ? displayRes.worldThumbnailUrlObjs : [],
 		},
 	};
 }
