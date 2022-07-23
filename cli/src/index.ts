@@ -217,15 +217,17 @@ yargs.usage('$0 command')
 			fs.writeFileSync(`${outDir}/${newNumber}.json`, JSON.stringify(levelData));
 		}
 	})
-	.command('reset-level-search', 'Clears all documents in the Meilisearch levels index and reuploads all of the backed up ones.', async () => {
+	.command('reupload-search-levels', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
 		const backupDir = `E:/backup/raw-levels`;
 
 		// Subdirectories are '1', '2', and '3'
 		for (const subdir of ['1', '2', '3']) {
 			console.log(`Processing subdirectory ${subdir}`);
+			const offset = subdir === '1' ? 158 : 0;
 			await createLevelSearchData({
 				inputDataDir: `${backupDir}/${subdir}`,
-				batchSize: 200000,
+				batchSize: 100000,
+				offset,
 			});
 		}
 	})

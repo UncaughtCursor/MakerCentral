@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import MeiliSearch from 'meilisearch';
+import MeiliSearch, { EnqueuedTask } from 'meilisearch';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
 import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
 import { loadJSON } from './util/Util';
@@ -19,6 +19,7 @@ interface CreateLevelSearchDataOptions {
 	onlyPopular?: boolean;
 	inputDataDir?: string;
 	batchSize?: number;
+	offset?: number;
 }
 
 /**
@@ -27,15 +28,37 @@ interface CreateLevelSearchDataOptions {
  * - onlyPopular Whether to only upload popular levels.
  * - inputDataDir The directory to read the level data from.
  * - batchSize The number of levels to upload at a time.
+ * - offset The number of files to skip before uploading.
+ * Use this if the process was interrupted.
  */
 export async function createLevelSearchData(options: CreateLevelSearchDataOptions = {}) {
 	const inputDataDir = options.inputDataDir || levelOutDir;
 	const batchSize = options.batchSize || 100000;
+	const offset = options.offset || 0;
 
 	const levelFileIterator = new TextDirIterator(inputDataDir);
 	const indexName = options.onlyPopular ? 'popular-levels' : 'levels';
 
 	console.log('Loading levels...');
+
+	const emptyPool = async (pool: MCLevelDocData[]) => {
+		let success = false;
+		let task: EnqueuedTask | undefined;
+		while (!success) {
+			try {
+				task = await meilisearch.index(indexName).addDocuments(pool);
+				success = true;
+			}
+			catch (e) {
+				console.log(e);
+				// Wait 1 second before retrying
+				await new Promise(resolve => setTimeout(resolve, 1000));
+			}
+		}
+		console.log(task);
+		pool = [];
+		return pool;
+	}
 	
 	let pool: MCLevelDocData[] = [];
 	await levelFileIterator.iterate(async (data: string, i: number) => {
@@ -50,18 +73,10 @@ export async function createLevelSearchData(options: CreateLevelSearchDataOption
 			pool.push(...docs);
 		}
 
-		if (pool.length >= batchSize) {
-			const task = await meilisearch.index(indexName).addDocuments(pool);
-			console.log(task);
-			pool = [];
-		}
+		if (pool.length >= batchSize) pool = await emptyPool(pool);
 		console.log(`${pool.length} levels in pool`);
-	}, 0);
-	if (pool.length > 0) {
-		const task = await meilisearch.index(indexName).addDocuments(pool);
-		console.log(task);
-		pool = [];
-	}
+	}, offset);
+	if (pool.length > 0) pool = await emptyPool(pool);
 	console.log('Done.');
 }
 
