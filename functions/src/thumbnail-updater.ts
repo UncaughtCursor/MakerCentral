@@ -22,6 +22,11 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 		status: 'Success' | 'Error' | 'Removed',
 		buffer: Buffer | null,
 	};
+	const maxLevelsPerRequest = 100;
+
+	if (data.levelIDs.length > maxLevelsPerRequest) {
+		throw new Error(`Cannot generate thumbnails for more than ${maxLevelsPerRequest} levels at once.`);
+	}
 
 	// Download the thumbnails for the level IDs from the SMM2 server.
 	const results: ThumbnailDownloadResult[] = await Promise.all(data.levelIDs.map(async (levelID) => {
