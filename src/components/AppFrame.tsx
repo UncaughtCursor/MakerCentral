@@ -9,12 +9,17 @@ import PageHead from './DefaultHead';
 /**
  * A frame to put page content into.
  * @param props The props:
+ * * title (Optional) The title of the page.
+ * * description (Optional) The description of the page.
+ * * imageUrl (Optional) The image URL of the page.
+ * * contentContainerClass (Optional) The class of the content container to override the default.
  * * children: The page content.
  */
 function AppFrame(props: {
 	title?: string,
 	description?: string,
 	imageUrl?: string,
+	contentContainerClass?: string,
 	children: React.ReactNode,
 }) {
 	return (
@@ -27,7 +32,7 @@ function AppFrame(props: {
 			<main>
 				<div className="App">
 					<Header />
-					<div className="web-content-container">
+					<div className={props.contentContainerClass}>
 						{props.children}
 						<Footer />
 					</div>
@@ -60,5 +65,9 @@ function AppFrame(props: {
 		</>
 	);
 }
+
+AppFrame.defaultProps = {
+	contentContainerClass: 'web-content-container',
+};
 
 export default AppFrame;

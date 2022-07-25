@@ -9,19 +9,14 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
 function Home() {
 	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level.
 	For the first time in history.`;
-	const columnWidth = '600px';
 
 	return (
-		<AppFrame>
-			<div style={{
-				width: '90vw',
-				maxWidth: columnWidth,
-				margin: '0 auto',
-			}}
-			>
+		<AppFrame contentContainerClass="home-background">
+			<div className="home-image" />
+			<div className="home-info-container">
 				<h1 style={{
 					textAlign: 'left',
-					marginTop: '20px',
+					marginTop: '0',
 				}}
 				>{`Search and Bookmark Over ${marketedLevelDBSize} Levels`}
 				</h1>
