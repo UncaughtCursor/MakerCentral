@@ -42,7 +42,7 @@ function LevelSearchBar(props: SearchBarProps) {
 	const numberOfNonDefaultSettings = Object.entries(filterSettings)
 		.filter(([key]) => key !== 'page' && key !== 'searchMode')
 		.reduce((acc, [key, value]) => {
-			if (value !== defaultFilterSettings[key as keyof SearchFilterSettings]) {
+			if (value !== defaultFilterSettings[filterSettings.searchMode][key as keyof SearchFilterSettings]) {
 				return acc + 1;
 			}
 			return acc;
@@ -86,6 +86,7 @@ function LevelSearchBar(props: SearchBarProps) {
 			>
 				<SearchOptionsModal
 					template={optionsTemplate}
+					searchMode={filterSettings.searchMode}
 					initSettings={props.initialSettings}
 					onChange={(settings) => {
 						setFilterSettings({
@@ -191,7 +192,8 @@ export function getSearchUrl(query: string, filterSettings: SearchFilterSettings
 	const segments = Object.keys(filterSettings)
 		.filter((filterName) => {
 			const name = filterName as keyof typeof filterSettings;
-			return filterSettings[name] !== defaultFilterSettings[name];
+			return filterSettings[name] !== defaultFilterSettings[filterSettings.searchMode][name]
+				|| (name === 'searchMode' && filterSettings[name] !== 'Levels');
 		})
 		.map((filterName) => `${filterName}=${filterSettings[filterName as keyof typeof filterSettings]}`);
 

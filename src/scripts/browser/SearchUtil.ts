@@ -126,25 +126,44 @@ export type SortType = typeof sortTypes.Level[number]
 export interface SearchFilterSettings {
 	searchMode: 'Levels' | 'Users' | 'Worlds';
 	sortType: SortType;
-	difficulty: MCDifficulty | 'Any';
-	theme: SMM2Theme | 'Any';
-	gameStyle: SMM2GameStyle | 'Any';
-	tags: MCTag | 'Any';
+	difficulty?: MCDifficulty | 'Any';
+	theme?: SMM2Theme | 'Any';
+	gameStyle?: SMM2GameStyle | 'Any';
+	tags?: MCTag | 'Any';
 	worldSize?: WorldSize | 'Any';
 	makerId?: string;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
 
-export const defaultFilterSettings: SearchFilterSettings = {
-	searchMode: 'Levels',
-	sortType: 'By Likes',
-	sortOrder: 'Descending',
-	difficulty: 'Any',
-	theme: 'Any',
-	gameStyle: 'Any',
-	tags: 'Any',
-	page: 0,
+export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} = {
+	Levels: {
+		searchMode: 'Levels',
+		sortType: 'By Likes',
+		sortOrder: 'Descending',
+		difficulty: 'Any',
+		theme: 'Any',
+		gameStyle: 'Any',
+		tags: 'Any',
+		page: 0,
+	},
+	Users: {
+		searchMode: 'Users',
+		sortType: 'By Likes',
+		sortOrder: 'Descending',
+		page: 0,
+	},
+	Worlds: {
+		searchMode: 'Worlds',
+		difficulty: 'Any',
+		theme: 'Any',
+		gameStyle: 'Any',
+		tags: 'Any',
+		sortType: 'By Likes',
+		sortOrder: 'Descending',
+		worldSize: 'Any',
+		page: 0,
+	},
 };
 
 const MCTagOptions: MCTag[] = [
@@ -181,39 +200,37 @@ function getSortTypeMap(template: SearchOptionsTemplate): { [key in SortType]: k
 	return res;
 }
 
-// TODO: Different properties for each search mode.
-
 // Describes the filtering and sorting options for a search.
 // In this case, for levels.
 export const levelSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
 		{
-			label: 'Game Style',
-			property: 'gameStyle',
-			options: ['Any', ...MCGameStyles],
-		},
+			label: 'Game Style' as const,
+			property: 'gameStyle' as const,
+			options: ['Any', ...MCGameStyles] as const,
+		} as const,
 		{
-			label: 'Theme',
-			property: 'theme',
-			options: ['Any', ...MCThemes],
-		},
+			label: 'Theme' as const,
+			property: 'theme' as const,
+			options: ['Any', ...MCThemes] as const,
+		} as const,
 		{
 			label: 'Difficulty',
 			property: 'difficulty',
-			options: ['Any', ...MCDifficulties],
-		},
+			options: ['Any', ...MCDifficulties] as const,
+		} as const,
 		{
 			label: 'Tag',
 			property: 'tags',
-			options: ['Any', ...MCTagOptions],
-		},
+			options: ['Any', ...MCTagOptions] as const,
+		} as const,
 		{
 			label: 'Maker ID',
 			property: 'makerId',
 			options: ['Any'],
 			userVisible: false,
-		},
-	],
+		} as const,
+	] as const,
 	sortOptions: [
 		{
 			label: 'By Likes',
@@ -227,8 +244,8 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 			label: 'By Clear Rate',
 			property: 'clearRate',
 		},
-	],
-};
+	] as const,
+} as const;
 export const levelSortTypeMap = getSortTypeMap(levelSearchTemplate);
 
 export const userSearchTemplate: SearchOptionsTemplate = {
@@ -293,21 +310,21 @@ export const worldSearchTemplate: SearchOptionsTemplate = {
 export const worldSortTypeMap = getSortTypeMap(worldSearchTemplate);
 
 interface SearchOptionsFilter {
-	label: string;
-	property: keyof SearchFilterSettings;
-	options: (SearchFilterSettings[SearchOptionsFilter['property']] | 'Any')[];
-	userVisible?: boolean;
+	readonly label: string;
+	readonly property: keyof SearchFilterSettings;
+	readonly options: Readonly<(SearchFilterSettings[SearchOptionsFilter['property']] | 'Any')[]>;
+	readonly userVisible?: boolean;
 }
 
 interface SearchOptionsSort {
-	label: SortType;
-	property: keyof MCLevelDocData | keyof MCUserDocData | keyof MCWorldDocData;
-	userVisible?: boolean;
+	readonly label: SortType;
+	readonly property: keyof MCLevelDocData | keyof MCUserDocData | keyof MCWorldDocData;
+	readonly userVisible?: boolean;
 }
 
 export interface SearchOptionsTemplate {
-	filterOptions: SearchOptionsFilter[];
-	sortOptions: SearchOptionsSort[];
+	filterOptions: readonly SearchOptionsFilter[];
+	sortOptions: readonly SearchOptionsSort[];
 }
 
 export type SearchResults = MeiliSearchResults<MCLevelDocData>

@@ -53,7 +53,7 @@ function LevelBrowser() {
 							history.push(getSearchUrl(query, filterSettings));
 						}}
 						initialVal=""
-						initialSettings={defaultFilterSettings}
+						initialSettings={defaultFilterSettings.Levels}
 					/>
 				</div>
 				{/* <LevelCategoryFeed extraQueryConstraints={[]} /> */}

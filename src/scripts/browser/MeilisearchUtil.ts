@@ -63,7 +63,8 @@ export async function searchLevels(
 	const filter = Object.keys(searchData).filter(
 		(paramName) => filterParamNames[searchData.searchMode].includes(paramName)
 			&& searchData[paramName as keyof SearchParams]
-			!== defaultFilterSettings[paramName as keyof typeof defaultFilterSettings],
+			!== defaultFilterSettings[searchData.searchMode][paramName as
+					keyof typeof defaultFilterSettings[SearchMode]],
 	).map(
 		(paramName) => `${paramName} = "${searchData[paramName as keyof SearchParams]}"`,
 	);

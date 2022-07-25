@@ -5,12 +5,13 @@ import { SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
 import SuperWorldPreview from '../browser/SuperWorldPreview';
+import UserPreview from '../browser/UserPreview';
 import LevelSearchPageControl from './LevelSearchPageControl';
 
 // A property for each search result data type to be used to identify the type of result.
 const uniqueProperty: {[key in SearchMode]: string} = {
 	Levels: 'theme',
-	Users: 'world',
+	Users: 'makerPoints',
 	Worlds: 'levelText',
 };
 
@@ -95,7 +96,12 @@ function LevelSearchResultView(props: {
 						// If the result is a user...
 						if ((result as MCUserDocData)[uniqueProperty.Users as keyof MCUserDocData]) {
 							const user = result as MCUserDocData;
-							return null; // TODO: Implement user search results.
+							return (
+								<UserPreview
+									userData={user}
+									key={user.id}
+								/>
+							);
 						}
 
 						// If the result is a world...

@@ -1,10 +1,11 @@
 import {
 	defaultFilterSettings,
 	SearchFilterSettings,
+	SearchMode,
 	SearchOptionsTemplate,
 	sortOrders,
 } from '@scripts/browser/SearchUtil';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SelectInput from '../controls/SelectInput';
 import TriggerButton from '../controls/TriggerButton';
 
@@ -12,17 +13,21 @@ import TriggerButton from '../controls/TriggerButton';
  * Settings for the level search feature.
  * @param props The props:
  * * template The template to use that determines the options.
+ * * searchMode: The current search mode to use.
  * * initSettings: The initial settings to use.
  * * onChange: The function to execute whenever the settings to change.
  * * onClose: The function to execute whenever the settings are closed.
  */
 function SearchOptionsModal(props: {
 	template: SearchOptionsTemplate;
+	searchMode: SearchMode;
 	initSettings: SearchFilterSettings,
 	onChange: (settings: SearchFilterSettings) => void,
 	onClose: () => void,
 }) {
 	const [settings, setSettings] = useState(props.initSettings);
+
+	useEffect(reset, [props.searchMode]);
 
 	return (
 		<div className="search-settings">
@@ -93,14 +98,20 @@ function SearchOptionsModal(props: {
 				<TriggerButton
 					text="Reset"
 					type="dark"
-					onClick={() => {
-						setSettings(defaultFilterSettings);
-						props.onChange(defaultFilterSettings);
-					}}
+					onClick={reset}
 				/>
 			</div>
 		</div>
 	);
+
+	/**
+	 * Resets the settings to the default values.
+	 */
+	function reset() {
+		console.log(JSON.stringify(props.searchMode));
+		setSettings(defaultFilterSettings[props.searchMode]);
+		props.onChange(defaultFilterSettings[props.searchMode]);
+	}
 }
 
 export default SearchOptionsModal;

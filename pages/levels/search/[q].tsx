@@ -4,7 +4,7 @@ import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSear
 import { useRouter } from 'next/router';
 import React from 'react';
 import {
-	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchResults,
+	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchMode, SearchResults,
 } from '@scripts/browser/SearchUtil';
 
 export interface SearchParams extends SearchFilterSettings {
@@ -63,13 +63,18 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 export default SearchResultsPage;
 
+interface SearchParamsRaw extends Partial<SearchParams> {
+	q: string;
+}
+
 /**
  * Fetches level data at request time.
  * @param context The context of the request. Includes the URL parameters.
  * @returns The props to render at request time.
  */
-export async function getServerSideProps(context: { query: any }) {
-	const queryData = { ...defaultFilterSettings, ...context.query } as SearchParams;
+export async function getServerSideProps(context: { query: SearchParamsRaw }) {
+	const searchMode: SearchMode = context.query.searchMode ? context.query.searchMode : 'Levels';
+	const queryData = { ...defaultFilterSettings[searchMode], ...context.query };
 	if (queryData.q === '_') queryData.q = '';
 
 	const displayRes = await getLevelResultData(queryData);
