@@ -19,7 +19,19 @@ export async function getLevelResultData(
 	levelThumbnailUrlObj?: {[key: string]: string},
 	worldThumbnailUrlObjs?: {[key: string]: string}[],
 }> {
-	const results = await searchLevels(searchParams, levelSortTypeMap, false);
+	const sortTypeMap = (() => {
+		switch (searchParams.searchMode) {
+		case 'Levels':
+			return levelSortTypeMap;
+		case 'Users':
+			return userSortTypeMap;
+		case 'Worlds':
+			return worldSortTypeMap;
+		default:
+			throw new Error(`Unknown search mode: ${searchParams.searchMode}`);
+		}
+	})();
+	const results = await searchLevels(searchParams, sortTypeMap, false);
 	let levelThumbnailUrlObj: {[key: string]: string} | undefined;
 	let worldThumbnailUrlObj: {[key: string]: string}[] | undefined;
 
@@ -130,6 +142,10 @@ export interface SearchFilterSettings {
 	theme?: SMM2Theme | 'Any';
 	gameStyle?: SMM2GameStyle | 'Any';
 	tags?: MCTag | 'Any';
+	avgDifficulty?: MCDifficulty | 'Any';
+	avgTheme?: SMM2Theme | 'Any';
+	avgGameStyle?: SMM2GameStyle | 'Any';
+	avgTags?: MCTag | 'Any';
 	worldSize?: WorldSize | 'Any';
 	makerId?: string;
 	sortOrder: 'Ascending' | 'Descending';
@@ -155,10 +171,10 @@ export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} 
 	},
 	Worlds: {
 		searchMode: 'Worlds',
-		difficulty: 'Any',
-		theme: 'Any',
-		gameStyle: 'Any',
-		tags: 'Any',
+		avgDifficulty: 'Any',
+		avgTheme: 'Any',
+		avgGameStyle: 'Any',
+		avgTags: 'Any',
 		sortType: 'By Likes',
 		sortOrder: 'Descending',
 		worldSize: 'Any',
@@ -252,8 +268,8 @@ export const userSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [],
 	sortOptions: [
 		{
-			label: 'By Maker Points',
-			property: 'makerPoints',
+			label: 'By Likes',
+			property: 'likes',
 		},
 		{
 			label: 'By Number of Levels',
@@ -267,22 +283,22 @@ export const worldSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
 		{
 			label: 'Game Style',
-			property: 'gameStyle',
+			property: 'avgGameStyle',
 			options: ['Any', ...MCGameStyles],
 		},
 		{
 			label: 'Theme',
-			property: 'theme',
+			property: 'avgTheme',
 			options: ['Any', ...MCThemes],
 		},
 		{
 			label: 'Difficulty',
-			property: 'difficulty',
+			property: 'avgDifficulty',
 			options: ['Any', ...MCDifficulties],
 		},
 		{
 			label: 'Tag',
-			property: 'tags',
+			property: 'avgTags',
 			options: ['Any', ...MCTagOptions],
 		},
 		{

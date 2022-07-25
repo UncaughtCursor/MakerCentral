@@ -140,118 +140,158 @@ export async function setSearchSuggestions() {
 
 /**
  * Sets the index settings. Use when they get reset.
+ * WARNING: Make sure no indexing is happening while this is running.
  */
 export async function setSearchSettings() {
 	const levelIndex = meilisearch.index('levels');
 	const popularLevelIndex = meilisearch.index('popular-levels');
-	// const userIndex = meilisearch.index('users');
+	const userIndex = meilisearch.index('users');
 	const worldIndex = meilisearch.index('worlds');
+	const suggestionsIndex = meilisearch.index('level-suggestions');
+
+	const updateLevelIndex = false;
+	const updatePopularLevelIndex = false;
+	const updateUserIndex = true;
+	const updateWorldIndex = false;
+	const updateSuggestionsIndex = false;
 
 	console.log('Setting settings...');
 
-	const levelSearchableAttributes = [
-		'name',
-		'description',
-	];
-	const worldSearchableAttributes = [
-		'levelText',
-	];
-	console.log(await levelIndex.updateSearchableAttributes(levelSearchableAttributes));
-	console.log(await popularLevelIndex.updateSearchableAttributes(levelSearchableAttributes));
-	console.log(await worldIndex.updateSearchableAttributes(worldSearchableAttributes));
-
-	const levelFilterableAttributes = [
-		'uploadTime',
-		'addedTime',
-		'makerName',
-		'makerId',
-		'difficulty',
-		'gameStyle',
-		'theme',
-		'numLikes',
-		'numPlays',
-		'likeToPlayRatio',
-		'clearRate',
-		'tags',
-		'isPromotedByPatron',
-	];
-	const worldFilterableAttributes = [
-		'avgUploadTime',
-		'avgDifficulty',
-		'avgClearRate',
-		'avgGameStyle',
-		'avgTheme',
-		'avgLikes',
-		'avgPlays',
-		'avgLikeToPlayRatio',
-		'avgTags',
-		'numLevels',
-		'numWorlds',
-		'created',
-	];
-
-	console.log(await levelIndex.updateFilterableAttributes(levelFilterableAttributes));
-	console.log(await popularLevelIndex.updateFilterableAttributes(levelFilterableAttributes));
-	console.log(await worldIndex.updateFilterableAttributes(worldFilterableAttributes));
-
-	const levelSortableAttributes = [
-		'uploadTime',
-		'addedTime',
-		'difficulty',
-		'gameStyle',
-		'theme',
-		'numLikes',
-		'numPlays',
-		'likeToPlayRatio',
-		'clearRate',
-	];
-	const worldSortableAttributes = [
-		'avgClearRate',
-		'avgLikes',
-		'avgLikeToPlayRatio',
-		'created',
-	];
+	if (updateLevelIndex || updatePopularLevelIndex) {
+		const levelSearchableAttributes = [
+			'name',
+			'description',
+		];
+		const levelFilterableAttributes = [
+			'uploadTime',
+			'addedTime',
+			'makerName',
+			'makerId',
+			'difficulty',
+			'gameStyle',
+			'theme',
+			'numLikes',
+			'numPlays',
+			'likeToPlayRatio',
+			'clearRate',
+			'tags',
+			'isPromotedByPatron',
+		];
+		const levelSortableAttributes = [
+			'uploadTime',
+			'addedTime',
+			'difficulty',
+			'gameStyle',
+			'theme',
+			'numLikes',
+			'numPlays',
+			'likeToPlayRatio',
+			'clearRate',
+		];
+		const levelRankingRules = [
+			'words',
+			'typo',
+			'sort',
+			'numLikes:desc',
+			'likeToPlayRatio:desc',
+			'attribute',
+			'proximity',
+			'exactness',
+		];
 	
-	console.log(await levelIndex.updateSortableAttributes(levelSortableAttributes));
-	console.log(await popularLevelIndex.updateSortableAttributes(levelSortableAttributes));
-	console.log(await worldIndex.updateSortableAttributes(worldSortableAttributes));
+		if (updateLevelIndex) {
+			console.log(await levelIndex.updateSearchableAttributes(levelSearchableAttributes));
+			console.log(await levelIndex.updateFilterableAttributes(levelFilterableAttributes));
+			console.log(await levelIndex.updateSortableAttributes(levelSortableAttributes));
+			console.log(await levelIndex.updateRankingRules(levelRankingRules));
+		}
+		if (updatePopularLevelIndex) {
+			console.log(await popularLevelIndex.updateSearchableAttributes(levelSearchableAttributes));
+			console.log(await popularLevelIndex.updateFilterableAttributes(levelFilterableAttributes));
+			console.log(await popularLevelIndex.updateSortableAttributes(levelSortableAttributes));
+			console.log(await popularLevelIndex.updateRankingRules(levelRankingRules));
+		}
+	}
 
-	const levelRankingRules = [
-		'words',
-		'typo',
-		'sort',
-		'numLikes:desc',
-		'likeToPlayRatio:desc',
-		'attribute',
-		'proximity',
-		'exactness',
-	];
-	const worldRankingRules = [
-		'words',
-		'typo',
-		'sort',
-		'avgLikes:desc',
-		'avgLikeToPlayRatio:desc',
-		'attribute',
-		'proximity',
-		'exactness',
-	];
+	if (updateUserIndex) {
+		const userSearchableAttributes = [
+			'name',
+		];
+		const userFilterableAttributes: string[] = [];
+		const userSortableAttributes = [
+			'likes',
+			'levels'
+		];
+		const userRankingRules = [
+			'words',
+			'typo',
+			'sort',
+			'likes:desc',
+			'attribute',
+			'proximity',
+			'exactness',
+		];
 
-	console.log(await levelIndex.updateRankingRules(levelRankingRules));
-	console.log(await popularLevelIndex.updateRankingRules(levelRankingRules));
-	console.log(await worldIndex.updateRankingRules(worldRankingRules));
+		console.log(await userIndex.updateSearchableAttributes(userSearchableAttributes));
+		console.log(await userIndex.updateFilterableAttributes(userFilterableAttributes));
+		console.log(await userIndex.updateSortableAttributes(userSortableAttributes));
+		console.log(await userIndex.updateRankingRules(userRankingRules));
+		
 
-	const suggestionsIndex = meilisearch.index('level-suggestions');
+	}
 
-	console.log(await suggestionsIndex.updateRankingRules([
-		'words',
-		'typo',
-		'numInstances:desc',
-		'sort',
-		'attribute',
-		'proximity',
-		'exactness',
-	]));
+	if (updateWorldIndex) {
+		const worldSearchableAttributes = [
+			'levelText',
+		];
+		const worldFilterableAttributes = [
+			'avgUploadTime',
+			'avgDifficulty',
+			'avgClearRate',
+			'avgGameStyle',
+			'avgTheme',
+			'avgLikes',
+			'avgPlays',
+			'avgLikeToPlayRatio',
+			'avgTags',
+			'numLevels',
+			'numWorlds',
+			'created',
+		];
+		const worldSortableAttributes = [
+			'avgClearRate',
+			'avgLikes',
+			'avgLikeToPlayRatio',
+			'created',
+		];
+		const worldRankingRules = [
+			'words',
+			'typo',
+			'sort',
+			'avgLikes:desc',
+			'avgLikeToPlayRatio:desc',
+			'attribute',
+			'proximity',
+			'exactness',
+		];
+		
+		console.log(await worldIndex.updateSearchableAttributes(worldSearchableAttributes));
+		console.log(await worldIndex.updateFilterableAttributes(worldFilterableAttributes));	
+		console.log(await worldIndex.updateSortableAttributes(worldSortableAttributes));
+		console.log(await worldIndex.updateRankingRules(worldRankingRules));
+	}
+
+	if (updateSuggestionsIndex) {
+		console.log(await suggestionsIndex.updateRankingRules([
+			'words',
+			'typo',
+			'numInstances:desc',
+			'sort',
+			'attribute',
+			'proximity',
+			'exactness',
+		]));
+	}
 
 	console.log('Settings set.');
 }

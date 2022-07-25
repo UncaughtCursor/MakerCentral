@@ -25,6 +25,7 @@ function SearchOptionsModal(props: {
 	onChange: (settings: SearchFilterSettings) => void,
 	onClose: () => void,
 }) {
+	const [isFirstEvent, setIsFirstEvent] = useState(true);
 	const [settings, setSettings] = useState(props.initSettings);
 
 	useEffect(reset, [props.searchMode]);
@@ -108,7 +109,10 @@ function SearchOptionsModal(props: {
 	 * Resets the settings to the default values.
 	 */
 	function reset() {
-		console.log(JSON.stringify(props.searchMode));
+		if (isFirstEvent) {
+			setIsFirstEvent(false);
+			return;
+		}
 		setSettings(defaultFilterSettings[props.searchMode]);
 		props.onChange(defaultFilterSettings[props.searchMode]);
 	}

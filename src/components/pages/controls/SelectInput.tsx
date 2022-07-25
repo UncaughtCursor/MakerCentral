@@ -9,6 +9,7 @@ import React, { SyntheticEvent } from 'react';
  * * onSelect: The function to execute when the user makes a different selection.
  * The first argument is the selected index, and the second is the selection as a string.
  * * selectedIndex (Optional): Overrides the selected index state.
+ * * className (Optional): The class name to add to the control to provide custom styling.
  */
 function SelectInput(props: {
 	label?: string,
@@ -16,6 +17,7 @@ function SelectInput(props: {
 	initSelectedIndex: number,
 	onSelect: (arg0: number, arg1: string) => void,
 	selectedIndex?: number | undefined,
+	className?: string,
 }) {
 	const usedSelectedIndex = props.selectedIndex !== undefined
 		? props.selectedIndex : props.initSelectedIndex;
@@ -29,7 +31,7 @@ function SelectInput(props: {
 				</p>
 			)}
 			<select
-				className="select-input"
+				className={props.className === '' ? 'select-input' : `select-input ${props.className}`}
 				onChange={(e: SyntheticEvent) => {
 					const el = e.nativeEvent.target as HTMLSelectElement;
 					props.onSelect(el.selectedIndex, el.value);
@@ -63,6 +65,7 @@ function SelectInput(props: {
 SelectInput.defaultProps = {
 	label: '',
 	selectedIndex: undefined,
+	className: '',
 };
 
 export default SelectInput;

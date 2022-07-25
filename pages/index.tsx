@@ -1,6 +1,5 @@
 import AppFrame from '@components/AppFrame';
-import LandingPageCard from '@components/main/landing-page/LandingPageCard';
-import Link from 'next/link';
+import { marketedLevelDBSize } from '@data/constants';
 import React from 'react';
 import ActionButton from '../src/components/pages/controls/ActionButton';
 
@@ -8,7 +7,7 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
  * The landing page of the site.
  */
 function Home() {
-	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level ever uploaded.
+	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level.
 	For the first time in history.`;
 	const columnWidth = '600px';
 
@@ -24,7 +23,7 @@ function Home() {
 					textAlign: 'left',
 					marginTop: '20px',
 				}}
-				>Coming Soon: Search and Bookmark Over 26 Million Levels
+				>{`Search and Bookmark Over ${marketedLevelDBSize} Levels`}
 				</h1>
 				<p style={{
 					textAlign: 'left',
@@ -47,7 +46,7 @@ function Home() {
 					>
 						<ActionButton
 							to="/levels"
-							text="Try the Demo"
+							text="Try It Now"
 						/>
 					</div>
 					<a href="https://medium.com/@maker-central/announcing-a-site-to-search-26-million-mario-maker-2-levels-ddcbdec7ba5a">Read More</a>

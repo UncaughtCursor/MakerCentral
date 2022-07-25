@@ -77,6 +77,8 @@ export async function getServerSideProps(context: { query: SearchParamsRaw }) {
 	const queryData = { ...defaultFilterSettings[searchMode], ...context.query };
 	if (queryData.q === '_') queryData.q = '';
 
+	console.log(searchMode, queryData);
+
 	const displayRes = await getLevelResultData(queryData);
 
 	return {

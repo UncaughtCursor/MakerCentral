@@ -109,16 +109,22 @@ function LevelSearchBar(props: SearchBarProps) {
 						onBlur={() => { setIsFocused(false); }}
 					/>
 					{/* TODO: Reset the settings appropriately when the search mode changes. */}
-					<SelectInput
-						initSelectedIndex={SearchModes.indexOf(filterSettings.searchMode)}
-						choices={SearchModes}
-						onSelect={(index) => {
-							setFilterSettings({
-								...filterSettings,
-								searchMode: SearchModes[index],
-							});
-						}}
-					/>
+					<div style={{
+						marginRight: '5px',
+					}}
+					>
+						<SelectInput
+							initSelectedIndex={SearchModes.indexOf(filterSettings.searchMode)}
+							choices={SearchModes}
+							onSelect={(index) => {
+								setFilterSettings({
+									...filterSettings,
+									searchMode: SearchModes[index],
+								});
+							}}
+							className="search-bar-dropdown"
+						/>
+					</div>
 					<div style={{
 						position: 'relative',
 						height: '34px',

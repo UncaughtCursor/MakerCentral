@@ -60,19 +60,25 @@ export async function searchLevels(
 	// Get the search parameters to use. This is done by filtering out the
 	// parameters that don't apply to the search mode, then mapping the
 	// remaining parameters to equality strings for the search.
-	const filter = Object.keys(searchData).filter(
-		(paramName) => filterParamNames[searchData.searchMode].includes(paramName)
+	// eslint-disable-next-line no-array-constructor
+	const filter = (new Array<string>()).concat(...(
+		(Object.keys(searchData) as (keyof typeof searchData)[]).filter(
+			(paramName) => filterParamNames[searchData.searchMode].includes(paramName)
 			&& searchData[paramName as keyof SearchParams]
 			!== defaultFilterSettings[searchData.searchMode][paramName as
 					keyof typeof defaultFilterSettings[SearchMode]],
-	).map(
-		(paramName) => `${paramName} = "${searchData[paramName as keyof SearchParams]}"`,
-	);
+		).map(
+			(paramName) => getSearchFilterString(
+paramName as SearchFilterKey,
+			searchData[paramName] as SearchParams[SearchFilterKey],
+			),
+		)));
 
 	// Abbreviation used for ascending/descending sort order.
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
 	// Sort substring to use for the search.
+	console.log(sortTypeMap[searchData.sortType]);
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
 	// Index name for the search.
@@ -94,9 +100,8 @@ export async function searchLevels(
 
 	// Perform the search and return the results.
 	const res = await client.index(indexName).search(searchData.q, {
-		// TODO: Enable filtering and sorting for the other search modes.
-		filter: searchData.searchMode === 'Levels' ? filter : undefined,
-		sort: searchData.searchMode === 'Levels' ? sort : undefined,
+		filter,
+		sort,
 		offset: searchData.page * numResultsPerPage,
 		limit: numResultsPerPage + 1,
 	});
@@ -119,4 +124,43 @@ export async function getSuggestions(text: string): Promise<string[]> {
 		limit: 6,
 	});
 	return res.hits.map((suggestion) => suggestion.word);
+}
+
+type Operator = '=' | '!=' | '>' | '>=' | '<' | '<=';
+type FilterExcludedSearchParams = 'q' | 'searchMode' | 'sortType' | 'sortOrder' | 'page';
+type SearchParamKey = keyof (SearchParams | FullSearchParams);
+type SearchFilterKey = Exclude<SearchParamKey, FilterExcludedSearchParams>
+type PropertyAccessorString = `[${string}]` | `.${string}`;
+type SearchFilterString = `${keyof MCLevelDocData | keyof MCUserDocData | keyof MCWorldDocData}${PropertyAccessorString | ''} ${Operator} ${string}`;
+
+/**
+ * Gets the filter string for the provided search parameter.
+ * @param key The search parameter's key.
+ * @param value The search parameter's value.
+ * @returns The filter string.
+ */
+function getSearchFilterString(
+	key: SearchFilterKey,
+	value: SearchParams[SearchFilterKey],
+): SearchFilterString[] {
+	if (key === 'worldSize') {
+		switch (value) {
+		case 'Small':
+			return ['numLevels <= 12'];
+		case 'Medium':
+			return ['numLevels >= 13', 'numLevels <= 24'];
+		case 'Large':
+			return ['numLevels >= 25'];
+		default:
+			throw new Error(`Invalid world size: ${value}`);
+		}
+	}
+	if (key === 'avgDifficulty' || key === 'avgTheme' || key === 'avgGameStyle' || key === 'avgTags') {
+		// Include in the search results if the desired property
+		// shows up in this percentage of the world's levels.
+		// FIXME: This does not work.
+		const prominencePercentage = 0.5;
+		return [`${key}.${value} >= ${prominencePercentage}`];
+	}
+	return [`${key} = "${value}"`];
 }

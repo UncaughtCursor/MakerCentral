@@ -108,3 +108,7 @@
 	position: relative;
 	top: -1px;
 }
+
+.search-bar-dropdown {
+	padding: 5px 10px;
+}
