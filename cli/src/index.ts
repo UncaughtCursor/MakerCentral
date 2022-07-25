@@ -19,6 +19,7 @@ import { DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme } 
 import streamFileUntil from './util/SteamFileUntil';
 import { downloadStorageDir } from './StorageManager';
 import path from 'path';
+import generateThumbnailGrid from './ThumbnailGridGenerator';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -230,6 +231,9 @@ yargs.usage('$0 command')
 				offset,
 			});
 		}
+	})
+	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
+		await generateThumbnailGrid(20, 40);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
