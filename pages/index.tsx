@@ -9,10 +9,24 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
 function Home() {
 	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level.
 	For the first time in history.`;
+	const bgImgWidthPx = 1280;
+	const bgImgHeightPx = 1440;
+
+	const viewportWidth = window.innerWidth;
+	const viewportHeight = window.innerHeight;
+
+	const bgImgWidth = bgImgWidthPx + Math.max(bgImgWidthPx, viewportWidth);
+	const bgImgHeight = bgImgHeightPx + Math.max(bgImgHeightPx, viewportHeight);
 
 	return (
 		<AppFrame contentContainerClass="home-background">
-			<div className="home-image" />
+			<div
+				className="home-image"
+				style={{
+					width: `${bgImgWidth}px`,
+					height: `${bgImgHeight}px`,
+				}}
+			/>
 			<div className="home-info-container">
 				<h1 style={{
 					textAlign: 'left',
