@@ -9,11 +9,11 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
 function Home() {
 	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level.
 	For the first time in history.`;
-	const bgImgWidthPx = 1280;
+	const bgImgWidthPx = 2560;
 	const bgImgHeightPx = 1440;
 
-	const viewportWidth = window.innerWidth;
-	const viewportHeight = window.innerHeight;
+	const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+	const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
 
 	const bgImgWidth = bgImgWidthPx + Math.max(bgImgWidthPx, viewportWidth);
 	const bgImgHeight = bgImgHeightPx + Math.max(bgImgHeightPx, viewportHeight);

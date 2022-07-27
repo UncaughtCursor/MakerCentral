@@ -20,6 +20,7 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 	const levelIds = await getPopularLevelIds(numThumbnails);
 
 	console.log('Downloading thumbnails...');
+	// TODO: Max batch size of 5000.
 	const thumbnails = await Promise.all(levelIds.map(getLevelThumbnailUrl));
 
 	console.log('Creating thumbnail grid...');

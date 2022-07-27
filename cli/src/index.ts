@@ -233,7 +233,7 @@ yargs.usage('$0 command')
 		}
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
-		await generateThumbnailGrid(20, 40);
+		await generateThumbnailGrid(100, 100); // Top 10K
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

@@ -4,6 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { discordLink } from '@scripts/site/FirebaseUtil';
 
 /**
  * The navigation menu in the site header.
@@ -14,7 +15,7 @@ function Navbar() {
 			<Navlink to="/" text="Home" />
 			<Navlink to="/levels" text="Browse Levels" />
 			<Navlink to="/music-level-studio" text="Music Level Studio" />
-			<Navlink to="/news" text="News" />
+			<Navlink to={discordLink} openInNewTab text="Discord" />
 			<Navlink to="/about" text="About" />
 		</div>
 	);
@@ -25,8 +26,11 @@ function Navbar() {
  * @param props.text The text to display.
  * @param props.to The destination path when clicked.
  * @param props.onClick (Optional) The function to execute when clicked.
+ * @param props.openInNewTab (Optional) Whether or not to open the link
+ * in a new tab when clicked.
  */
-function Navlink(props: { to?: string | null; text: string; onClick?: () => void }) {
+function Navlink(props: { to?: string | null, text: string,
+	onClick?: () => void, openInNewTab?: boolean }) {
 	// Allow sub-pages to light up the corresponding link unless it's the home page.
 	const router = useRouter();
 	const isMatch = isRouteMatch(props.to!, props.to === '/');
@@ -36,6 +40,8 @@ function Navlink(props: { to?: string | null; text: string; onClick?: () => void
 				<a
 					className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
 					onClick={props.onClick}
+					target={props.openInNewTab ? '_blank' : undefined}
+					rel={props.openInNewTab ? 'noopener noreferrer' : undefined}
 				>
 					{props.text}
 				</a>
@@ -69,6 +75,7 @@ function Navlink(props: { to?: string | null; text: string; onClick?: () => void
 Navlink.defaultProps = {
 	onClick: () => {},
 	to: null,
+	openInNewTab: false,
 };
 
 export default Navbar;

@@ -10,7 +10,6 @@
 	top: 50vh;
 	left: max(80vw - 400px, 0px);
 	transform: translateY(-50%);
-	margin: 10px;
 }
 
 @media (max-width: 570px) {
@@ -33,9 +32,9 @@
 	background-image: url(/thumbnail-grid.png);
 	background-repeat: repeat;
 	filter: blur(2.5px);
-	width: calc(1280px * 2);
+	width: calc(2560px * 2);
 	height: calc(1440px * 2);
-	animation: scroll-home-background 180s linear infinite;
+	animation: scroll-home-background 240s linear infinite;
 }
 
 @keyframes scroll-home-background {
@@ -43,6 +42,6 @@
 		transform: translateX(0px) translateY(0px);
 	}
 	100% {
-		transform: translateX(-1280px) translateY(-1440px);
+		transform: translateX(-2560px) translateY(-1440px);
 	}
 }
