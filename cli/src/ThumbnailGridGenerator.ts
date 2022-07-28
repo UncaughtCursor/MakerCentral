@@ -2,6 +2,7 @@ import { Stream } from "stream";
 import { storage } from "./FirebaseUtil";
 import { meilisearch } from "./SearchManager";
 import sharp from 'sharp';
+import chunk from "chunk";
 
 /**
  * Generates a thumbnail grid to be displayed on the site's home page.
@@ -20,8 +21,7 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 	const levelIds = await getPopularLevelIds(numThumbnails);
 
 	console.log('Downloading thumbnails...');
-	// TODO: Max batch size of 5000.
-	const thumbnails = await Promise.all(levelIds.map(getLevelThumbnailUrl));
+	const thumbnails = await getThumbnails(levelIds);
 
 	console.log('Creating thumbnail grid...');
 
@@ -33,7 +33,7 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 			width: thumbWidth * width,
 			height: thumbHeight * height,
 			channels: 4,
-			background: { r: 255, g: 255, b: 255, alpha: 0 },
+			background: { r: 0, g: 0, b: 0, alpha: 0 },
 		}
 	});
 
@@ -43,8 +43,11 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 		const x = i % width;
 		const y = Math.floor(i / width);
 
+		const img = thumbnails[i];
+		if (img === null) continue;
+
 		composites.push({
-			input: thumbnails[i],
+			input: img,
 			left: x * thumbWidth,
 			top: y * thumbHeight,
 		});
@@ -86,15 +89,21 @@ async function getPopularLevelIds(numLevels: number): Promise<string[]> {
 /**
  * Downloads a thumbnail for a level.
  * @param id The level's course ID.
- * @returns A Promise that resolves to a buffer containing the thumbnail.
+ * @returns A Promise that resolves to a buffer containing the thumbnail or null if not found.
  */
-async function getLevelThumbnailUrl(id: string): Promise<Buffer> {
+async function getLevelThumbnailUrl(id: string): Promise<Buffer | null> {
 	const levelThumbnailDir = 'game-level-thumb/small';
 	const levelThumbnailSuffix = '_64x36';
 
 	const thumbnailStorageUrl = `${levelThumbnailDir}/${id}${levelThumbnailSuffix}.png`;
-	const buffer = await streamToBuffer(storage.bucket().file(thumbnailStorageUrl).createReadStream());
-	return buffer;
+	try {
+		const buffer = await streamToBuffer(storage.bucket().file(thumbnailStorageUrl).createReadStream());
+		return buffer;
+	}
+	catch (err) {
+		console.error(err);
+		return null;
+	}
 }
 
 async function streamToBuffer(stream: Stream): Promise<Buffer> {
@@ -106,4 +115,23 @@ async function streamToBuffer(stream: Stream): Promise<Buffer> {
         stream.on("error", err => reject(`error converting stream - ${err}`));
 
     });
-} 
+}
+
+/**
+ * Downloads level thumbnails to an array of buffers.
+ * @param ids The IDs of the levels to download.
+ * @returns A Promise that resolves to an array of buffers containing the thumbnails.
+ * Any thumbnails that are not found are null.
+ */
+async function getThumbnails(ids: string[]): Promise<(Buffer | null)[]> {
+	const batchSize = 1000;
+	const chunks = chunk(ids, batchSize);
+
+	const thumbnails = [];
+	for (const chunk of chunks) {
+		const thumbnailsChunk = await Promise.all(chunk.map(getLevelThumbnailUrl));
+		thumbnails.push(...thumbnailsChunk);
+	}
+
+	return thumbnails;
+}
