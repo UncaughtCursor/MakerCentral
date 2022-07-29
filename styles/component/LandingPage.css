@@ -29,9 +29,10 @@
 }
 
 .home-image {
-	background-image: url(/thumbnail-grid.png);
+	background-image: url(/thumbnail-grid.jpg);
+	background-size: 2560px 1440px;
 	background-repeat: repeat;
-	filter: blur(2.5px);
+	filter: blur(2px);
 	width: calc(2560px * 2);
 	height: calc(1440px * 2);
 	animation: scroll-home-background 240s linear infinite;

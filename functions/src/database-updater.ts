@@ -263,9 +263,9 @@ export const updateDB = functions.runWith({
 		await indexDocs('levels', progress.levelsToBeIndexed);
 		progress.levelsToBeIndexed = [];
 		progress.lastLevelIndexTime = Date.now();
+		const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
+		await indexDocs('popular-levels', popularLevels);
 	}
-	const popularLevels = MCBrowserLevels.filter(level => level.numLikes >= 25);
-	await indexDocs('popular-levels', popularLevels);
 
 	const MCBrowserUsers = fullUserProfiles.map(user => {
 		return MCRawUserDocToMCUserDoc(user);
