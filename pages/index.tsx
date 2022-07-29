@@ -7,7 +7,7 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
  * The landing page of the site.
  */
 function Home() {
-	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level.
+	const text = `Text search, browse, and bookmark every Mario Maker 2 level.
 	For the first time in history.`;
 	const bgImgWidthPx = 2560;
 	const bgImgHeightPx = 1440;

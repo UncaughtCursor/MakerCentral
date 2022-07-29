@@ -32,7 +32,7 @@ function SearchOptionsModal(props: {
 
 	return (
 		<div className="search-settings">
-			<h3>Filters</h3>
+			{props.template.filterOptions.length > 0 && <h3>Filters</h3>}
 			<div className="search-settings-dropdown-container">
 				{props.template.filterOptions.filter(
 					(filter) => filter.userVisible === true || filter.userVisible === undefined,
@@ -55,7 +55,7 @@ function SearchOptionsModal(props: {
 						/>
 					))}
 			</div>
-			<h3>Sort</h3>
+			{props.template.sortOptions.length > 0 && <h3>Sort</h3>}
 			<div className="search-settings-dropdown-container">
 				<SelectInput
 					label="Sort Type"
