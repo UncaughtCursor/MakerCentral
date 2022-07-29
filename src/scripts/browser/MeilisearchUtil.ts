@@ -78,7 +78,6 @@ paramName as SearchFilterKey,
 	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
 
 	// Sort substring to use for the search.
-	console.log(sortTypeMap[searchData.sortType]);
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
 	// Index name for the search.

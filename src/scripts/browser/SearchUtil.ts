@@ -281,7 +281,8 @@ export const userSortTypeMap = getSortTypeMap(userSearchTemplate);
 
 export const worldSearchTemplate: SearchOptionsTemplate = {
 	filterOptions: [
-		{
+		// TODO: Make these work
+		/* {
 			label: 'Game Style',
 			property: 'avgGameStyle',
 			options: ['Any', ...MCGameStyles],
@@ -300,7 +301,7 @@ export const worldSearchTemplate: SearchOptionsTemplate = {
 			label: 'Tag',
 			property: 'avgTags',
 			options: ['Any', ...MCTagOptions],
-		},
+		}, */
 		{
 			label: 'Size',
 			property: 'worldSize',

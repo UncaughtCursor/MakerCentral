@@ -151,8 +151,8 @@ export async function setSearchSettings() {
 
 	const updateLevelIndex = false;
 	const updatePopularLevelIndex = false;
-	const updateUserIndex = true;
-	const updateWorldIndex = false;
+	const updateUserIndex = false;
+	const updateWorldIndex = true;
 	const updateSuggestionsIndex = false;
 
 	console.log('Setting settings...');
