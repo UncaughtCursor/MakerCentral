@@ -131,6 +131,7 @@ interface MCRawUserDocPre {
 export const updateDB = functions.runWith({
 	timeoutSeconds: 540,
 	maxInstances: 1,
+	memory: '512MB',
 }).pubsub.schedule('every 9 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
