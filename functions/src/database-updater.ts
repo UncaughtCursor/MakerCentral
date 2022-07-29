@@ -37,6 +37,8 @@ interface UpdaterProgress {
 	dumpFileIndex: number;
 	lastLevelIndexTime?: number;
 	levelsToBeIndexed?: MCLevelDocData[];
+	usersToBeIndexed?: MCUserDocData[];
+	worldsToBeIndexed?: MCWorldDocData[];
 }
 
 interface DumpFile {
@@ -129,7 +131,7 @@ interface MCRawUserDocPre {
 export const updateDB = functions.runWith({
 	timeoutSeconds: 540,
 	maxInstances: 1,
-}).pubsub.schedule('every 60 minutes').onRun(async () => {
+}).pubsub.schedule('every 9 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 	console.log(progress);
@@ -244,18 +246,19 @@ export const updateDB = functions.runWith({
 		};
 	});
 
-	const MCBrowserLevels = levels.map(level => {
-		return MCRawLevelDocToMCLevelDoc(level);
-	});
-	const shouldIndexLevels: boolean = (() => {
+	const shouldIndexContent: boolean = (() => {
 		if (!progress.lastLevelIndexTime) return Date.now() >= firstIndexTime;
 		const diff = Date.now() - progress.lastLevelIndexTime;
 		return diff >= timeBeforeLevelIndex;
 	})();
-	console.log(shouldIndexLevels ? 'Indexing full levels' : 'Not indexing full levels');
+
+	const MCBrowserLevels = levels.map(level => {
+		return MCRawLevelDocToMCLevelDoc(level);
+	});
+	console.log(shouldIndexContent ? 'Indexing content' : 'Not indexing content');
 	progress.levelsToBeIndexed = progress.levelsToBeIndexed
 		? progress.levelsToBeIndexed.concat(MCBrowserLevels) : MCBrowserLevels;
-	if (shouldIndexLevels) {
+	if (shouldIndexContent) {
 		await indexDocs('levels', progress.levelsToBeIndexed);
 		progress.levelsToBeIndexed = [];
 		progress.lastLevelIndexTime = Date.now();
@@ -266,12 +269,22 @@ export const updateDB = functions.runWith({
 	const MCBrowserUsers = fullUserProfiles.map(user => {
 		return MCRawUserDocToMCUserDoc(user);
 	});
-	await indexDocs('users', MCBrowserUsers);
+	progress.usersToBeIndexed = progress.usersToBeIndexed
+		? progress.usersToBeIndexed.concat(MCBrowserUsers) : MCBrowserUsers;
+	if (shouldIndexContent) {
+		await indexDocs('users', progress.usersToBeIndexed);
+		progress.usersToBeIndexed = [];
+	}
 
 	const MCBrowserWorlds: MCWorldDocData[] = fullUserProfiles.filter(user => user.super_world).map(user => {
 		return MCRawUserToMCWorldDoc(user)!;
 	});
-	await indexDocs('worlds', MCBrowserWorlds);
+	progress.worldsToBeIndexed = progress.worldsToBeIndexed
+		? progress.worldsToBeIndexed.concat(MCBrowserWorlds) : MCBrowserWorlds;
+	if (shouldIndexContent) {
+		await indexDocs('worlds', progress.worldsToBeIndexed);
+		progress.worldsToBeIndexed = [];
+	}
 
 	// Set the new progress.
 	progress.lastDataIdDownloaded = endId;
