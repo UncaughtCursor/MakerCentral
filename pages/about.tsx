@@ -1,7 +1,7 @@
 import React from 'react';
 import AppFrame from '@components/AppFrame';
 import {
-	discordLink, patreonLink, twitterLink, twitterLinkPersonal,
+	discordLink, twitterLinkPersonal,
 } from '@scripts/site/FirebaseUtil';
 import TextSection from '@components/main/TextSection';
 

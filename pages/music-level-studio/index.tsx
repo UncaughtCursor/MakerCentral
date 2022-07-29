@@ -1,7 +1,6 @@
 import React, { useContext } from 'react';
 import { useRouter } from 'next/router';
 import AppFrame from '@components/AppFrame';
-import Gate from '@components/main/Gate';
 import EditorContext from '../../src/components/pages/editor/EditorContext';
 import TriggerButton from '../../src/components/pages/controls/TriggerButton';
 import ProjectList from '../../src/components/pages/controls/ProjectList';

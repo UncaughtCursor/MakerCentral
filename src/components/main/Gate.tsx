@@ -1,12 +1,7 @@
-import RewardRedeemer from '@components/pages/controls/settings/RewardRedeemer';
 import SettingsGroup from '@components/pages/controls/settings/SettingsGroup';
-import {
-	auth, getUser, logout, patreonLink,
-} from '@scripts/site/FirebaseUtil';
-import { getPatronType, refreshUserData } from '@scripts/site/UserDataScripts';
+import { getUser } from '@scripts/site/FirebaseUtil';
+import { getPatronType } from '@scripts/site/UserDataScripts';
 import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import TriggerButton from '@components/pages/controls/TriggerButton';
 import Spinner from '@components/pages/controls/Spinner';
 import useUserInfo from '@components/hooks/useUserInfo';
 import LoginPrompt from './LoginPrompt';
@@ -62,31 +57,9 @@ function Gate(props: {
 		return (
 			<div className="gate-background">
 				<div style={{ display: isLoading ? 'none' : '' }}>
-					<SettingsGroup name="Want a Taste of What's Cooking? 🍳">
-						<p><b>{boldMsg}</b></p>
-						<br />
-						<p>If you have a reward key, you can use it below.</p>
-						{ /* TODO: Change functionality when other rewards are implemented */}
-						<RewardRedeemer onSuccess={() => {
-							refreshUserData();
-						}}
-						/>
-						<p>You can unlock this feature and more by supporting me on Patreon!</p>
-						<p>I work hard to develop this site and its music level technology.
-							If you know you will find this website helpful,
-							please consider <a href={patreonLink}>becoming a Patron</a>.
-							It helps me a ton and I would really appreciate it. ❤️
-						</p>
-						<div style={{ display: props.showLogout ? '' : 'none' }}>
-							<p>Other Options:</p>
-							<div style={{ display: 'flex', justifyContent: 'center' }}>
-								<br />
-								<TriggerButton text="Log Out" type="dark" onClick={logout} />
-							</div>
-						</div>
-					</SettingsGroup>
+					<span>Error</span>
+					<Spinner isActive={isLoading} />
 				</div>
-				<Spinner isActive={isLoading} />
 			</div>
 		);
 	}

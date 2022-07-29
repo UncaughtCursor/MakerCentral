@@ -59,7 +59,6 @@ export const privacyPolicyUrl = 'https://www.termsfeed.com/live/9b12f22d-2228-4b
 export const discordLink = 'https://discord.gg/KhmXzfp';
 export const twitterLink = 'https://twitter.com/MakerCentralApp';
 export const twitterLinkPersonal = 'https://twitter.com/UncaughtCursor';
-export const patreonLink = 'https://www.patreon.com/UncaughtCursor';
 
 const firebaseUiConfig: firebaseui.auth.Config = {
 	signInOptions: [
