@@ -58,7 +58,7 @@ function Home() {
 							text="Try It Now"
 						/>
 					</div>
-					<a href="https://medium.com/@maker-central/announcing-a-site-to-search-26-million-mario-maker-2-levels-ddcbdec7ba5a">Read More</a>
+					<a href="https://medium.com/@maker-central/announcing-a-site-to-search-26-million-mario-maker-2-levels-ddcbdec7ba5a">Learn More</a>
 				</div>
 			</div>
 		</AppFrame>

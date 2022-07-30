@@ -28,7 +28,7 @@ function About() {
 			/>
 			<TextSection
 				title="How does this site make money?"
-				body={[<>It doesn&apos;t. And it never will.</>,
+				body={[<>It doesn&apos;t.</>,
 					<>Due to the legal risks of even attempting to make money from this site, I have decided to not monetize it.</>,
 					<>Unfortunately, that means this site has no way of covering its overhead costs, and I will need to earn money through other ventures to cover them myself.</>,
 					<>If you&apos;re open to trying any projects I create in the future, please consider following me on <a href={twitterLinkPersonal} target="_blank" rel="noopener noreferrer">Twitter</a> or joining my <a href={discordLink} target="_blank" rel="noopener noreferrer">Discord community</a>.</>]}
