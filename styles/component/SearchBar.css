@@ -24,6 +24,7 @@
 	color: var(--text-color);
 	height: 30px;
 	font-size: 18px;
+	width: 0;
 	flex-grow: 1;
 	outline: none
 }
