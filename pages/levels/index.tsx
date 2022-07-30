@@ -3,6 +3,7 @@ import AppFrame from '@components/AppFrame';
 import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSearchBar';
 import { useRouter } from 'next/router';
 import { defaultFilterSettings } from '@scripts/browser/SearchUtil';
+import { marketedLevelDBSize } from '@data/constants';
 
 /**
  * The user level browsing view.
@@ -37,7 +38,7 @@ function LevelBrowser() {
 						marginTop: '4px',
 						fontSize: '20px',
 					}}
-					>Search Preview
+					>Search
 					</h4>
 					<br />
 					<h4 style={{
@@ -46,14 +47,14 @@ function LevelBrowser() {
 						marginLeft: '20px',
 						marginBottom: '2px',
 					}}
-					>Search over 800,000 popular levels...
+					>{`Search over ${marketedLevelDBSize.toLowerCase()} levels...`}
 					</h4>
 					<LevelSearchBar
 						onSubmit={(query, filterSettings) => {
 							history.push(getSearchUrl(query, filterSettings));
 						}}
 						initialVal=""
-						initialSettings={defaultFilterSettings}
+						initialSettings={defaultFilterSettings.Levels}
 					/>
 				</div>
 				{/* <LevelCategoryFeed extraQueryConstraints={[]} /> */}

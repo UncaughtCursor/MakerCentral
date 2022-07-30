@@ -1,4 +1,4 @@
-import { MCWorldPreview } from '@data/types/MCBrowserTypes';
+import { MCTag, MCWorldDocData, MCWorldPreview } from '@data/types/MCBrowserTypes';
 import React from 'react';
 import LikeIcon from '@mui/icons-material/Favorite';
 import LevelsIcon from '@mui/icons-material/EmojiFlags';
@@ -19,13 +19,20 @@ const superWorldSlug = '/worlds';
  * * thumbnailUrls: The URLs of the thumbnails of the showcased levels in the super world.
  */
 function SuperWorldPreview(props: {
-	world: MCWorldPreview,
+	world: MCWorldPreview | MCWorldDocData,
 	makerName: string,
 	makerId: string,
 	thumbnailUrls: {[levelId: string]: string},
 }) {
 	const totalLikes = Math.round(props.world.avgLikes * props.world.numLevels);
 	const totalPlays = Math.round(props.world.avgPlays * props.world.numLevels);
+
+	// Establish prominent tags. If this is a world preview, this comes built in.
+	// If it's the data from a world document, we need to compute it.
+	const prominentTags = (props.world as MCWorldPreview).prominentTags
+		? (props.world as MCWorldPreview).prominentTags : (() => (
+			Object.keys((props.world as MCWorldDocData).avgTags) as MCTag[])
+			.filter((tag: MCTag) => (props.world as MCWorldDocData).avgTags[tag] >= 0.15))();
 	return (
 		<a
 			className="super-world-preview"
@@ -56,7 +63,7 @@ function SuperWorldPreview(props: {
 					},
 				]}
 				/>
-				<TagDisplay tags={props.world.prominentTags} />
+				<TagDisplay tags={prominentTags} />
 			</div>
 		</a>
 	);

@@ -57,13 +57,13 @@ function UserPage(props: UserPageProps) {
 				)}
 				<h2 className="user-profile-header">Levels ({userData.levels})</h2>
 				<LevelSearchResultWidget searchParams={{
-					type: 'Level',
+					searchMode: 'Levels',
 					q: '',
 					sortType: 'By Date',
 					sortOrder: 'Descending',
 					gameStyle: 'Any',
 					difficulty: 'Any',
-					tag: 'Any',
+					tags: 'Any',
 					theme: 'Any',
 					page: 0,
 					makerId: userData.id,

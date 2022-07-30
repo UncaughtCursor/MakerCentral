@@ -4,7 +4,7 @@ import {
 import React, { useEffect, useState, useRef } from 'react';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
-import useLevelThumbnails, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnails';
+import useLevelThumbnailStates, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
 import LevelPreview from './LevelPreview';
 import LevelSearchPageControl from '../search/LevelSearchPageControl';
 import Spinner from '../controls/Spinner';
@@ -45,7 +45,7 @@ function LevelCollectionView(props: LevelCollectionViewProps) {
 	const hasNextPage = levels.length === props.batchSize! + 1;
 	const hasPreviousPage = page > 0;
 
-	const thumbnails = useLevelThumbnails(thumbnailStates);
+	const thumbnails = useLevelThumbnailStates(thumbnailStates);
 
 	// FIXME: Load each image upfront when the page loads.
 

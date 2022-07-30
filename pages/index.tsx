@@ -1,6 +1,5 @@
 import AppFrame from '@components/AppFrame';
-import LandingPageCard from '@components/main/landing-page/LandingPageCard';
-import Link from 'next/link';
+import { marketedLevelDBSize } from '@data/constants';
 import React from 'react';
 import ActionButton from '../src/components/pages/controls/ActionButton';
 
@@ -8,23 +7,32 @@ import ActionButton from '../src/components/pages/controls/ActionButton';
  * The landing page of the site.
  */
 function Home() {
-	const text = `Text search, browse, and bookmark almost every Mario Maker 2 level ever uploaded.
+	const text = `Text search, browse, and bookmark every Mario Maker 2 level.
 	For the first time in history.`;
-	const columnWidth = '600px';
+	const bgImgWidthPx = 2560;
+	const bgImgHeightPx = 1440;
+
+	const viewportWidth = typeof window !== 'undefined' ? window.innerWidth : 0;
+	const viewportHeight = typeof window !== 'undefined' ? window.innerHeight : 0;
+
+	const bgImgWidth = bgImgWidthPx + Math.max(bgImgWidthPx, viewportWidth);
+	const bgImgHeight = bgImgHeightPx + Math.max(bgImgHeightPx, viewportHeight);
 
 	return (
-		<AppFrame>
-			<div style={{
-				width: '90vw',
-				maxWidth: columnWidth,
-				margin: '0 auto',
-			}}
-			>
+		<AppFrame contentContainerClass="home-background">
+			<div
+				className="home-image"
+				style={{
+					width: `${bgImgWidth}px`,
+					height: `${bgImgHeight}px`,
+				}}
+			/>
+			<div className="home-info-container">
 				<h1 style={{
 					textAlign: 'left',
-					marginTop: '20px',
+					marginTop: '0',
 				}}
-				>Coming Soon: Search and Bookmark Over 26 Million Levels
+				>{`Search and Bookmark Over ${marketedLevelDBSize} Levels`}
 				</h1>
 				<p style={{
 					textAlign: 'left',
@@ -47,10 +55,10 @@ function Home() {
 					>
 						<ActionButton
 							to="/levels"
-							text="Try the Demo"
+							text="Try It Now"
 						/>
 					</div>
-					<a href="https://medium.com/@maker-central/announcing-a-site-to-search-26-million-mario-maker-2-levels-ddcbdec7ba5a">Read More</a>
+					<a href="https://medium.com/@maker-central/announcing-a-site-to-search-26-million-mario-maker-2-levels-ddcbdec7ba5a">Learn More</a>
 				</div>
 			</div>
 		</AppFrame>

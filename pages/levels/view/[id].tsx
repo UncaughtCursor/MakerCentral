@@ -7,7 +7,7 @@ import { getLevelThumbnailUrl, initAnalytics } from '@scripts/site/FirebaseUtil'
 import { useRouter } from 'next/router';
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import useCloudFn from '@components/hooks/useCloudFn';
-import useLevelThumbnails from '@components/hooks/useLevelThumbnails';
+import useLevelThumbnailStates from '@components/hooks/useLevelThumbnailStates';
 import LevelThumbnail from '@components/pages/browser/LevelThumbnail';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
@@ -23,7 +23,7 @@ function LevelPage(props: {
 		return <Page404 />;
 	}
 
-	const thumbnails = useLevelThumbnails({
+	const thumbnails = useLevelThumbnailStates({
 		[level.id]: {
 			state: props.initThumbnailUrl === undefined || props.initThumbnailUrl === ''
 				? 'Not Uploaded' : 'Loaded',

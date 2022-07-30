@@ -1,5 +1,6 @@
-import { LevelSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
-import { LevelSearchFilterSettings } from '@scripts/browser/SearchUtil';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { MeiliSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
+import { SearchFilterSettings, SearchResults } from '@scripts/browser/SearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
 import TriggerButton from '../controls/TriggerButton';
@@ -20,7 +21,7 @@ import { getSearchUrl } from './LevelSearchBar';
  * provided if curSearchResults is not provided.
  */
 function LevelSearchPageControl(props: {
-	curSearchResults?: LevelSearchResults,
+	curSearchResults?: SearchResults,
 	hasNextPage?: boolean,
 	hasPreviousPage?: boolean,
 	goToPage?: boolean,
@@ -71,14 +72,14 @@ function LevelSearchPageControl(props: {
 		if (props.curSearchResults) {
 			const query = props.curSearchResults.searchParams.q;
 			const searchParams = props.curSearchResults.searchParams;
-			const newSearchSettings: LevelSearchFilterSettings = {
-				type: searchParams.type,
+			const newSearchSettings: SearchFilterSettings = {
+				searchMode: searchParams.searchMode,
 				sortType: searchParams.sortType,
 				sortOrder: searchParams.sortOrder,
 				difficulty: searchParams.difficulty,
 				theme: searchParams.theme,
 				gameStyle: searchParams.gameStyle,
-				tag: searchParams.tag,
+				tags: searchParams.tags,
 				page: curPage! + delta,
 			};
 			if (props.goToPage!) {

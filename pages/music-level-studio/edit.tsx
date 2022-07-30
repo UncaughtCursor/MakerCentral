@@ -1,5 +1,4 @@
 import AppFrame from '@components/AppFrame';
-import Gate from '@components/main/Gate';
 import React from 'react';
 import EditorContext, { defaultState } from '../../src/components/pages/editor/EditorContext';
 import EditorView from '../../src/components/pages/editor/EditorView';

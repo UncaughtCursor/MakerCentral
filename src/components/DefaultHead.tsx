@@ -36,7 +36,7 @@ function PageHead(props: {
 
 PageHead.defaultProps = {
 	title: 'MakerCentral',
-	description: 'Coming Soon: Text search, browse, and bookmark almost every Mario Maker 2 level ever uploaded. For the first time in history.',
+	description: 'Text search, browse, and bookmark every Mario Maker 2 level in the world. For the first time in history.',
 	imageUrl: '', // TODO: Banner image
 };
 

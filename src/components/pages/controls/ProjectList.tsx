@@ -1,10 +1,11 @@
-import { db, getUser } from '@scripts/site/FirebaseUtil';
+import { db } from '@scripts/site/FirebaseUtil';
 import {
 	collection, DocumentData, getDocs, limit, orderBy, query,
 } from 'firebase/firestore/lite';
 import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import TimeAgo from 'javascript-time-ago';
+import useUserInfo from '@components/hooks/useUserInfo';
 import EditorContext from '../editor/EditorContext';
 
 const timeAgo = new TimeAgo('en-US');
@@ -22,10 +23,12 @@ function ProjectList(props: {
 
 	const ctx = useContext(EditorContext);
 	const router = useRouter();
+	const userInfo = useUserInfo();
 
 	useEffect(() => {
+		if (userInfo === null) return;
 		const projectQuery = async function projectQuery() {
-			const projectsRef = collection(db, `users/${getUser()!.uid}/projects`);
+			const projectsRef = collection(db, `users/${userInfo.user.uid}/projects`);
 
 			const q = query(
 				projectsRef,
@@ -42,14 +45,23 @@ function ProjectList(props: {
 			setLoaded(true);
 		};
 
-		if (getUser() !== null) projectQuery();
+		if (userInfo !== null) projectQuery();
 		if (typeof document !== 'undefined') {
 			document.addEventListener('userinit', () => { projectQuery(); });
 		}
-	}, []);
+	}, [userInfo]);
+
+	const tableRows = getProjectListElements();
 
 	return (
 		<div style={{ display: 'flex', justifyContent: 'center' }}>
+			{!loaded && userInfo !== null && <span>Loading...</span>}
+			{tableRows.length === 0 && loaded && (
+				<span>No projects. Try creating one!</span>
+			)}
+			{userInfo === null && (
+				<span>Sign in to see your projects!</span>
+			)}
 			<table
 				style={{ display: loaded ? '' : 'none' }}
 				className="project-display-table"
@@ -60,7 +72,7 @@ function ProjectList(props: {
 					<td>Project Name</td>
 					<td>Last Modified</td>
 				</tr>
-				{getProjectListElements()}
+				{tableRows}
 			</table>
 		</div>
 	);

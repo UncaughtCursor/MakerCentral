@@ -53,7 +53,6 @@ export async function queryLevels(
 
 	const q = query(levelsRef, ...constraints);
 	const queryDocs = await getDocs(q);
-	console.log(queryDocs.docs);
 
 	const levelDocData = await Promise.all(queryDocs.docs.map(
 		async (levelDoc): Promise<MCLevelDocData | null> => {

@@ -1,6 +1,7 @@
-import { LevelSearchResults } from '@scripts/browser/MeilisearchUtil';
-import { FullLevelSearchParams, getLevelResultDisplayData } from '@scripts/browser/SearchUtil';
-import { LevelSearchParams } from 'pages/levels/search/[q]';
+import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { MeiliSearchResults } from '@scripts/browser/MeilisearchUtil';
+import { FullSearchParams, getLevelResultData, SearchResults } from '@scripts/browser/SearchUtil';
+import { SearchParams } from 'pages/levels/search/[q]';
 import React, { useEffect, useState } from 'react';
 import Spinner from '../controls/Spinner';
 import LevelSearchResultView from './LevelSearchResultView';
@@ -11,20 +12,21 @@ import LevelSearchResultView from './LevelSearchResultView';
  * - searchParams: The search parameters to search with.
  */
 function LevelSearchResultWidget(props: {
-	searchParams: LevelSearchParams | FullLevelSearchParams,
+	searchParams: SearchParams | FullSearchParams,
 }) {
 	const [searchResults, setSearchResults] = useState<{
-		results: LevelSearchResults,
-		thumbnailUrlObj: {[key: string]: string},
+		results: SearchResults,
+		levelThumbnailUrlObj?: {[key: string]: string},
+		worldThumbnailUrlObjs?: {[key: string]: string}[],
 	} | null>(null);
 
-	const [curSearchParams, setCurSearchParams]	= useState<LevelSearchParams | FullLevelSearchParams>(
+	const [curSearchParams, setCurSearchParams]	= useState<SearchParams | FullSearchParams>(
 		props.searchParams,
 	);
 
 	useEffect(() => {
 		setSearchResults(null);
-		getLevelResultDisplayData(curSearchParams).then((res) => {
+		getLevelResultData(curSearchParams).then((res) => {
 			setSearchResults(res);
 		});
 	}, [curSearchParams]);
@@ -33,7 +35,8 @@ function LevelSearchResultWidget(props: {
 		return (
 			<LevelSearchResultView
 				results={searchResults.results}
-				thumbnailUrls={searchResults.thumbnailUrlObj}
+				levelThumbnailUrls={searchResults.levelThumbnailUrlObj}
+				worldThumbnailUrls={searchResults.worldThumbnailUrlObjs}
 				isWidget
 				onPageChange={(delta) => {
 					setCurSearchParams({

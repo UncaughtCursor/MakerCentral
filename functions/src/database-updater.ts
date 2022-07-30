@@ -4,37 +4,41 @@ import * as functions from 'firebase-functions';
 import chunk from 'chunk';
 // import MeiliSearch from 'meilisearch';
 // import MeiliCredentials from './data/private/meilisearch-credentials.json';
-import { MCRawLevelDoc, MCRawUserDoc } from './data/types/MCRawTypes';
+import { MCRawLevelAggregation, MCRawLevelAggregationUnit, MCRawLevelDoc, MCRawMedal, MCRawSuperWorld, MCRawUserDoc, MCRawUserPreview, MCRawWorldLevelPreview } from './data/types/MCRawTypes';
 import { storageBucket } from '.';
 import {
 	DBClearCondition,
-	DBDifficulty, DBGameStyle, APILevel, DBTag, DBTheme,
+	DBDifficulty, DBGameStyle, APILevel, DBTag, DBTheme, DBSuperWorld, DBUser, UserRegion, VersusRank,
 } from './data/types/DBTypes';
-import { levelEndpoint, maxDataIdEndpoint, smm2APIBaseUrl } from './constants';
+import { levelEndpoint, maxDataIdEndpoint, meilisearch, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 import axios, { AxiosResponse } from 'axios';
+import { MCLevelDocData, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
+import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc } from './data/util/MCRawToMC';
+import { APIDifficulties, APIGameStyles, APITags, APIThemes } from './data/APITypes';
 
-// const meilisearchClient = new MeiliSearch(MeiliCredentials);
-
-const maxLevelsToAdd = 30000;
+const maxLevelsToAdd = 3000;
 const levelsPerChunk = 500;
+const usersPerChunk = 500;
+const worldsPerChunk = 50;
 
 const progressFileLocation = 'admin/updater-progress.json';
 const dumpLocation = 'admin/dump';
-
-// const meilisearchLevelIndex = meilisearchClient.index('levels');
-// const meilisearchUserIndex = meilisearchClient.index('users');
-// const meilisearchWorldIndex = meilisearchClient.index('worlds');
+// Push to level index every 1 hr 48 min
+const timeBeforeLevelIndex = 12 * 9 * 60 * 1000;
+const firstIndexTime = 1657616041747;
 
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
 	lastNewestDataId: number;
-	lastUserIndexTime: number;
-	lastLevelIndexTime: number;
-	lastWorldIndexTime: number;
+	lastRanTime: number;
 	totalLevelsAdded: number;
 	totalUsersAdded: number;
 	totalWorldsAdded: number;
 	dumpFileIndex: number;
+	lastLevelIndexTime?: number;
+	levelsToBeIndexed?: MCLevelDocData[];
+	usersToBeIndexed?: MCUserDocData[];
+	worldsToBeIndexed?: MCWorldDocData[];
 }
 
 interface DumpFile {
@@ -75,6 +79,52 @@ interface MCRawLevelDocPre {
     record_holder_pid?: string;
 }
 
+interface MCRawUserDocPre {
+	pid: string,
+	data_id: number,
+	code: string,
+	region: UserRegion,
+	name: string,
+	country: string,
+	last_active: number,
+	mii_image: string,
+	mii_studio_code: string,
+	courses_played: number,
+	courses_cleared: number,
+	courses_attempted: number,
+	courses_deaths: number,
+	likes: number,
+	maker_points: number,
+	easy_highscore: number,
+	normal_highscore: number,
+	expert_highscore: number,
+	super_expert_highscore: number,
+	versus_rating: number,
+	versus_rank: VersusRank,
+	versus_won: number,
+	versus_lost: number,
+	versus_win_streak: number,
+	versus_lose_streak: number,
+	versus_plays: number,
+	versus_disconnected: number,
+	coop_clears: number,
+	coop_plays: number,
+	recent_performance: number,
+	versus_kills: number,
+	versus_killed_by_others: number,
+	first_clears: number,
+	world_records: number,
+	unique_super_world_clears: number,
+	uploaded_levels: number,
+	weekly_maker_points: number,
+	last_uploaded_level: number,
+	is_nintendo_employee: number,
+	comments_enabled: number,
+	tags_enabled: number,
+	medals: MCRawMedal[],
+	super_world_id: string,
+}
+
 /**
  * Updates the levels in the database from Nintendo's servers.
  */
@@ -101,7 +151,7 @@ export const updateDB = functions.runWith({
 	const levelsPre = await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId);
 	console.log(`Downloaded ${levelsPre.length} levels`);
 
-	/* 
+	
 	// Get all user PIDs from levels.
 	const fullProfilePids = [];
 	const previewPids = [];
@@ -135,7 +185,7 @@ export const updateDB = functions.runWith({
 	for (const level of worldLevels) {
 		worldLevelMap.set(level.data_id, level);
 	}
-	const fullUserProfiles = await Promise.all(fullUserProfilesPre.map(async (profile) => {
+	const fullUserProfiles: MCRawUserDoc[] = await Promise.all(fullUserProfilesPre.map(async (profile) => {
 		const { super_world_id, ...rest } = profile;
 		const super_world = super_world_id !== '' ? superWorldMap.get(super_world_id)! : null;
 		return {
@@ -197,54 +247,45 @@ export const updateDB = functions.runWith({
 		};
 	});
 
-	// Upload new documents to the database.
-	await uploadUsersOrLevels(levels, 'Level');
-	await uploadUsersOrLevels(fullUserProfiles, 'User');
+	const shouldIndexContent: boolean = (() => {
+		if (!progress.lastLevelIndexTime) return Date.now() >= firstIndexTime;
+		const diff = Date.now() - progress.lastLevelIndexTime;
+		return diff >= timeBeforeLevelIndex;
+	})();
 
 	const MCBrowserLevels = levels.map(level => {
 		return MCRawLevelDocToMCLevelDoc(level);
 	});
-	progress.levelDocPool.push(...MCBrowserLevels);
+	console.log(shouldIndexContent ? 'Indexing content' : 'Not indexing content');
+	progress.levelsToBeIndexed = progress.levelsToBeIndexed
+		? progress.levelsToBeIndexed.concat(MCBrowserLevels) : MCBrowserLevels;
+	if (shouldIndexContent) {
+		await indexDocs('levels', progress.levelsToBeIndexed);
+		progress.levelsToBeIndexed = [];
+		progress.lastLevelIndexTime = Date.now();
+		const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
+		await indexDocs('popular-levels', popularLevels);
+	}
 
 	const MCBrowserUsers = fullUserProfiles.map(user => {
 		return MCRawUserDocToMCUserDoc(user);
 	});
-	progress.userDocPool.push(...MCBrowserUsers);
+	progress.usersToBeIndexed = progress.usersToBeIndexed
+		? progress.usersToBeIndexed.concat(MCBrowserUsers) : MCBrowserUsers;
+	if (shouldIndexContent) {
+		await indexDocs('users', progress.usersToBeIndexed);
+		progress.usersToBeIndexed = [];
+	}
 
 	const MCBrowserWorlds: MCWorldDocData[] = fullUserProfiles.filter(user => user.super_world).map(user => {
 		return MCRawUserToMCWorldDoc(user)!;
 	});
-	progress.worldDocPool.push(...MCBrowserWorlds);
-
-	// TODO: Upload to MeiliSearch
-	const time = Date.now();
-	const shouldIndexLevels = time - progress.lastLevelIndexTime > minutesBetweenIndexing * 60 * 1000
-		|| progress.levelDocPool.length >= maxIndexBatchSize;
-	if (shouldIndexLevels) {
-		await indexDocs('levels', progress.levelDocPool);
-		progress.lastLevelIndexTime = time;
-		progress.levelDocPool = [];
-	
-		const popularLevelLikeThreshold = 25;
-		const popularLevels = MCBrowserLevels.filter(level => level.numLikes >= popularLevelLikeThreshold);
-		await indexDocs('popular-levels', popularLevels);
+	progress.worldsToBeIndexed = progress.worldsToBeIndexed
+		? progress.worldsToBeIndexed.concat(MCBrowserWorlds) : MCBrowserWorlds;
+	if (shouldIndexContent) {
+		await indexDocs('worlds', progress.worldsToBeIndexed);
+		progress.worldsToBeIndexed = [];
 	}
-
-	const shouldIndexUsers = time - progress.lastUserIndexTime > minutesBetweenIndexing * 60 * 1000
-		|| progress.userDocPool.length >= maxIndexBatchSize;
-	if (shouldIndexUsers) {
-		await indexDocs('users', progress.userDocPool);
-		progress.lastUserIndexTime = time;
-		progress.userDocPool = [];
-	}
-
-	const shouldIndexWorlds = time - progress.lastWorldIndexTime > minutesBetweenIndexing * 60 * 1000
-		|| progress.worldDocPool.length >= maxIndexBatchSize;
-	if (shouldIndexWorlds) {
-		await indexDocs('worlds', progress.worldDocPool);
-		progress.lastWorldIndexTime = time;
-		progress.worldDocPool = [];
-	} */
 
 	// Set the new progress.
 	progress.lastDataIdDownloaded = endId;
@@ -252,22 +293,261 @@ export const updateDB = functions.runWith({
 	
 	// Save the progress.
 	await saveDump({
-		levelsPre,
+		levels,
+		users: fullUserProfiles,
 	}, progress.dumpFileIndex);
+
 	progress.dumpFileIndex++;
-	progress.totalLevelsAdded += levelsPre.length;
+	progress.totalLevelsAdded += MCBrowserLevels.length;
+	progress.totalUsersAdded += MCBrowserUsers.length;
+	progress.totalWorldsAdded += MCBrowserWorlds.length;
+	progress.lastRanTime = Date.now();
 
 	console.log(`Last data id downloaded: ${progress.lastDataIdDownloaded}`);
 	console.log(`Last newest data id: ${progress.lastNewestDataId}`);
-	/* console.log(`Last level index time: ${progress.lastLevelIndexTime}`);
-	console.log(`Last user index time: ${progress.lastUserIndexTime}`);
-	console.log(`Last world index time: ${progress.lastWorldIndexTime}`);
-	console.log(`Level doc pool size: ${progress.levelDocPool.length}`);
-	console.log(`User doc pool size: ${progress.userDocPool.length}`);
-	console.log(`World doc pool size: ${progress.worldDocPool.length}`); */
 
 	await saveProgress(progress);
 });
+
+interface RawLevelSetResponse {
+	courses: APILevel[];
+}
+
+function getUserPreview(user: MCRawUserDoc): MCRawUserPreview {
+	return {
+		name: user.name,
+		pid: user.pid,
+		makerId: user.code,
+		region: user.region,
+		country: user.country,
+		medals: user.medals,
+		likes: user.likes,
+		maker_points: user.maker_points,
+		mii_image: user.mii_image,
+		mii_studio_code: user.mii_studio_code,
+		has_super_world: user.super_world !== null,
+	};
+}
+
+/**
+ * Downloads users from Nintendo's servers, sweeping through the PIDs specified.
+ * @param pids The PIDs of the users to download.
+ * @returns A promise that resolves with the downloaded user info.
+ */
+async function downloadRawUsers(pids: string[]): Promise<MCRawUserDocPre[]> {
+	const docs: MCRawUserDocPre[] = [];
+	const chunks = chunk(pids, usersPerChunk);
+
+	// Download users in each chunk.
+	for (let i = 0; i < chunks.length; i++) {
+		const chunk = chunks[i];
+		docs.push(...(await downloadRawUserSet(chunk, false)) as MCRawUserDocPre[]);
+	}
+
+	return docs;
+}
+
+async function downloadRawUserPreviews(pids: string[]): Promise<MCRawUserPreview[]> {
+	const previews: MCRawUserPreview[] = [];
+	const chunks = chunk(pids, usersPerChunk);
+
+	// Download users in each chunk.
+	for (let i = 0; i < chunks.length; i++) {
+		const chunk = chunks[i];
+		previews.push(...(await downloadRawUserSet(chunk, true)) as MCRawUserPreview[]);
+	}
+
+	return previews;
+}
+
+interface RawUserSetResponseUser extends DBUser {
+	badges: MCRawMedal[],
+}
+
+type RawUserSetResponse = {
+	users: RawUserSetResponseUser[];
+}
+
+/**
+ * Downloads a set of users from the SMM2 server.
+ * @param pids The PIDs of the users to download.
+ * @param isPreview Whether or not to download previews instead of full user info.
+ * @returns A promise that resolves with the downloaded user info.
+ */
+async function downloadRawUserSet(pids: string[], isPreview = false): Promise<MCRawUserDocPre[] | MCRawUserPreview[]> {
+	console.log(`Downloading ${pids.length} users`);
+	const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}`;
+	const response = await getAPIResponse(url) as RawUserSetResponse;
+	console.log(`Downloaded ${response.users.length} users`);
+
+	// Convert the response to the correct format.
+
+	let res: MCRawUserDocPre[] | MCRawUserPreview[] = [];
+	if (isPreview) {
+		const userPreviews: MCRawUserPreview[] = [];
+		for (let i = 0; i < response.users.length; i++) {
+			const user = response.users[i];
+			userPreviews.push({
+				name: user.name,
+				pid: user.pid,
+				makerId: user.code,
+				region: user.region,
+				country: user.country,
+				medals: user.badges,
+				likes: user.likes,
+				maker_points: user.maker_points,
+				mii_image: user.mii_image,
+				mii_studio_code: user.mii_studio_code,
+				has_super_world: user.super_world_id !== '',
+			});
+		}
+		res = userPreviews;
+	}
+	else {
+		const MCRawUserDocPres: MCRawUserDocPre[] = [];
+		for (let i = 0; i < response.users.length; i++) {
+			const user = response.users[i];
+			const { badges, ...rest } = user;
+			MCRawUserDocPres.push({
+				...rest,
+				medals: badges,
+			});
+		}
+		res = MCRawUserDocPres;
+	}
+
+	return res;
+}
+
+interface RawSuperWorldResponse {
+	super_worlds: DBSuperWorld[];
+}
+
+/**
+ * Downloads the data for Super Worlds from the SMM2 server.
+ * @param worldIds The ID of the Super Worlds to download.
+ * @returns A promise that resolves with the downloaded Super World info.
+ */
+async function downloadSuperWorlds(worldIds: string[]): Promise<DBSuperWorld[]> {
+	const worldIdChunks = chunk(worldIds, worldsPerChunk);
+	const worlds: DBSuperWorld[] = [];
+	for (const worldIdChunk of worldIdChunks) {
+		const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldIdChunk.join(',')}`;
+		const response = await getAPIResponse(url) as RawSuperWorldResponse;
+		worlds.push(...response.super_worlds);
+	}
+	return worlds;
+}
+
+/**
+ * Converts a DBSuperWorld to an MCRawSuperWorld.
+ * @param world The DBSuperWorld to convert.
+ * @param uploader_pid The PID of the user who uploaded the world.
+ */
+async function DBSuperWorldToMCRawSuperWorld(world: DBSuperWorld,
+	uploader_pid: string, dataIdMap: Map<number, MCRawLevelDocPre>): Promise<MCRawSuperWorld> {
+	const world_id = world.id;
+
+	const levels = world.courses.map((course) => dataIdMap.get(course)!);
+
+	const level_info: MCRawWorldLevelPreview[] = levels.map((level) => ({
+		name: level.name,
+		course_id: level.course_id,
+		plays: level.plays,
+		likes: level.likes,
+	}));
+
+	const aggregationUnits: MCRawLevelAggregationUnit[] = levels.map((level) => ({
+		name: level.name,
+		code: level.course_id,
+		uploaded: level.uploaded,
+		difficulty: level.difficulty,
+		clear_rate: level.clear_rate,
+		gamestyle: level.gamestyle,
+		theme: level.theme,
+		likes: level.likes,
+		plays: level.plays,
+		like_to_play_ratio: level.likes / level.unique_players_and_versus,
+		upload_time: level.upload_time,
+		tags: [level.tag1, level.tag2],
+		uploader_pid,
+	}));
+
+	const aggregated_properties = aggregateLevelInfo(aggregationUnits);
+	const { courses, ...rest } = world;
+
+	return {
+		...rest,
+		world_id,
+		level_info,
+		aggregated_properties,
+	};
+}
+
+/**
+ * Aggregates the data for a Super World.
+ * @param levelInfo The units of data to aggregate.
+ * @returns The aggregated data.
+ */
+function aggregateLevelInfo(levelInfo: MCRawLevelAggregationUnit[]): MCRawLevelAggregation {
+	const sum_difficulty: number[] = new Array(APIDifficulties.length).fill(0);
+	const sum_theme: number[] = new Array(APIThemes.length).fill(0);
+	const sum_gamestyle: number[] = new Array(APIGameStyles.length).fill(0);
+	const sum_tags: number[] = new Array(APITags.length).fill(0);
+
+	let sum_uploaded = 0;
+	let sum_clear_rate = 0;
+	let sum_likes = 0;
+	let sum_plays = 0;
+	let sum_like_to_play_ratio = 0;
+	let sum_upload_time = 0;
+	let total_tags = 0;
+
+	levelInfo.forEach((info) => {
+		sum_difficulty[info.difficulty]++;
+		sum_gamestyle[info.gamestyle]++;
+		sum_tags[info.tags[0]]++;
+		total_tags++;
+		if (info.tags[1] !== info.tags[0]) {
+			sum_tags[info.tags[1]]++;
+			total_tags++;
+		}
+		sum_theme[info.theme]++;
+
+		sum_uploaded += info.uploaded;
+		sum_upload_time += info.uploaded;
+		sum_likes += info.likes;
+		sum_plays += info.plays;
+		sum_clear_rate += info.clear_rate;
+		sum_like_to_play_ratio += info.like_to_play_ratio;
+	});
+
+	return {
+		avg_uploaded: sum_uploaded / levelInfo.length,
+		avg_difficulty: sum_difficulty.map((n) => n / levelInfo.length) as unknown as {[key in DBDifficulty]: number},
+		avg_clear_rate: sum_clear_rate / levelInfo.length,
+		avg_gamestyle: sum_gamestyle.map((n) => n / levelInfo.length) as unknown as {[key in DBGameStyle]: number},
+		avg_theme: sum_theme.map((n) => n / levelInfo.length) as unknown as {[key in DBTheme]: number},
+		avg_likes: sum_likes / levelInfo.length,
+		avg_plays: sum_plays / levelInfo.length,
+		avg_like_to_play_ratio: sum_like_to_play_ratio / levelInfo.length,
+		avg_tags: sum_tags.map((n) => n / total_tags) as unknown as {[key in DBTag]: number},
+		avg_upload_time: sum_upload_time / levelInfo.length,
+	};
+}
+
+type IndexName = 'levels' | 'popular-levels' | 'users' | 'worlds';
+type IndexableDocuments = MCLevelDocData[] | MCUserDocData[] | MCWorldDocData[];
+
+/**
+ * Indexes a set of documents in Meilisearch.
+ * @param indexName The name of the index to index into.
+ * @param docs The documents to index.
+ * @returns A promise that resolves when the indexing is enqueued.
+ */
+async function indexDocs(indexName: IndexName, docs: IndexableDocuments): Promise<void> {
+	await meilisearch.index(indexName).addDocuments(docs);
+}
 
 /**
  * Downloads levels from Nintendo's servers, sweeping through the data IDs specified.

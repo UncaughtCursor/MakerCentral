@@ -21,8 +21,11 @@ function Dialog(props: {
 	useEffect(() => {
 		const modalEl = modalRef.current;
 		if (modalEl !== null) {
-			if (props.open) disableBodyScroll(modalEl);
-			else enableBodyScroll(modalEl);
+			if (props.open) {
+				disableBodyScroll(modalEl, {
+					allowTouchMove: (el) => containedByElement(el, (testEl) => testEl.classList.contains('popup-content')),
+				});
+			} else enableBodyScroll(modalEl);
 		}
 	}, [props.open]);
 
@@ -64,3 +67,25 @@ Dialog.defaultProps = {
 };
 
 export default Dialog;
+
+/**
+ * Determines if the specified element is a descendant of a parent that passes
+ * the specified filter, or if the element itself passes the filter.
+ * @param el The element to check.
+ * @param filterFn The filter function to use.
+ * @returns True if the element is a descendant of a parent
+ * that passes the filter, or if the element itself passes the filter. False otherwise.
+ */
+function containedByElement(
+	el: HTMLElement | Element,
+	filterFn: (el: HTMLElement | Element) => boolean,
+) {
+	let testEl: HTMLElement | Element | null = el;
+	while (testEl !== null) {
+		if (filterFn(testEl)) {
+			return true;
+		}
+		testEl = testEl.parentElement;
+	}
+	return false;
+}

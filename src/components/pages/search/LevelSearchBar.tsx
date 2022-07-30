@@ -5,13 +5,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import Dialog from '@components/main/Dialog';
 import { getSuggestions } from '@scripts/browser/MeilisearchUtil';
-import { defaultFilterSettings, LevelSearchFilterSettings, levelSearchTemplate } from '@scripts/browser/SearchUtil';
+import {
+	defaultFilterSettings, SearchFilterSettings, levelSearchTemplate,
+	SearchModes, userSearchTemplate, worldSearchTemplate,
+} from '@scripts/browser/SearchUtil';
 import SearchOptionsModal from './SearchOptionsModal';
+import SelectInput from '../controls/SelectInput';
 
 interface SearchBarProps {
 	initialVal: string;
-	initialSettings: LevelSearchFilterSettings;
-	onSubmit: (value: string, filterSettings: LevelSearchFilterSettings) => void;
+	initialSettings: SearchFilterSettings;
+	onSubmit: (value: string, filterSettings: SearchFilterSettings) => void;
 }
 
 /**
@@ -26,8 +30,8 @@ function LevelSearchBar(props: SearchBarProps) {
 	const [inputText, setInputText] = useState(props.initialVal);
 	valueRef.current = inputText;
 
-	const filterSettingsRef = useRef<LevelSearchFilterSettings>(props.initialSettings);
-	const [filterSettings, setFilterSettings] =	useState<LevelSearchFilterSettings>(
+	const filterSettingsRef = useRef<SearchFilterSettings>(props.initialSettings);
+	const [filterSettings, setFilterSettings] =	useState<SearchFilterSettings>(
 		{
 			...props.initialSettings,
 			page: 0,
@@ -36,9 +40,9 @@ function LevelSearchBar(props: SearchBarProps) {
 	filterSettingsRef.current = filterSettings;
 
 	const numberOfNonDefaultSettings = Object.entries(filterSettings)
-		.filter(([key]) => key !== 'page')
+		.filter(([key]) => key !== 'page' && key !== 'searchMode')
 		.reduce((acc, [key, value]) => {
-			if (value !== defaultFilterSettings[key as keyof LevelSearchFilterSettings]) {
+			if (value !== defaultFilterSettings[filterSettings.searchMode][key as keyof SearchFilterSettings]) {
 				return acc + 1;
 			}
 			return acc;
@@ -64,6 +68,15 @@ function LevelSearchBar(props: SearchBarProps) {
 		};
 	}, []);
 
+	const optionsTemplate = (() => {
+		switch (filterSettings.searchMode) {
+		case 'Levels': return levelSearchTemplate;
+		case 'Users': return userSearchTemplate;
+		case 'Worlds': return worldSearchTemplate;
+		default: return levelSearchTemplate;
+		}
+	})();
+
 	return (
 		<>
 			<Dialog
@@ -72,7 +85,8 @@ function LevelSearchBar(props: SearchBarProps) {
 				onCloseEvent={() => { setDialogOpen(false); }}
 			>
 				<SearchOptionsModal
-					template={levelSearchTemplate}
+					template={optionsTemplate}
+					searchMode={filterSettings.searchMode}
 					initSettings={props.initialSettings}
 					onChange={(settings) => {
 						setFilterSettings({
@@ -94,6 +108,23 @@ function LevelSearchBar(props: SearchBarProps) {
 						onFocus={() => { setIsFocused(true); }}
 						onBlur={() => { setIsFocused(false); }}
 					/>
+					{/* TODO: Reset the settings appropriately when the search mode changes. */}
+					<div style={{
+						marginRight: '5px',
+					}}
+					>
+						<SelectInput
+							initSelectedIndex={SearchModes.indexOf(filterSettings.searchMode)}
+							choices={SearchModes}
+							onSelect={(index) => {
+								setFilterSettings({
+									...filterSettings,
+									searchMode: SearchModes[index],
+								});
+							}}
+							className="search-bar-dropdown"
+						/>
+					</div>
 					<div style={{
 						position: 'relative',
 						height: '34px',
@@ -161,13 +192,14 @@ function LevelSearchBar(props: SearchBarProps) {
  * @param filterSettings The filter settings.
  * @returns The generated URL.
  */
-export function getSearchUrl(query: string, filterSettings: LevelSearchFilterSettings) {
+export function getSearchUrl(query: string, filterSettings: SearchFilterSettings) {
 	const root = `/levels/search/${query !== '' ? query : '_'}`;
 
 	const segments = Object.keys(filterSettings)
 		.filter((filterName) => {
 			const name = filterName as keyof typeof filterSettings;
-			return filterSettings[name] !== defaultFilterSettings[name];
+			return filterSettings[name] !== defaultFilterSettings[filterSettings.searchMode][name]
+				|| (name === 'searchMode' && filterSettings[name] !== 'Levels');
 		})
 		.map((filterName) => `${filterName}=${filterSettings[filterName as keyof typeof filterSettings]}`);
 
