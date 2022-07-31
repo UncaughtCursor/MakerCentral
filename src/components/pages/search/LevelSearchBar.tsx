@@ -193,7 +193,7 @@ function LevelSearchBar(props: SearchBarProps) {
  * @returns The generated URL.
  */
 export function getSearchUrl(query: string, filterSettings: SearchFilterSettings) {
-	const root = `/levels/search/${query !== '' ? query : '_'}`;
+	const root = `/levels/search/${query !== '' ? encodeURIComponent(query) : '_'}`;
 
 	const segments = Object.keys(filterSettings)
 		.filter((filterName) => {
