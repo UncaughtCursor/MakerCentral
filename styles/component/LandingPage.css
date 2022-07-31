@@ -32,17 +32,24 @@
 	background-image: url(/thumbnail-grid.jpg);
 	background-size: 2560px 1440px;
 	background-repeat: repeat;
-	filter: blur(2px);
+	filter: blur(2px) brightness(0.6);
 	width: calc(2560px * 2);
 	height: calc(1440px * 2);
-	animation: scroll-home-background 240s linear infinite;
+	animation: scroll-home-background 480s linear infinite;
+	perspective-origin: center;
 }
 
 @keyframes scroll-home-background {
 	0% {
-		transform: translateX(0px) translateY(0px);
+		transform: translateX(0px) translateY(0px) translateZ(0.1px);
 	}
 	100% {
-		transform: translateX(-2560px) translateY(-1440px);
+		transform: translateX(-2560px) translateY(-1440px) translateZ(0.1px);
+	}
+}
+
+@media (prefers-reduced-motion) {
+	.home-image {
+		animation: none;
 	}
 }
