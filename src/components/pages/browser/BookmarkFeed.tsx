@@ -5,7 +5,9 @@ import LevelCollectionView from './LevelCollectionView';
 /**
  * A feed for a the user's bookmarked levels.
  */
-function BookmarkFeed() {
+function BookmarkFeed(props: {
+	debugUid?: string | undefined;
+}) {
 	const userInfo = useUserInfo();
 	const user = userInfo !== null ? userInfo.user : null;
 
@@ -15,11 +17,15 @@ function BookmarkFeed() {
 
 	return (
 		<LevelCollectionView
-			collectionPath={`users/${user.uid}/bookmarks`}
+			collectionPath={`users/${props.debugUid ? props.debugUid : user.uid}/bookmarks`}
 			isLink
 			batchSize={10}
 		/>
 	);
 }
+
+BookmarkFeed.defaultProps = {
+	debugUid: undefined,
+};
 
 export default BookmarkFeed;
