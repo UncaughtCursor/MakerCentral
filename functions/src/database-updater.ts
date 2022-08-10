@@ -260,10 +260,12 @@ export const updateDB = functions.runWith({
 	progress.levelsToBeIndexed = progress.levelsToBeIndexed
 		? progress.levelsToBeIndexed.concat(MCBrowserLevels) : MCBrowserLevels;
 	if (shouldIndexContent) {
+		console.log('Indexing levels');
 		await indexDocs('levels', progress.levelsToBeIndexed);
 		progress.levelsToBeIndexed = [];
 		progress.lastLevelIndexTime = Date.now();
 		const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
+		console.log('Indexing popular levels');
 		await indexDocs('popular-levels', popularLevels);
 	}
 
@@ -273,6 +275,7 @@ export const updateDB = functions.runWith({
 	progress.usersToBeIndexed = progress.usersToBeIndexed
 		? progress.usersToBeIndexed.concat(MCBrowserUsers) : MCBrowserUsers;
 	if (shouldIndexContent) {
+		console.log('Indexing users');
 		await indexDocs('users', progress.usersToBeIndexed);
 		progress.usersToBeIndexed = [];
 	}
@@ -283,6 +286,7 @@ export const updateDB = functions.runWith({
 	progress.worldsToBeIndexed = progress.worldsToBeIndexed
 		? progress.worldsToBeIndexed.concat(MCBrowserWorlds) : MCBrowserWorlds;
 	if (shouldIndexContent) {
+		console.log('Indexing worlds');
 		await indexDocs('worlds', progress.worldsToBeIndexed);
 		progress.worldsToBeIndexed = [];
 	}

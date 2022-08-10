@@ -9,7 +9,7 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reade
 import {
 	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, meilisearch, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -187,13 +187,6 @@ yargs.usage('$0 command')
 			onlyLogFailures: true,
 		});
 	})
-	.command('test', 'Test', async () => {
-		// Run the updateDB cloud function
-		console.log('Running cloud function');
-		const startTime = Date.now();
-		await CloudFn('updateDB', {});
-		console.log(`Cloud function finished in ${Date.now() - startTime}ms`);
-	})
 	.command('extract-dump-levels', 'Extract the new levels from the dumps collected by the updateDB cloud function.', async () => {
 		const timeOfDump = 1658536344617;
 		const dataDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}`;
@@ -234,6 +227,9 @@ yargs.usage('$0 command')
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
 		await generateThumbnailGrid(100, 100); // Top 10K
+	})
+	.command('test', 'Test', async () => {
+		
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
