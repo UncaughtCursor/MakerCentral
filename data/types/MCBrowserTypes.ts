@@ -23,6 +23,19 @@ export interface MCLevelDocData {
 	updatedTime?: number;
 }
 
+// Data that is used to update a level's entry in the meilisearch index.
+export interface MCLevelDocUpdateData {
+	id: string;
+	difficulty: MCDifficulty;
+	clearRate: number;
+	numLikes: number;
+	numPlays: number;
+	likeToPlayRatio: number;
+	numComments: number;
+	tags: MCTag[];
+	updatedTime?: number;
+}
+
 export type MCWorldLevelAggregation = {
 	avgUploadTime: number;
 	avgDifficulty: {[key in MCDifficulty]: number};
