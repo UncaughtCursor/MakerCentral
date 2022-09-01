@@ -13,7 +13,7 @@ import {
 
 /**
  * Converts a raw MakerCentral level document to a client-side level document.
- * @param rawLevelDoc The raw level document.
+ * @param level The raw level document.
  * @returns The client-side level document.
  */
 export function MCRawLevelDocToMCLevelDoc(level: MCRawLevelDoc): MCLevelDocData {
@@ -146,7 +146,7 @@ export function MCRawUserToMCWorldDoc(user: MCRawUserDoc): MCWorldDocData | null
  * @param tag The level tag from the database.
  * @returns The MakerCentral tag.
  */
-function convertDBTagToMC(tag: DBTag): MCTag | null {
+export function convertDBTagToMC(tag: DBTag): MCTag | null {
 	const tagStr = DBTag[tag];
 	switch (tagStr) {
 	case 'Art': return 'Pixel Art';

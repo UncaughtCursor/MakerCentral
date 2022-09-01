@@ -12,11 +12,11 @@ import {
 } from './data/types/DBTypes';
 import { levelEndpoint, maxDataIdEndpoint, meilisearch, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 import axios, { AxiosResponse } from 'axios';
-import { MCLevelDocData, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
-import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc } from './data/util/MCRawToMC';
+import { MCLevelDocData, MCLevelDocUpdateData, MCTag, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
+import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc, convertDBTagToMC } from './data/util/MCRawToMC';
 import { APIDifficulties, APIGameStyles, APITags, APIThemes } from './data/APITypes';
 
-const maxLevelsToAdd = 3000;
+const maxLevelsToAdd = 4000;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
 const worldsPerChunk = 50;
@@ -26,6 +26,8 @@ const dumpLocation = 'admin/dump';
 // Push to level index every 1 hr 48 min
 const timeBeforeLevelIndex = 12 * 9 * 60 * 1000;
 const firstIndexTime = 1657616041747;
+const minDataId = 3000000;
+const oldLevelAmountMultiplier = 10;
 
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
@@ -36,9 +38,10 @@ interface UpdaterProgress {
 	totalWorldsAdded: number;
 	dumpFileIndex: number;
 	lastLevelIndexTime?: number;
-	levelsToBeIndexed?: MCLevelDocData[];
+	levelsToBeIndexed?: (MCLevelDocData | MCLevelDocUpdateData)[];
 	usersToBeIndexed?: MCUserDocData[];
 	worldsToBeIndexed?: MCWorldDocData[];
+	lastOldDataIdDownloaded?: number;
 }
 
 interface DumpFile {
@@ -135,7 +138,6 @@ export const updateDB = functions.runWith({
 }).pubsub.schedule('every 9 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
-	console.log(progress);
 
 	// If it's possible to go over the cached max data ID, get the new max data ID.
 	const maxId = progress.lastDataIdDownloaded + maxLevelsToAdd >= progress.lastNewestDataId
@@ -150,6 +152,18 @@ export const updateDB = functions.runWith({
 
 	const levelsPre = await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId);
 	console.log(`Downloaded ${levelsPre.length} levels`);
+
+	const numOldIdsToDownload = (maxLevelsToAdd + progress.lastDataIdDownloaded - endId) * oldLevelAmountMultiplier;
+	const minOldId = progress.lastOldDataIdDownloaded ? progress.lastOldDataIdDownloaded + 1 : minDataId;
+	const maxOldId = Math.min(minOldId + numOldIdsToDownload, maxId);
+
+	console.log(`Downloading ${numOldIdsToDownload} old levels`);
+	const oldLevels: MCLevelDocUpdateData[] = (await downloadRawLevels(minOldId, maxOldId))
+		.map((rawLevel) => MCRawLevelPreToUpdateData(rawLevel));
+	console.log(`Downloaded ${oldLevels.length} old levels`);
+
+	// Cycle through old levels, resetting the ID if caught up to the current max ID.
+	progress.lastOldDataIdDownloaded = maxOldId === maxId ? minDataId : maxOldId;
 
 	
 	// Get all user PIDs from levels.
@@ -253,20 +267,23 @@ export const updateDB = functions.runWith({
 		return diff >= timeBeforeLevelIndex;
 	})();
 
-	const MCBrowserLevels = levels.map(level => {
-		return MCRawLevelDocToMCLevelDoc(level);
-	});
+	const MCBrowserLevels: (MCLevelDocData | MCLevelDocUpdateData)[] = [
+		...levels.map(level => {
+			return MCRawLevelDocToMCLevelDoc(level);
+		}),
+		...oldLevels,
+	];
 	console.log(shouldIndexContent ? 'Indexing content' : 'Not indexing content');
 	progress.levelsToBeIndexed = progress.levelsToBeIndexed
 		? progress.levelsToBeIndexed.concat(MCBrowserLevels) : MCBrowserLevels;
 	if (shouldIndexContent) {
 		console.log('Indexing levels');
-		await indexDocs('levels', progress.levelsToBeIndexed);
+		await updateDocs('levels', progress.levelsToBeIndexed);
 		progress.levelsToBeIndexed = [];
 		progress.lastLevelIndexTime = Date.now();
 		const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
 		console.log('Indexing popular levels');
-		await indexDocs('popular-levels', popularLevels);
+		await updateDocs('popular-levels', popularLevels);
 	}
 
 	const MCBrowserUsers = fullUserProfiles.map(user => {
@@ -308,6 +325,7 @@ export const updateDB = functions.runWith({
 	progress.lastRanTime = Date.now();
 
 	console.log(`Last data id downloaded: ${progress.lastDataIdDownloaded}`);
+	console.log(`Last old data id downloaded: ${progress.lastOldDataIdDownloaded}`);
 	console.log(`Last newest data id: ${progress.lastNewestDataId}`);
 
 	await saveProgress(progress);
@@ -543,14 +561,27 @@ function aggregateLevelInfo(levelInfo: MCRawLevelAggregationUnit[]): MCRawLevelA
 type IndexName = 'levels' | 'popular-levels' | 'users' | 'worlds';
 type IndexableDocuments = MCLevelDocData[] | MCUserDocData[] | MCWorldDocData[];
 
+type UpdatableIndexName = 'levels' | 'popular-levels';
+type UpdateDocuments = MCLevelDocUpdateData[];
+
 /**
- * Indexes a set of documents in Meilisearch.
+ * Indexes a set of documents in Meilisearch. This replaces any existing documents with the same ID.
  * @param indexName The name of the index to index into.
  * @param docs The documents to index.
  * @returns A promise that resolves when the indexing is enqueued.
  */
 async function indexDocs(indexName: IndexName, docs: IndexableDocuments): Promise<void> {
 	await meilisearch.index(indexName).addDocuments(docs);
+}
+
+/**
+ * Updates a set of documents in Meilisearch. This updates any fields that are present in the existing documents.
+ * @param indexName The name of the index to update.
+ * @param docs The documents to use to update the index.
+ * @returns A promise that resolves when the indexing is enqueued.
+ */
+async function updateDocs(indexName: UpdatableIndexName, docs: UpdateDocuments): Promise<void> {
+	await meilisearch.index(indexName).updateDocuments(docs);
 }
 
 /**
@@ -692,4 +723,34 @@ async function saveDump(dump: DumpFile, index: number) {
 	const fileName = `${index}.json`;
 	const data = JSON.stringify(dump);
 	await storageBucket.file(`${dumpLocation}/${fileName}`).save(data);
+}
+
+/**
+ * Converts a raw MakerCentral pre-level document to an update document for the search engine.
+ * @param levelPre The raw pre-level document.
+ * @returns The update document for the search engine.
+ */
+ export function MCRawLevelPreToUpdateData(levelPre: MCRawLevelDocPre): MCLevelDocUpdateData {
+	const tags: MCTag[] = (() => {
+		const tagsArr: MCTag[] = [];
+
+		if (levelPre.tag1 !== DBTag.None) tagsArr.push(convertDBTagToMC(levelPre.tag1)!);
+		if (levelPre.tag2 !== DBTag.None && levelPre.tag2 !== levelPre.tag1) {
+			tagsArr.push(convertDBTagToMC(levelPre.tag2)!);
+		}
+
+		return tagsArr;
+	})();
+	const difficulty = DBDifficulty[levelPre.difficulty] as keyof typeof DBDifficulty;
+	
+	return {
+		difficulty: difficulty !== 'Super expert' ? difficulty : 'Super Expert',
+	clearRate: levelPre.clear_rate / 100,
+	numLikes: levelPre.likes,
+	numPlays: levelPre.plays,
+	likeToPlayRatio: levelPre.likes / levelPre.plays,
+	numComments: levelPre.num_comments,
+	tags,
+	updatedTime: Date.now(),
+	};
 }
