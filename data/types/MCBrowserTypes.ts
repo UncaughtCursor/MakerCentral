@@ -25,6 +25,7 @@ export interface MCLevelDocData {
 
 // Data that is used to update a level's entry in the meilisearch index.
 export interface MCLevelDocUpdateData {
+	id: string;
 	difficulty: MCDifficulty;
 	clearRate: number;
 	numLikes: number;

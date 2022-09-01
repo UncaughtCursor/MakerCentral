@@ -744,13 +744,14 @@ async function saveDump(dump: DumpFile, index: number) {
 	const difficulty = DBDifficulty[levelPre.difficulty] as keyof typeof DBDifficulty;
 	
 	return {
+		id: levelPre.course_id,
 		difficulty: difficulty !== 'Super expert' ? difficulty : 'Super Expert',
-	clearRate: levelPre.clear_rate / 100,
-	numLikes: levelPre.likes,
-	numPlays: levelPre.plays,
-	likeToPlayRatio: levelPre.likes / levelPre.plays,
-	numComments: levelPre.num_comments,
-	tags,
-	updatedTime: Date.now(),
+		clearRate: levelPre.clear_rate / 100,
+		numLikes: levelPre.likes,
+		numPlays: levelPre.plays,
+		likeToPlayRatio: levelPre.likes / levelPre.plays,
+		numComments: levelPre.num_comments,
+		tags,
+		updatedTime: Date.now(),
 	};
 }
