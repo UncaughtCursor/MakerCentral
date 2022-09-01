@@ -108,25 +108,43 @@ function LevelPage(props: {
 							width: '300px',
 						}}
 					>
-						<h4>Description</h4>
-						<p>{level.description}</p>
-						<br />
-						<h4>Tags</h4>
-						<TagDisplay tags={level.tags} />
-						<br />
-						<h4>Level Viewer</h4>
-						<a
+						<div className="level-page-info-container-section">
+							<h4>Description</h4>
+							<p>{level.description}</p>
+						</div>
+						<div className="level-page-info-container-section">
+							<h4>Tags</h4>
+							<TagDisplay tags={level.tags} />
+						</div>
+						<div className="level-page-info-container-section">
+							<h4>Level Viewer</h4>
+							<a
+								style={{
+									display: 'block',
+									width: '100%',
+									textAlign: 'left',
+									margin: '5px',
+								}}
+								target="_blank"
+								href={`https://smm2.wizul.us/smm2/level/${level.id}`}
+								rel="noreferrer"
+							>View in Wizulus's SMM2 Viewer
+							</a>
+						</div>
+						<div
+							className="level-page-info-container-section"
 							style={{
-								display: 'block',
-								width: '100%',
-								textAlign: 'left',
-								margin: '5px',
+								marginTop: 'auto',
 							}}
-							target="_blank"
-							href={`https://smm2.wizul.us/smm2/level/${level.id}`}
-							rel="noreferrer"
-						>View in Wizulus's SMM2 Viewer
-						</a>
+						>
+							{level.updatedTime && (
+								<p style={{
+									textAlign: 'right',
+								}}
+								><i>{`Last updated: ${new Date(level.updatedTime).toLocaleDateString()}`}</i>
+								</p>
+							)}
+						</div>
 					</div>
 				</div>
 			</div>

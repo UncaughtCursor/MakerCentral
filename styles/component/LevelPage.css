@@ -26,9 +26,17 @@
 	position: relative;
 	white-space: pre-wrap;
 	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	gap: 20px;
 }
 
-.level-page-info-container > p, .level-page-info-container > h4 {
+.level-page-info-container-section {
+
+}
+
+.level-page-info-container-section > p, .level-page-info-container-section > h4 {
 	text-align: left;
 	margin: 5px;
 }
