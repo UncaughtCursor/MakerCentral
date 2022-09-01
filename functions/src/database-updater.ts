@@ -16,7 +16,7 @@ import { MCLevelDocData, MCLevelDocUpdateData, MCTag, MCUserDocData, MCWorldDocD
 import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc, convertDBTagToMC } from './data/util/MCRawToMC';
 import { APIDifficulties, APIGameStyles, APITags, APIThemes } from './data/APITypes';
 
-const maxLevelsToAdd = 4000;
+const maxLevelsToAdd = 3000;
 const levelsPerChunk = 500;
 const usersPerChunk = 500;
 const worldsPerChunk = 50;
