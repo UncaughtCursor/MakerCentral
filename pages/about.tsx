@@ -1,7 +1,7 @@
 import React from 'react';
 import AppFrame from '@components/AppFrame';
 import {
-	discordLink, twitterLinkPersonal,
+	discordLink, kofiLink, patreonLink, twitterLinkPersonal,
 } from '@scripts/site/FirebaseUtil';
 import TextSection from '@components/main/TextSection';
 
@@ -27,11 +27,23 @@ function About() {
 				body={<>The data was obtained using TheGreatRambler&apos;s API and the tools used to run it. A big thanks to him for his work on the API and his direct help with obtaining the data. It would have been impossible without him.</>}
 			/>
 			<TextSection
-				title="How does this site make money?"
-				body={[<>It doesn&apos;t.</>,
-					<>Due to the legal risks of even attempting to make money from this site, I have decided to not monetize it.</>,
-					<>Unfortunately, that means this site has no way of covering its overhead costs, and I will need to earn money through other ventures to cover them myself.</>,
-					<>If you&apos;re open to trying any projects I create in the future, please consider following me on <a href={twitterLinkPersonal} target="_blank" rel="noopener noreferrer">Twitter</a> or joining my <a href={discordLink} target="_blank" rel="noopener noreferrer">Discord community</a>.</>]}
+				title="How does this site pay for itself?"
+				body={[<>Donations.</>,
+					<>Although I originally planned on not monetizing this site due to legal concerns, this is unsustainable; I will soon run out of money to pay for the site's ongoing expenses.</>,
+					<>In other words, <b>this site will die soon without donations from people like you.</b></>,
+					<>If you find this site useful and want it to stay available for everyone, please consider donating on <a href={patreonLink} target="_blank" rel="noopener noreferrer">Patreon</a> or <a href={kofiLink} target="_blank" rel="noopener noreferrer">Ko-Fi</a>. Every 5 dollars donated is another day that the site can stay running.</>]}
+			/>
+			<TextSection
+				title="Donations - Thank You!"
+				body={[<>I would like to thank the following people for their generous donations. In parentheses is how much longer this site will last thanks to them.</>,
+					<ul>
+						<li>tint - $40 (8 days)</li>
+						<li>Anti Node - $10 (2 days)</li>
+						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
+						<li>NintendoThumb@YT - $5 (1 day)</li>
+						<li>Cody Stumma - $5 (1 day)</li>
+					</ul>,
+				]}
 			/>
 		</AppFrame>
 	);
