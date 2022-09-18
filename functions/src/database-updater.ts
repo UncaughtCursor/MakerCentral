@@ -23,8 +23,8 @@ const worldsPerChunk = 50;
 
 const progressFileLocation = 'admin/updater-progress.json';
 const dumpLocation = 'admin/dump';
-// Push to level index every 1 hr 48 min
-const timeBeforeLevelIndex = 12 * 9 * 60 * 1000;
+// Push to level index every 2 hr 15 min
+const timeBeforeLevelIndex = 15 * 9 * 60 * 1000;
 const firstIndexTime = 1657616041747;
 const minDataId = 3000000;
 const oldLevelAmountMultiplier = 10;
@@ -134,7 +134,7 @@ interface MCRawUserDocPre {
 export const updateDB = functions.runWith({
 	timeoutSeconds: 540,
 	maxInstances: 1,
-	memory: '512MB',
+	memory: '1GB',
 }).pubsub.schedule('every 9 minutes').onRun(async () => {
 	const progress = await loadProgress();
 	console.log('Progress loaded');
