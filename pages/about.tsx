@@ -39,6 +39,7 @@ function About() {
 					<ul>
 						<li>tint - $40 (8 days)</li>
 						<li>Anti Node - $10 (2 days)</li>
+						<li>BamBoozil - $10 (2 days)</li>
 						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
 						<li>NintendoThumb@YT - $5 (1 day)</li>
 						<li>Cody Stumma - $5 (1 day)</li>
