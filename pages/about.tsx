@@ -38,10 +38,10 @@ function About() {
 				body={[<>I would like to thank the following people for their generous donations. In parentheses is how much longer this site will last thanks to them.</>,
 					<ul>
 						<li>tint - $40 (8 days)</li>
+						<li>NintendoThumbFan - $20 (4 days)</li>
 						<li>Anti Node - $10 (2 days)</li>
 						<li>BamBoozil - $10 (2 days)</li>
 						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
-						<li>NintendoThumb@YT - $5 (1 day)</li>
 						<li>Cody Stumma - $5 (1 day)</li>
 					</ul>,
 				]}
