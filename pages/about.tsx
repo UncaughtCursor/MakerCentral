@@ -39,6 +39,7 @@ function About() {
 					<ul>
 						<li>tint - $40 (8 days)</li>
 						<li>NintendoThumbFan - $20 (4 days)</li>
+						<li>BeardBear - $10.79 (2 days, 3 hr)</li>
 						<li>Anti Node - $10 (2 days)</li>
 						<li>BamBoozil - $10 (2 days)</li>
 						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
