@@ -5,6 +5,33 @@ import {
 } from '@scripts/site/FirebaseUtil';
 import TextSection from '@components/main/TextSection';
 
+// Donations; key = username, value = donation amount in cents
+// Sort from highest to lowest
+const donations: [string, number][] = [
+	['tint', 12000],
+	['NintendoThumbFan', 6000],
+	['BeardBear', 2934],
+	['Anti Node', 3000],
+	['BamBoozil', 1000],
+	['Taan Wallbanks', 1717],
+	['Cody Stumma', 1500],
+	['RogendGuy', 1200],
+	['SirMystic', 1000],
+	['Annette Wilson', 10000],
+].sort((a, b) => (b[1] as number) - (a[1] as number)) as [string, number][];
+
+const totalDonations = donations.reduce((a, b) => a + b[1], 0);
+
+const siteDailyCostCents = 500;
+
+const daysPaidForByDonators: number[] = donations.map((donation) => {
+	const [_, amount] = donation;
+	const daysPaidFor = Math.floor(amount / siteDailyCostCents);
+	return daysPaidFor;
+});
+
+const totalDaysPaidFor = Math.floor(totalDonations / siteDailyCostCents);
+
 /**
  * The about page of the site.
  */
@@ -37,14 +64,24 @@ function About() {
 				title="Donations - Thank You!"
 				body={[<>I would like to thank the following people for their generous donations. In parentheses is how much longer this site will last thanks to them.</>,
 					<ul>
-						<li>tint - $40 (8 days)</li>
+						{/* <li>tint - $40 (8 days)</li>
 						<li>NintendoThumbFan - $20 (4 days)</li>
 						<li>BeardBear - $10.79 (2 days, 3 hr)</li>
 						<li>Anti Node - $10 (2 days)</li>
 						<li>BamBoozil - $10 (2 days)</li>
 						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
-						<li>Cody Stumma - $5 (1 day)</li>
+	<li>Cody Stumma - $5 (1 day)</li> */}
+						{donations.map((donation, i) => {
+							const [username, amount] = donation;
+							const daysPaidFor = daysPaidForByDonators[i];
+							return (
+								<li key={username}>
+									{`${username} - $${(amount / 100).toFixed(2)} (${daysPaidFor} day${daysPaidFor === 1 ? '' : 's'})`}
+								</li>
+							);
+						})}
 					</ul>,
+					<>Total amount donated: ${(totalDonations / 100).toFixed(2)} ({totalDaysPaidFor} day{totalDaysPaidFor === 1 ? '' : 's'})</>,
 				]}
 			/>
 		</AppFrame>
