@@ -6,6 +6,8 @@ import React from 'react';
 import {
 	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchMode, SearchResults,
 } from '@scripts/browser/SearchUtil';
+import WarningBanner from '@components/pages/search/WarningBanner';
+import { discordLink } from '@scripts/site/FirebaseUtil';
 
 export interface SearchParams extends SearchFilterSettings {
 	q: string;
@@ -35,8 +37,28 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 		}, {} as {[key: string]: any});
 	})() as SearchFilterSettings;
 
+	const discordLinkElement = (
+		<a
+			href={discordLink}
+			target="_blank"
+			rel="noopener noreferrer"
+		>Discord server
+		</a>
+	);
+
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
+			<WarningBanner
+				message={(
+					<div>
+						A recent update to Nintendo's online protocols is currently preventing new levels and images from
+						being added. For more info and updates, check the {discordLinkElement}.
+					</div>
+				)}
+				style={{
+					marginBottom: '-12px',
+				}}
+			/>
 			<div style={{
 				margin: '24px auto',
 				width: 'max-content',

@@ -52,6 +52,8 @@ import '../styles/component/LevelThumbnail.css';
 import '../styles/component/SuperWorld.css';
 import '../styles/component/Charts.css';
 import '../styles/component/UserPreview.css';
+import '../styles/component/Banner.css';
+// I know this is bad and I'm sorry
 
 import type { AppProps } from 'next/app';
 import TimeAgo from 'javascript-time-ago';

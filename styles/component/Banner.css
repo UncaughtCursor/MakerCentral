@@ -1,0 +1,22 @@
+.warning-banner {
+	background-color: #4F522B;
+	border: 1px solid #636626;
+	color: var(--text-color);
+	border-radius: 6px;
+	text-align: left;
+	padding: 5px 8px;
+	display: flex;
+	flex-direction: row;
+	margin: 20px auto;
+	width: fit-content;
+	max-width: 800px;
+}
+
+.warning-banner > svg {
+	margin-right: 8px;
+	color: #C4C50E;
+}
+
+.warning-banner-wrapper {
+	padding: 0 20px;
+}
