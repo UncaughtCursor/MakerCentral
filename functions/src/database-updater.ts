@@ -10,7 +10,7 @@ import {
 	DBClearCondition,
 	DBDifficulty, DBGameStyle, APILevel, DBTag, DBTheme, DBSuperWorld, DBUser, UserRegion, VersusRank,
 } from './data/types/DBTypes';
-import { cacheDisableSuffix, levelEndpoint, maxDataIdEndpoint, meilisearch, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
+import { levelEndpoint, maxDataIdEndpoint, meilisearch, smm2APIBaseUrl, superWorldEndpoint, userEndpoint } from './constants';
 import axios, { AxiosResponse } from 'axios';
 import { MCLevelDocData, MCLevelDocUpdateData, MCTag, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
 import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc, convertDBTagToMC } from './data/util/MCRawToMC';
@@ -398,7 +398,7 @@ type RawUserSetResponse = {
  */
 async function downloadRawUserSet(pids: string[], isPreview = false): Promise<MCRawUserDocPre[] | MCRawUserPreview[]> {
 	console.log(`Downloading ${pids.length} users`);
-	const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}${cacheDisableSuffix}`;
+	const url = `${smm2APIBaseUrl}/${userEndpoint}/${pids.join(',')}`;
 	const response = await getAPIResponse(url) as RawUserSetResponse;
 	console.log(`Downloaded ${response.users.length} users`);
 
@@ -454,7 +454,7 @@ async function downloadSuperWorlds(worldIds: string[]): Promise<DBSuperWorld[]> 
 	const worldIdChunks = chunk(worldIds, worldsPerChunk);
 	const worlds: DBSuperWorld[] = [];
 	for (const worldIdChunk of worldIdChunks) {
-		const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldIdChunk.join(',')}${cacheDisableSuffix}`;
+		const url = `${smm2APIBaseUrl}/${superWorldEndpoint}/${worldIdChunk.join(',')}`;
 		const response = await getAPIResponse(url) as RawSuperWorldResponse;
 		worlds.push(...response.super_worlds);
 	}
@@ -623,7 +623,7 @@ interface RawLevelSetResponse {
  * @returns A promise that resolves with the downloaded level info.
  */
 async function downloadRawLevelSet(dataIds: number[]): Promise<MCRawLevelDocPre[]> {
-	const url = `${smm2APIBaseUrl}/${levelEndpoint}/${dataIds.join(',')}${cacheDisableSuffix}`;
+	const url = `${smm2APIBaseUrl}/${levelEndpoint}/${dataIds.join(',')}`;
 	const response = await getAPIResponse(url) as RawLevelSetResponse;
 
 	const res: MCRawLevelDocPre[] = [];
@@ -649,7 +649,7 @@ type MaxDataIDResponse = { data_id: number };
  * approximate maximum data ID that can be downloaded.
  */
 async function getMaxDataID(): Promise<number> {
-	const url = `${smm2APIBaseUrl}/${maxDataIdEndpoint}${cacheDisableSuffix}`;
+	const url = `${smm2APIBaseUrl}/${maxDataIdEndpoint}`;
 	const response = await getAPIResponse(url) as MaxDataIDResponse;
 	
 	return response.data_id;
