@@ -51,7 +51,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			<WarningBanner
 				message={(
 					<div>
-						The database is catching up on downloading new content. New levels, users, and super worlds may be missing until after {new Date(1672405200000).toLocaleDateString()}. For more info and updates, check the {discordLinkElement}.
+						The database is catching up on downloading new content. New levels, users, and super worlds may be missing for a couple of days. For more info and updates, check the {discordLinkElement}.
 					</div>
 				)}
 				style={{
