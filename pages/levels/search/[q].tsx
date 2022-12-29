@@ -51,8 +51,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			<WarningBanner
 				message={(
 					<div>
-						A recent update to Nintendo's online protocols is currently preventing new levels and images from
-						being added. For more info and updates, check the {discordLinkElement}.
+						The database is catching up on downloading new content. New levels, users, and super worlds may be missing for a couple of days. For more info and updates, check the {discordLinkElement}.
 					</div>
 				)}
 				style={{
