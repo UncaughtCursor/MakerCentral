@@ -148,9 +148,15 @@ export interface SearchFilterSettings {
 	avgTags?: MCTag | 'Any';
 	worldSize?: WorldSize | 'Any';
 	makerId?: string;
+	time?: SearchTimeFilter;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
+
+export const SearchTimeFilters = [
+	'Past Day', 'Past Week', 'Past Month', 'Past Year', 'Any',
+] as const;
+export type SearchTimeFilter = typeof SearchTimeFilters[number];
 
 export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} = {
 	Levels: {
@@ -161,6 +167,7 @@ export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} 
 		theme: 'Any',
 		gameStyle: 'Any',
 		tags: 'Any',
+		time: 'Any',
 		page: 0,
 	},
 	Users: {
@@ -239,6 +246,11 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 			label: 'Tag',
 			property: 'tags',
 			options: ['Any', ...MCTagOptions] as const,
+		} as const,
+		{
+			label: 'Time',
+			property: 'time',
+			options: SearchTimeFilters,
 		} as const,
 		{
 			label: 'Maker ID',
