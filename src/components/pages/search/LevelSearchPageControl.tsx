@@ -80,6 +80,7 @@ function LevelSearchPageControl(props: {
 				theme: searchParams.theme,
 				gameStyle: searchParams.gameStyle,
 				tags: searchParams.tags,
+				time: searchParams.time,
 				page: curPage! + delta,
 			};
 			if (props.goToPage!) {
