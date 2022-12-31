@@ -4,7 +4,7 @@ import { SearchParams } from 'pages/levels/search/[q]';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
 import {
 	defaultFilterSettings, FullSearchParams,
-	levelSearchTemplate, SearchMode, SearchResults, userSearchTemplate, worldSearchTemplate,
+	levelSearchTemplate, SearchMode, SearchResults, SearchTimeFilter, userSearchTemplate, worldSearchTemplate,
 } from './SearchUtil';
 
 export interface LevelSearch {
@@ -161,5 +161,47 @@ function getSearchFilterString(
 		const prominencePercentage = 0.5;
 		return [`${key}.${value} >= ${prominencePercentage}`];
 	}
+	if (key === 'time') {
+		const minResultUnixTime = getMinResultUnixTime(value as SearchTimeFilter);
+		return [`uploadTime >= ${minResultUnixTime}`];
+	}
 	return [`${key} = "${value}"`];
+}
+
+/**
+ * For the time filter, returns the minimum unix timestamp to show levels from.
+ * @param timeFilter The time filter to use.
+ * @returns The minimum unix timestamp to show levels from.
+ */
+function getMinResultUnixTime(timeFilter: SearchTimeFilter): number {
+	const now = Date.now();
+	let msToSubtract = 0;
+
+	switch (timeFilter) {
+	case 'Past Day': {
+		msToSubtract = 24 * 60 * 60 * 1000;
+		break;
+	}
+	case 'Past Week': {
+		msToSubtract = 7 * 24 * 60 * 60 * 1000;
+		break;
+	}
+	case 'Past Month': {
+		msToSubtract = 30 * 24 * 60 * 60 * 1000;
+		break;
+	}
+	case 'Past Year': {
+		msToSubtract = 365 * 24 * 60 * 60 * 1000;
+		break;
+	}
+	case 'Any': {
+		// Any time is valid, so just return 0.
+		return 0;
+	}
+	default: {
+		throw new Error(`Invalid time filter: ${timeFilter}`);
+	}
+	}
+
+	return now - msToSubtract;
 }
