@@ -8,16 +8,18 @@ import TextSection from '@components/main/TextSection';
 // Donations; key = username, value = donation amount in cents
 // Sort from highest to lowest
 const donations: [string, number][] = [
-	['tint', 12000],
-	['NintendoThumbFan', 6000],
-	['BeardBear', 2934],
-	['Anti Node', 3000],
+	['tint', 18000],
+	['NintendoThumbFan', 8000],
+	['BeardBear', 3970],
+	['Anti Node', 4000],
 	['BamBoozil', 1000],
-	['Taan Wallbanks', 1717],
-	['Cody Stumma', 1500],
-	['RogendGuy', 1200],
-	['SirMystic', 1000],
+	['Taan Wallbanks', 2317],
+	['Cody Stumma', 2000],
+	['RogendGuy', 1800],
+	['SirMystic', 1500],
 	['Annette Wilson', 10000],
+	['FauxBlue', 1000],
+	['youyi1996', 5000],
 ].sort((a, b) => (b[1] as number) - (a[1] as number)) as [string, number][];
 
 const totalDonations = donations.reduce((a, b) => a + b[1], 0);
