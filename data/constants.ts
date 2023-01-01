@@ -1,1 +1,1 @@
-export const marketedLevelDBSize = '31 Million';
+export const marketedLevelDBSize = '32 Million';
