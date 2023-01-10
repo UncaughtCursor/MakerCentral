@@ -48,16 +48,16 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
-			{/* <WarningBanner
+			<WarningBanner
 				message={(
 					<div>
-						The database is catching up on downloading new content. New levels, users, and super worlds may be missing for a couple of days. For more info and updates, check the {discordLinkElement}.
+						The third-party software powering MakerCentral has corrupted the database, temporarily removing most levels. This is being worked on. For more info and updates, check the {discordLinkElement}.
 					</div>
 				)}
 				style={{
 					marginBottom: '-12px',
 				}}
-			/> */}
+			/>
 			<div style={{
 				margin: '24px auto',
 				width: 'max-content',
