@@ -27,7 +27,7 @@
     "firebaseui": "^6.0.1",
     "javascript-time-ago": "^2.3.13",
     "lz-string": "^1.4.4",
-    "meilisearch": "^0.25.1",
+    "meilisearch": "^0.30.0",
     "midifile": "^2.0.0",
     "next": "^12.1.0",
     "react": "17.0.2",

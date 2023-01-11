@@ -15,6 +15,10 @@ const wordDataOutputName = 'out/stats/wordData.json';
 const popularLevelLikeThreshold = 25;
 export const meilisearch = new MeiliSearch(MeiliCredentials);
 
+const levelIndexBatchSize = 2000000;
+const userIndexBatchSize = 1000000;
+const worldIndexBatchSize = 200000;
+
 interface CreateLevelSearchDataOptions {
 	onlyPopular?: boolean;
 	inputDataDir?: string;
@@ -33,7 +37,7 @@ interface CreateLevelSearchDataOptions {
  */
 export async function createLevelSearchData(options: CreateLevelSearchDataOptions = {}) {
 	const inputDataDir = options.inputDataDir || levelOutDir;
-	const batchSize = options.batchSize || 100000;
+	const batchSize = options.batchSize || levelIndexBatchSize;
 	const offset = options.offset || 0;
 
 	const levelFileIterator = new TextDirIterator(inputDataDir);
@@ -105,7 +109,7 @@ export async function createWorldSearchData() {
 		const docs: MCWorldDocData[] = rawDocs.filter(userDoc => userDoc.super_world !== null)
 			.map(rawDoc => MCRawUserToMCWorldDoc(rawDoc)!);
 		pool.push(...docs);
-		if (pool.length >= 20000) {
+		if (pool.length >= worldIndexBatchSize) {
 			const task = await meilisearch.index('worlds').addDocuments(pool);
 			console.log(task);
 			pool = [];
@@ -151,10 +155,10 @@ export async function setSearchSettings() {
 
 	// IMPORTANT: Make sure the index you want to update is set to true
 	const updateLevelIndex = true;
-	const updatePopularLevelIndex = false;
-	const updateUserIndex = false;
-	const updateWorldIndex = false;
-	const updateSuggestionsIndex = false;
+	const updatePopularLevelIndex = true;
+	const updateUserIndex = true;
+	const updateWorldIndex = true;
+	const updateSuggestionsIndex = true;
 
 	console.log('Setting settings...');
 
@@ -323,10 +327,10 @@ export async function dumpIndexDocs(indexName: string) {
 		let responseLength = 0;
 		while (!success) {
 			try {
-				const docs = await index.getDocuments({
+				const docs = (await index.getDocuments({
 					limit: batchSize,
 					offset: i * batchSize,
-				});
+				})).results;
 				responseLength = docs.length;
 				if (responseLength > 0) {
 					console.log('Saving...');
@@ -360,6 +364,7 @@ export async function searchLevels(query: string, searchParams?: SearchParams) {
  * @returns The list of tasks.
  */
 export async function getTasks() {
+	const res = await meilisearch.getTasks();
 	return (await meilisearch.getTasks()).results.filter(
 		(task) => {
 			if (task.status === 'enqueued' || task.status === 'processing') {
@@ -378,4 +383,22 @@ export async function getTasks() {
 			return diff < 24 * 60 * 60 * 1000;
 		},
 	);
+}
+
+/**
+ * Creates the MeiliSearch indices.
+ */
+export async function createIndices() {
+	await meilisearch.createIndex('users', {
+		primaryKey: 'id',
+	});
+	await meilisearch.createIndex('levels', {
+		primaryKey: 'id',
+	});
+	await meilisearch.createIndex('worlds', {
+		primaryKey: 'makerId',
+	});
+	await meilisearch.createIndex('level-suggestions', {
+		primaryKey: 'id',
+	});
 }

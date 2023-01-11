@@ -6,8 +6,10 @@ export const originalBackupDir = `${backupDir}/original`;
 
 /**
  * Reuploads all levels in the backup directory to the levels index.
+ * @param backupId The ID of the backup to restore.
+ * @param popularOnly Whether to only restore popular levels.
  */
-export async function restoreLevelBackup(backupId: number) {
+export async function restoreLevelBackup(backupId: number, popularOnly = false) {
 	const dumpDir = `${generalOutDir}/updatedb-dumps/${backupId}/extracted-levels`;
 
 	for (const dir of [`${originalBackupDir}/1`, `${originalBackupDir}/2`, dumpDir]) {
@@ -17,6 +19,7 @@ export async function restoreLevelBackup(backupId: number) {
 			inputDataDir: dir,
 			batchSize: 100000,
 			offset,
+			onlyPopular: popularOnly,
 		});
 	}
 }

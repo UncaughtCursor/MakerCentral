@@ -9,7 +9,7 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reade
 import {
 	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -216,6 +216,18 @@ yargs.usage('$0 command')
 	.command('restore-level-backup', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
 		await restoreLevelBackup(latestBackupId);
 	})
+	.command('restore-popular-level-backup', 'Reuploads all of the backed up popular levels to Meilisearch.', async () => {
+		await restoreLevelBackup(latestBackupId, true);
+	})
+	.command('restore-user-backup', 'Reuploads all of the backed up users to Meilisearch.', async () => {
+		await createUserSearchData();
+	})
+	.command('restore-world-backup', 'Reuploads all of the backed up worlds to Meilisearch.', async () => {
+		await createWorldSearchData();
+	})
+	.command('create-indices', 'Create the Meilisearch indices in case they got erased.', async () => {
+		await createIndices();
+	})
 	.command('search-levels', 'Search the live database using the query specified in data/search.json', async () => {
 		console.log('Searching...');
 		const search = JSON.parse(fs.readFileSync('data/search.json', 'utf8')) as {
@@ -249,7 +261,7 @@ function logSearchResults(results: SearchResponse<Record<string, any>>) {
 	results.hits.forEach((hit) => {
 		console.log(hit);
 	});
-	console.log(`About ${results.nbHits} results (${results.processingTimeMs}ms)`);
+	console.log(`About ${results.estimatedTotalHits} results (${results.processingTimeMs}ms)`);
 }
 
 /**
@@ -263,7 +275,7 @@ function logTasks(tasks: Task[]) {
 		console.log(`Type: ${task.type}`);
 		console.log(`Status: ${task.status}`);
 		console.log(`Enqueued at: ${task.enqueuedAt}`);
-		if (task.processedAt) console.log(`Processed at: ${task.processedAt}`);
+		if (task.finishedAt) console.log(`Finished at: ${task.finishedAt}`);
 		if (task.duration) console.log(`Duration: ${task.duration}`);
 		if (task.details) console.log('Details:', task.details);
 		if (task.error) console.log(`Error: ${task.error}`);

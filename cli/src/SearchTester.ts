@@ -19,13 +19,13 @@ export async function runSearchTests(
 			? await basicSearch(test.query, 'levels')
 			: await hasDoc(test.query, 'levels');
 		if (options.onlyLogFailures) {
-			if (typeof res === 'boolean' ? !res : res.nbHits === 0) {
+			if (typeof res === 'boolean' ? !res : res.estimatedTotalHits === 0) {
 				console.log(`${test.label} failed`);	
 			}
 		} else {
 			console.log(`${test.label}`);
 			console.log(`${test.query}`);
-			if (typeof res !== 'boolean') console.log(`${res.nbHits} results\n`);
+			if (typeof res !== 'boolean') console.log(`${res.estimatedTotalHits} results\n`);
 			else console.log(res ? 'Found' : 'Not found');
 		}
 	}
