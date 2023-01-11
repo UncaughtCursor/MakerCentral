@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { CountryCode } from '../types/CountryTypes';
 import {
 	DBDifficulty, DBGameStyle, DBTag, DBTheme,
 } from '../types/DBTypes';
@@ -34,8 +35,9 @@ export function MCRawLevelDocToMCLevelDoc(level: MCRawLevelDoc): MCLevelDocData 
 	return {
 		id: level.course_id,
 		uploadTime: level.uploaded * 1000,
+		updatedTime: Date.now(),
 		name: level.name,
-		addedTime: -1,
+		country: level.uploader.country as CountryCode,
 		makerName: level.uploader.name,
 		makerId: level.uploader.makerId,
 		difficulty: difficulty !== 'Super expert' ? difficulty : 'Super Expert',
@@ -43,12 +45,13 @@ export function MCRawLevelDocToMCLevelDoc(level: MCRawLevelDoc): MCLevelDocData 
 		gameStyle,
 		theme: theme !== 'Ghost House' ? theme : 'Ghost house',
 		numLikes: level.likes,
+		numBoos: level.boos,
 		numPlays: level.unique_players_and_versus,
-		likeToPlayRatio: level.likes / level.unique_players_and_versus,
-		numComments: level.num_comments,
+		likePercentage: (level.likes + level.boos) > 0
+			? level.likes / (level.likes + level.boos)
+			: 0.5,
 		description: level.description,
 		tags,
-		isPromotedByPatron: false,
 	};
 }
 

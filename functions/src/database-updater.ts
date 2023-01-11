@@ -748,9 +748,11 @@ async function saveDump(dump: DumpFile, index: number) {
 		difficulty: difficulty !== 'Super expert' ? difficulty : 'Super Expert',
 		clearRate: levelPre.clear_rate / 100,
 		numLikes: levelPre.likes,
+		numBoos: levelPre.boos,
 		numPlays: levelPre.plays,
-		likeToPlayRatio: levelPre.likes / levelPre.plays,
-		numComments: levelPre.num_comments,
+		likePercentage: (levelPre.likes + levelPre.boos) > 0
+			? levelPre.likes / (levelPre.likes + levelPre.boos)
+			: 0.5,
 		tags,
 		updatedTime: Date.now(),
 	};

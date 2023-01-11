@@ -33,7 +33,7 @@
     "gpu.js": "^2.4.1",
     "html-escaper": "^3.0.3",
     "inquirer": "^8.2.1",
-    "meilisearch": "^0.25.0",
+    "meilisearch": "^0.30.0",
     "natural": "^5.2.2",
     "ndarray": "^1.0.19",
     "partrick": "^1.0.2",

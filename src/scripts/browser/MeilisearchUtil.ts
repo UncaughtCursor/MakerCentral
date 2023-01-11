@@ -107,8 +107,8 @@ paramName as SearchFilterKey,
 	});
 	return {
 		results: res.hits as MCLevelDocData[],
-		numResults: res.nbHits,
-		isNumResultsExact: res.exhaustiveNbHits,
+		numResults: res.estimatedTotalHits!,
+		isNumResultsExact: false,
 		computeTimeMs: res.processingTimeMs,
 		searchParams: searchData,
 	};

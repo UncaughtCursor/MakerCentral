@@ -1,39 +1,39 @@
 import {
 	APIGameStyle, APIGameStyles, APITheme, APIThemes,
 } from '../APITypes';
+import { CountryCode } from './CountryTypes';
 
 export interface MCLevelDocData {
 	name: string;
 	id: string;
 	uploadTime: number;
-	addedTime: number;
+	updatedTime: number;
 	makerName: string;
 	makerId: string;
+	country: CountryCode;
 	difficulty: MCDifficulty;
 	clearRate: number;
 	gameStyle: MCGameStyle;
 	theme: MCTheme;
 	numLikes: number;
+	numBoos: number;
 	numPlays: number;
-	likeToPlayRatio: number;
-	numComments: number;
+	likePercentage: number;
 	description: string;
 	tags: MCTag[];
-	isPromotedByPatron: boolean;
-	updatedTime?: number;
 }
 
 // Data that is used to update a level's entry in the meilisearch index.
 export interface MCLevelDocUpdateData {
 	id: string;
+	updatedTime: number;
 	difficulty: MCDifficulty;
 	clearRate: number;
 	numLikes: number;
+	numBoos: number;
 	numPlays: number;
-	likeToPlayRatio: number;
-	numComments: number;
+	likePercentage: number;
 	tags: MCTag[];
-	updatedTime?: number;
 }
 
 export type MCWorldLevelAggregation = {
@@ -113,7 +113,6 @@ export const MCTags = [
 	'Short',
 	'One Player Only',
 ] as const;
-
 export type MCTag = typeof MCTags[number];
 
 export const MCDifficulties = [
@@ -129,3 +128,11 @@ export type MCTheme = APITheme;
 
 export const MCGameStyles = APIGameStyles;
 export type MCGameStyle = APIGameStyle;
+
+export const MCRegions = [
+	'Asia',
+	'Americas',
+	'Europe',
+	'Other',
+] as const;
+export type MCRegion = typeof MCRegions[number];

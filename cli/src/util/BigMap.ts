@@ -76,4 +76,14 @@ export default class BigMap<K, V> {
 	size(): number {
 		return this.maps.reduce((o, map) => (o + map.size), 0);
 	}
+
+	/**
+	 * Iterates over the entries in the BigMap.
+	 * @param cb A callback to be called with the key and value for every entry.
+	 */
+	forEach(cb: (value: V, key: K) => void) {
+		for (const map of this.maps) {
+			map.forEach(cb);
+		}
+	}
 }

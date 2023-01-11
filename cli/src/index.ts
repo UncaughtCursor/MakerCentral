@@ -9,17 +9,18 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reade
 import {
 	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, meilisearch, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
-import CloudFn from '../../data/util/CloudFn';
 import { runSearchTests, SearchTest } from './SearchTester';
 import { DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme } from '@data/types/DBTypes';
 import streamFileUntil from './util/SteamFileUntil';
 import { downloadStorageDir } from './StorageManager';
 import path from 'path';
 import generateThumbnailGrid from './ThumbnailGridGenerator';
+import { restoreLevelBackup } from './Backups';
+import { SearchParams, SearchResponse, Task } from 'meilisearch';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -108,6 +109,8 @@ const superWorldEndpoint = 'super_worlds';
 const thumbnailEndpoint = 'level_thumbnail';
 const smm2APIBaseUrl = 'http://magic.makercentral.io';
 
+const latestBackupId = 1673399049735;
+
 yargs.usage('$0 command')
 	.command('sitemap', 'Update the sitemap', async () => {
 		await generateSitemap();
@@ -138,7 +141,7 @@ yargs.usage('$0 command')
 	.command('set-search-suggestions', 'Upload the latest word stats to Meilisearch to update the search suggestions', async () => {
 		await setSearchSuggestions();
 	})
-	.command('set-search-settings', 'Reinitialize Meilisearch settings if they got reset', async () => {
+	.command('set-search-settings', 'Reinitialize or update Meilisearch the settings specified in the code. WARNING: Make sure no indexing is happening while this is running. Wait a long time after indexing is completed to ensure safety.', async () => {
 		await setSearchSettings();
 	})
 	.command('upload-levels', 'Upload completed levels to Firebase', async () => {
@@ -188,9 +191,8 @@ yargs.usage('$0 command')
 		});
 	})
 	.command('extract-dump-levels', 'Extract the new levels from the dumps collected by the updateDB cloud function.', async () => {
-		const timeOfDump = 1658536344617;
-		const dataDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}`;
-		const outDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}/extracted-levels`;
+		const dataDir = `${generalOutDir}/updatedb-dumps/${latestBackupId}`;
+		const outDir = `${generalOutDir}/updatedb-dumps/${latestBackupId}/extracted-levels`;
 		const minFileNumber = 130;
 
 		const files = fs.readdirSync(dataDir);
@@ -211,27 +213,73 @@ yargs.usage('$0 command')
 			fs.writeFileSync(`${outDir}/${newNumber}.json`, JSON.stringify(levelData));
 		}
 	})
-	.command('reupload-search-levels', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
-		const backupDir = `E:/backup/raw-levels`;
-
-		// Subdirectories are '1', '2', and '3'
-		for (const subdir of ['1', '2', '3']) {
-			console.log(`Processing subdirectory ${subdir}`);
-			const offset = subdir === '1' ? 158 : 0;
-			await createLevelSearchData({
-				inputDataDir: `${backupDir}/${subdir}`,
-				batchSize: 100000,
-				offset,
-			});
-		}
+	.command('restore-level-backup', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
+		await restoreLevelBackup(latestBackupId);
+	})
+	.command('restore-popular-level-backup', 'Reuploads all of the backed up popular levels to Meilisearch.', async () => {
+		await restoreLevelBackup(latestBackupId, true);
+	})
+	.command('restore-user-backup', 'Reuploads all of the backed up users to Meilisearch.', async () => {
+		await createUserSearchData();
+	})
+	.command('restore-world-backup', 'Reuploads all of the backed up worlds to Meilisearch.', async () => {
+		await createWorldSearchData();
+	})
+	.command('create-indices', 'Create the Meilisearch indices in case they got erased.', async () => {
+		await createIndices();
+	})
+	.command('search-levels', 'Search the live database using the query specified in data/search.json', async () => {
+		console.log('Searching...');
+		const search = JSON.parse(fs.readFileSync('data/search.json', 'utf8')) as {
+			query: string,
+			searchParams: SearchParams,
+		};
+		console.log('Query', search);
+		const results = await searchLevels(search.query, search.searchParams);
+		logSearchResults(results);
+	})
+	.command('show-active-tasks', 'Show the active tasks in the Meilisearch instance and any failed tasks in the last 24 hours', async () => {
+		const tasks = await getTasks();
+		logTasks(tasks);
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
 		await generateThumbnailGrid(100, 100); // Top 10K
 	})
 	.command('test', 'Test', async () => {
-		
+
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
 	.alias('h', 'help')
 	.parse();
+
+/**
+ * Logs search results to the console.
+ * @param results The results to log.
+ */
+function logSearchResults(results: SearchResponse<Record<string, any>>) {
+	results.hits.forEach((hit) => {
+		console.log(hit);
+	});
+	console.log(`About ${results.estimatedTotalHits} results (${results.processingTimeMs}ms)`);
+}
+
+/**
+ * Logs the currently active tasks in the Meilisearch instance.
+ * @param tasks The tasks to log.
+ */
+function logTasks(tasks: Task[]) {
+	tasks.forEach((task) => {
+		console.log('**********');
+		console.log(`Task ${task.uid}`);
+		console.log(`Type: ${task.type}`);
+		console.log(`Status: ${task.status}`);
+		console.log(`Enqueued at: ${task.enqueuedAt}`);
+		if (task.finishedAt) console.log(`Finished at: ${task.finishedAt}`);
+		if (task.duration) console.log(`Duration: ${task.duration}`);
+		if (task.details) console.log('Details:', task.details);
+		if (task.error) console.log(`Error: ${task.error}`);
+		console.log('');
+	});
+	console.log(`${tasks.length} tasks`);
+}
