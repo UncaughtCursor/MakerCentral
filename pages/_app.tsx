@@ -65,6 +65,9 @@ TimeAgo.addDefaultLocale(en);
 // FIXME: SET TO TRUE IN PROD
 export const isProd = true;
 
+// Whether or not to use the popular levels index in case the normal one is down
+export const isInBackupMode = true;
+
 /**
  * The app.
  */

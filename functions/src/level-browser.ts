@@ -1,12 +1,13 @@
 import * as functions from 'firebase-functions';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
-import { levelIndexName, meilisearch, superWorldIndexName, userIndexName } from './constants';
+import { isInBackupMode, levelIndexName, meilisearch, popularLevelIndexName, superWorldIndexName, userIndexName } from './constants';
 
 export const getLevel = functions.https.onCall(async (data: {
 	levelId: string,
 }): Promise<MCLevelDocData | null> => {
+	const indexName = isInBackupMode ? popularLevelIndexName : levelIndexName;
 	try {
-		const level = await meilisearch.index(levelIndexName).getDocument(data.levelId);
+		const level = await meilisearch.index(indexName).getDocument(data.levelId);
 		return level;
 	}
 	catch (e) {

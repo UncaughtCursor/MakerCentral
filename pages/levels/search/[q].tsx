@@ -51,7 +51,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			<WarningBanner
 				message={(
 					<div>
-						The third-party software powering MakerCentral has corrupted the database, temporarily removing most levels. This is being worked on. For more info and updates, check the {discordLinkElement}.
+						The third-party software powering MakerCentral has corrupted the database. For now, only popular levels from at least 6 months ago can be shown. For more info and updates, check the {discordLinkElement}.
 					</div>
 				)}
 				style={{

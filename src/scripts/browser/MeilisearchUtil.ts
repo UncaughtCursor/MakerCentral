@@ -2,6 +2,7 @@ import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import { SearchParams } from 'pages/levels/search/[q]';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import { isInBackupMode } from 'pages/_app';
 import {
 	defaultFilterSettings, FullSearchParams,
 	levelSearchTemplate, SearchMode, SearchResults, SearchTimeFilter, userSearchTemplate, worldSearchTemplate,
@@ -84,7 +85,7 @@ paramName as SearchFilterKey,
 	const indexName = (() => {
 		switch (searchData.searchMode) {
 		case 'Levels':
-			if (popularOnly) {
+			if (popularOnly || isInBackupMode) {
 				return 'popular-levels';
 			}
 			return 'levels';
