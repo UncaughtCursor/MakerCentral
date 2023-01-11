@@ -14,6 +14,8 @@ export const thumbnailEndpoint = 'level_thumbnail';
 // Meilisearch
 export const meilisearch = new MeiliSearch(MeiliCredentials);
 
+export const isInBackupMode = true; // Set to true to use the backup popular level index instead of the main one
+
 export const levelIndexName = 'levels';
 export const userIndexName = 'users';
 export const popularLevelIndexName = 'popular-levels';

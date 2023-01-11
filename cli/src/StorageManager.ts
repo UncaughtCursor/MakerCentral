@@ -20,11 +20,20 @@ export async function downloadStorageDir(storageDirPath: string, localDirPath: s
 	fs.mkdirSync(localDirPath, { recursive: true });
 
 	for (const file of files) {
+		const maxTries = 30;
 		const baseName = path.basename(file.name);
 		console.log(`Downloading ${baseName}...`);
-		await file.download({
-			destination: `${localDirPath}/${baseName}`,
-		});
+		for (let i = 0; i < maxTries; i++) {
+			try {
+				await file.download({
+					destination: `${localDirPath}/${baseName}`,
+				});
+				break;
+			} catch (e) {
+				console.log(`Error downloading ${baseName}`, e);
+				console.log(`Retrying ${i + 1} of ${maxTries}...`);
+			}
+		}
 	}
 	console.log('Download complete.');
 }
