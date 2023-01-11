@@ -24,18 +24,19 @@ export default class TextDirIterator {
 	 * or an array of file names to iterate over.
 	 * It returns a Promise that resolves when the work is done.
 	 */
-	async iterate(cb: (data: string, i: number) => Promise<void>,
+	async iterate(cb: (data: string, i: number, fileName: string) => Promise<void>,
 		startIndexOrNameArr: number | string[] = 0): Promise<void> {
 		if (Array.isArray(startIndexOrNameArr)) {
 			for (let i = 0; i < startIndexOrNameArr.length; i++) {
 				const fileName = startIndexOrNameArr[i];
 				const data = fs.readFileSync(`${this.dir}/${fileName}`, 'utf8');
-				await cb(data, i);
+				await cb(data, i, fileName);
 			}
 		} else {
 			for (let i = startIndexOrNameArr; i < this.fileNames.length; i++) {
-				const data = fs.readFileSync(`${this.dir}/${this.fileNames[i]}`, 'utf8');
-				await cb(data, i);
+				const fileName = this.fileNames[i];
+				const data = fs.readFileSync(`${this.dir}/${fileName}`, 'utf8');
+				await cb(data, i, fileName);
 			}
 		}
 	}

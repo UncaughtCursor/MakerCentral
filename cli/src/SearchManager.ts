@@ -158,34 +158,33 @@ export async function setSearchSettings() {
 	console.log('Setting settings...');
 
 	if (updateLevelIndex || updatePopularLevelIndex) {
-		const levelSearchableAttributes = [
+		const levelSearchableAttributes: (keyof MCLevelDocData)[] = [
 			'name',
 			'description',
 		];
-		const levelFilterableAttributes = [
+		const levelFilterableAttributes: (keyof MCLevelDocData)[] = [
 			'uploadTime',
-			'addedTime',
+			'updatedTime',
 			'makerName',
+			'country',
 			'makerId',
 			'difficulty',
 			'gameStyle',
 			'theme',
 			'numLikes',
 			'numPlays',
-			'likeToPlayRatio',
+			'likePercentage',
 			'clearRate',
 			'tags',
-			'isPromotedByPatron',
 		];
-		const levelSortableAttributes = [
+		const levelSortableAttributes: (keyof MCLevelDocData)[] = [
 			'uploadTime',
-			'addedTime',
 			'difficulty',
 			'gameStyle',
 			'theme',
 			'numLikes',
 			'numPlays',
-			'likeToPlayRatio',
+			'likePercentage',
 			'clearRate',
 		];
 		const levelRankingRules = [

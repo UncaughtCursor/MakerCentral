@@ -13,13 +13,13 @@ import { createLevelSearchData, createUserSearchData, createWorldSearchData, dum
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
-import CloudFn from '../../data/util/CloudFn';
 import { runSearchTests, SearchTest } from './SearchTester';
 import { DBClearCondition, DBDifficulty, DBGameStyle, DBLevel, DBTag, DBTheme } from '@data/types/DBTypes';
 import streamFileUntil from './util/SteamFileUntil';
 import { downloadStorageDir } from './StorageManager';
 import path from 'path';
 import generateThumbnailGrid from './ThumbnailGridGenerator';
+import { restoreLevelBackup } from './Backups';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -108,6 +108,8 @@ const superWorldEndpoint = 'super_worlds';
 const thumbnailEndpoint = 'level_thumbnail';
 const smm2APIBaseUrl = 'http://magic.makercentral.io';
 
+const latestBackupId = 1673399049735;
+
 yargs.usage('$0 command')
 	.command('sitemap', 'Update the sitemap', async () => {
 		await generateSitemap();
@@ -138,7 +140,7 @@ yargs.usage('$0 command')
 	.command('set-search-suggestions', 'Upload the latest word stats to Meilisearch to update the search suggestions', async () => {
 		await setSearchSuggestions();
 	})
-	.command('set-search-settings', 'Reinitialize Meilisearch settings if they got reset', async () => {
+	.command('set-search-settings', 'Reinitialize or update Meilisearch settings. WARNING: Make sure no indexing is happening while this is running. Wait a long time after indexing is completed to ensure safety.', async () => {
 		await setSearchSettings();
 	})
 	.command('upload-levels', 'Upload completed levels to Firebase', async () => {
@@ -188,9 +190,8 @@ yargs.usage('$0 command')
 		});
 	})
 	.command('extract-dump-levels', 'Extract the new levels from the dumps collected by the updateDB cloud function.', async () => {
-		const timeOfDump = 1658536344617;
-		const dataDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}`;
-		const outDir = `${generalOutDir}/updatedb-dumps/${timeOfDump}/extracted-levels`;
+		const dataDir = `${generalOutDir}/updatedb-dumps/${latestBackupId}`;
+		const outDir = `${generalOutDir}/updatedb-dumps/${latestBackupId}/extracted-levels`;
 		const minFileNumber = 130;
 
 		const files = fs.readdirSync(dataDir);
@@ -211,25 +212,14 @@ yargs.usage('$0 command')
 			fs.writeFileSync(`${outDir}/${newNumber}.json`, JSON.stringify(levelData));
 		}
 	})
-	.command('reupload-search-levels', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
-		const backupDir = `E:/backup/raw-levels`;
-
-		// Subdirectories are '1', '2', and '3'
-		for (const subdir of ['1', '2', '3']) {
-			console.log(`Processing subdirectory ${subdir}`);
-			const offset = subdir === '1' ? 158 : 0;
-			await createLevelSearchData({
-				inputDataDir: `${backupDir}/${subdir}`,
-				batchSize: 100000,
-				offset,
-			});
-		}
+	.command('restore-level-backup', 'Reuploads all of the backed up levels to Meilisearch.', async () => {
+		await restoreLevelBackup(latestBackupId);
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
 		await generateThumbnailGrid(100, 100); // Top 10K
 	})
 	.command('test', 'Test', async () => {
-		
+
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

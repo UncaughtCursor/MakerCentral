@@ -49,3 +49,13 @@ export function loadJSON(path: string): any {
 export function saveJSON(path: string, data: any) {
 	fs.writeFileSync(path, JSON.stringify(data));
 }
+
+/**
+ * Gets the number in a file name.
+ * Example: 1.json -> 1
+ * @param fileName The file name.
+ * @returns The number.
+ */
+export function getNumberInFileName(fileName: string): number {
+	return parseInt(fileName.split('.')[0], 10);
+}
