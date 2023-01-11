@@ -9,3 +9,5 @@ out/
 tmp/
 
 .VSCodeCounter/
+
+data/

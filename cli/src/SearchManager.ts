@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import MeiliSearch, { EnqueuedTask } from 'meilisearch';
+import MeiliSearch, { EnqueuedTask, SearchParams } from 'meilisearch';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
 import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
 import { loadJSON } from './util/Util';
@@ -149,10 +149,11 @@ export async function setSearchSettings() {
 	const worldIndex = meilisearch.index('worlds');
 	const suggestionsIndex = meilisearch.index('level-suggestions');
 
-	const updateLevelIndex = false;
+	// IMPORTANT: Make sure the index you want to update is set to true
+	const updateLevelIndex = true;
 	const updatePopularLevelIndex = false;
 	const updateUserIndex = false;
-	const updateWorldIndex = true;
+	const updateWorldIndex = false;
 	const updateSuggestionsIndex = false;
 
 	console.log('Setting settings...');
@@ -295,7 +296,7 @@ export async function setSearchSettings() {
 	console.log('Settings set.');
 }
 
-export async function search(query: string, indexName: string) {
+export async function basicSearch(query: string, indexName: string) {
 	const index = meilisearch.index(indexName);
 	return index.search(query);
 }
@@ -341,4 +342,40 @@ export async function dumpIndexDocs(indexName: string) {
 		i++;
 		done = responseLength === 0;
 	}
+}
+
+/**
+ * Searches for levels and returns the results.
+ * @param query The query used to search.
+ * @param searchParams The search parameters.
+ * @returns The search results.
+ */
+export async function searchLevels(query: string, searchParams?: SearchParams) {
+	const results = await meilisearch.index('levels').search(query, searchParams);
+	return results;
+}
+
+/**
+ * Returns the list of tasks that are currently running.
+ * @returns The list of tasks.
+ */
+export async function getTasks() {
+	return (await meilisearch.getTasks()).results.filter(
+		(task) => {
+			if (task.status === 'enqueued' || task.status === 'processing') {
+				return true;
+			}
+
+			// If there are failed tasks, display all of them from the last 24 hours
+			if (task.status !== 'failed') {
+				return false;
+			}
+
+			const now = new Date();
+			const taskDate = new Date(task.enqueuedAt);
+			const diff = now.getTime() - taskDate.getTime();
+
+			return diff < 24 * 60 * 60 * 1000;
+		},
+	);
 }

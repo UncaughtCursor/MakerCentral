@@ -1,4 +1,4 @@
-import { getDoc, search } from "./SearchManager";
+import { getDoc, basicSearch } from "./SearchManager";
 
 export interface SearchTest {
 	label: string;
@@ -16,7 +16,7 @@ export async function runSearchTests(
 ) {
 	for (const test of tests) {
 		const res = !options.isId
-			? await search(test.query, 'levels')
+			? await basicSearch(test.query, 'levels')
 			: await hasDoc(test.query, 'levels');
 		if (options.onlyLogFailures) {
 			if (typeof res === 'boolean' ? !res : res.nbHits === 0) {
