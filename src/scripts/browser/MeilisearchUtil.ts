@@ -3,6 +3,7 @@ import MeilisearchConfig from '@data/meilisearch-config.json';
 import { SearchParams } from 'pages/levels/search/[q]';
 import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
 import { isInBackupMode } from 'pages/_app';
+import { CountryName, countryNameToCode } from '@data/types/CountryTypes';
 import {
 	defaultFilterSettings, FullSearchParams,
 	levelSearchTemplate, SearchMode, SearchResults, SearchTimeFilter, userSearchTemplate, worldSearchTemplate,
@@ -154,17 +155,28 @@ function getSearchFilterString(
 		default:
 			throw new Error(`Invalid world size: ${value}`);
 		}
-	}
-	if (key === 'avgDifficulty' || key === 'avgTheme' || key === 'avgGameStyle' || key === 'avgTags') {
+	} else if (key === 'avgDifficulty' || key === 'avgTheme' || key === 'avgGameStyle' || key === 'avgTags') {
 		// Include in the search results if the desired property
 		// shows up in this percentage of the world's levels.
 		// FIXME: This does not work.
 		const prominencePercentage = 0.5;
 		return [`${key}.${value} >= ${prominencePercentage}`];
-	}
-	if (key === 'time') {
+	} else if (key === 'time') {
 		const minResultUnixTime = getMinResultUnixTime(value as SearchTimeFilter);
 		return [`uploadTime >= ${minResultUnixTime}`];
+	} else if (key === 'country') {
+		const countryCode = countryNameToCode[value as CountryName];
+		return [`${key} = "${countryCode}"`];
+	} else if (key === 'clearStatus') {
+		if (value === 'Cleared') {
+			return ['clearRate > 0'];
+		}
+		if (value === 'Not Cleared') {
+			return ['clearRate = 0'];
+		}
+		throw new Error(`Invalid clear status: ${value}`);
+	} else if (key === 'minimumPlays') {
+		return [`numPlays >= ${value}`];
 	}
 	return [`${key} = "${value}"`];
 }
@@ -194,10 +206,6 @@ function getMinResultUnixTime(timeFilter: SearchTimeFilter): number {
 	case 'Past Year': {
 		msToSubtract = 365 * 24 * 60 * 60 * 1000;
 		break;
-	}
-	case 'Any': {
-		// Any time is valid, so just return 0.
-		return 0;
 	}
 	default: {
 		throw new Error(`Invalid time filter: ${timeFilter}`);

@@ -9,6 +9,7 @@ import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import useCloudFn from '@components/hooks/useCloudFn';
 import useLevelThumbnailStates from '@components/hooks/useLevelThumbnailStates';
 import LevelThumbnail from '@components/pages/browser/LevelThumbnail';
+import { countryCodeToName } from '@data/types/CountryTypes';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
 
 /**
@@ -81,8 +82,16 @@ function LevelPage(props: {
 								<td>{new Date(level.uploadTime).toLocaleDateString()}</td>
 							</tr>
 							<tr>
+								<td>Country</td>
+								<td>{countryCodeToName[level.country]}</td>
+							</tr>
+							<tr>
 								<td>Likes</td>
 								<td>{level.numLikes}</td>
+							</tr>
+							<tr>
+								<td>Boos</td>
+								<td>{level.numBoos}</td>
 							</tr>
 							<tr>
 								<td>Plays</td>

@@ -1,4 +1,5 @@
 /* eslint-disable import/prefer-default-export */
+import { CountryCode, countryCodeToName, SMM2CountryCodes } from '@data/types/CountryTypes';
 import {
 	MCDifficulties, MCDifficulty, MCGameStyles,
 	MCLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
@@ -123,7 +124,7 @@ export type SearchMode = typeof SearchModes[number];
 
 export const sortTypes = {
 	Level: [
-		'By Likes', 'By Date', 'By Clear Rate',
+		'By Likes', 'By Date', 'By Clear Rate', 'By Like/Boo Ratio',
 	],
 	User: [
 		'By Maker Points', 'By Number of Levels',
@@ -148,13 +149,16 @@ export interface SearchFilterSettings {
 	avgTags?: MCTag | 'Any';
 	worldSize?: WorldSize | 'Any';
 	makerId?: string;
-	time?: SearchTimeFilter;
+	time?: SearchTimeFilter | 'Any';
+	country?: CountryCode | 'Any';
+	clearStatus?: 'Any' | 'Cleared' | 'Not Cleared';
+	minimumPlays?: number;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
 
 export const SearchTimeFilters = [
-	'Past Day', 'Past Week', 'Past Month', 'Past Year', 'Any',
+	'Past Day', 'Past Week', 'Past Month', 'Past Year',
 ] as const;
 export type SearchTimeFilter = typeof SearchTimeFilters[number];
 
@@ -223,6 +227,8 @@ function getSortTypeMap(template: SearchOptionsTemplate): { [key in SortType]: k
 	return res;
 }
 
+const SMM2Countries = SMM2CountryCodes.map((code) => countryCodeToName[code]).sort();
+
 // Describes the filtering and sorting options for a search.
 // In this case, for levels.
 export const levelSearchTemplate: SearchOptionsTemplate = {
@@ -250,7 +256,22 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 		{
 			label: 'Time',
 			property: 'time',
-			options: SearchTimeFilters,
+			options: ['Any', ...SearchTimeFilters] as const,
+		} as const,
+		{
+			label: 'Minimum Plays',
+			property: 'minimumPlays',
+			options: ['0', '100', '500', '1000', '5000', '10000', '50000', '100000'] as const,
+		} as const,
+		{
+			label: 'Country',
+			property: 'country',
+			options: ['Any', ...SMM2Countries],
+		} as const,
+		{
+			label: 'Clear Status',
+			property: 'clearStatus',
+			options: ['Any', 'Cleared', 'Not Cleared'],
 		} as const,
 		{
 			label: 'Maker ID',
@@ -271,6 +292,10 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 		{
 			label: 'By Clear Rate',
 			property: 'clearRate',
+		},
+		{
+			label: 'By Like/Boo Ratio',
+			property: 'likePercentage',
 		},
 	] as const,
 } as const;
