@@ -72,15 +72,10 @@ function LevelSearchPageControl(props: {
 		if (props.curSearchResults) {
 			const query = props.curSearchResults.searchParams.q;
 			const searchParams = props.curSearchResults.searchParams;
+			const { q, ...persistedParams } = searchParams;
+
 			const newSearchSettings: SearchFilterSettings = {
-				searchMode: searchParams.searchMode,
-				sortType: searchParams.sortType,
-				sortOrder: searchParams.sortOrder,
-				difficulty: searchParams.difficulty,
-				theme: searchParams.theme,
-				gameStyle: searchParams.gameStyle,
-				tags: searchParams.tags,
-				time: searchParams.time,
+				...persistedParams,
 				page: curPage! + delta,
 			};
 			if (props.goToPage!) {

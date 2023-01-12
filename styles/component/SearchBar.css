@@ -81,6 +81,7 @@
 	flex-direction: row;
 	justify-content: center;
 	flex-wrap: wrap;
+	row-gap: 20px;
 }
 
 .search-settings-dropdown-container > div {
