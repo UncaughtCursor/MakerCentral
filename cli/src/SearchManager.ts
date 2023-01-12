@@ -147,6 +147,8 @@ export async function setSearchSuggestions() {
  * WARNING: Make sure no indexing is happening while this is running.
  */
 export async function setSearchSettings() {
+	const searchResultLimit = 100000000;
+
 	const levelIndex = meilisearch.index('levels');
 	const popularLevelIndex = meilisearch.index('popular-levels');
 	const userIndex = meilisearch.index('users');
@@ -208,12 +210,18 @@ export async function setSearchSettings() {
 			console.log(await levelIndex.updateFilterableAttributes(levelFilterableAttributes));
 			console.log(await levelIndex.updateSortableAttributes(levelSortableAttributes));
 			console.log(await levelIndex.updateRankingRules(levelRankingRules));
+			console.log(await levelIndex.updatePagination({
+				maxTotalHits: searchResultLimit,
+			}));
 		}
 		if (updatePopularLevelIndex) {
 			console.log(await popularLevelIndex.updateSearchableAttributes(levelSearchableAttributes));
 			console.log(await popularLevelIndex.updateFilterableAttributes(levelFilterableAttributes));
 			console.log(await popularLevelIndex.updateSortableAttributes(levelSortableAttributes));
 			console.log(await popularLevelIndex.updateRankingRules(levelRankingRules));
+			console.log(await popularLevelIndex.updatePagination({
+				maxTotalHits: searchResultLimit,
+			}));
 		}
 	}
 
@@ -240,8 +248,9 @@ export async function setSearchSettings() {
 		console.log(await userIndex.updateFilterableAttributes(userFilterableAttributes));
 		console.log(await userIndex.updateSortableAttributes(userSortableAttributes));
 		console.log(await userIndex.updateRankingRules(userRankingRules));
-		
-
+		console.log(await userIndex.updatePagination({
+			maxTotalHits: searchResultLimit,
+		}));
 	}
 
 	if (updateWorldIndex) {
@@ -283,6 +292,9 @@ export async function setSearchSettings() {
 		console.log(await worldIndex.updateFilterableAttributes(worldFilterableAttributes));	
 		console.log(await worldIndex.updateSortableAttributes(worldSortableAttributes));
 		console.log(await worldIndex.updateRankingRules(worldRankingRules));
+		console.log(await worldIndex.updatePagination({
+			maxTotalHits: searchResultLimit,
+		}));
 	}
 
 	if (updateSuggestionsIndex) {
