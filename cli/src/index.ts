@@ -262,6 +262,7 @@ function logSearchResults(results: SearchResponse<Record<string, any>>) {
 		console.log(hit);
 	});
 	console.log(`About ${results.estimatedTotalHits} results (${results.processingTimeMs}ms)`);
+	if (results.totalHits) console.log(`Exact total of results: ${results.totalHits}`);
 }
 
 /**

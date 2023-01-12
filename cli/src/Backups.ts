@@ -17,7 +17,6 @@ export async function restoreLevelBackup(backupId: number, popularOnly = false) 
 		const offset = 0; // Use this if the process was interrupted
 		await createLevelSearchData({
 			inputDataDir: dir,
-			batchSize: 100000,
 			offset,
 			onlyPopular: popularOnly,
 		});
