@@ -152,7 +152,7 @@ export interface SearchFilterSettings {
 	time?: SearchTimeFilter | 'Any';
 	country?: CountryCode | 'Any';
 	clearStatus?: 'Any' | 'Cleared' | 'Not Cleared';
-	minimumPlays?: number;
+	minimumPlays?: string;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
@@ -172,6 +172,9 @@ export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} 
 		gameStyle: 'Any',
 		tags: 'Any',
 		time: 'Any',
+		country: 'Any',
+		clearStatus: 'Any',
+		minimumPlays: '0',
 		page: 0,
 	},
 	Users: {
