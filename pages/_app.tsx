@@ -66,7 +66,7 @@ TimeAgo.addDefaultLocale(en);
 export const isProd = true;
 
 // Whether or not to use the popular levels index in case the normal one is down
-export const isInBackupMode = true;
+export const isInBackupMode = false;
 
 /**
  * The app.

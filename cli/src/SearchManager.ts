@@ -15,9 +15,9 @@ const wordDataOutputName = 'out/stats/wordData.json';
 const popularLevelLikeThreshold = 25;
 export const meilisearch = new MeiliSearch(MeiliCredentials);
 
-const levelIndexBatchSize = 2000000;
+const levelIndexBatchSize = 100000;
 const userIndexBatchSize = 1000000;
-const worldIndexBatchSize = 200000;
+const worldIndexBatchSize = 20000;
 
 interface CreateLevelSearchDataOptions {
 	onlyPopular?: boolean;

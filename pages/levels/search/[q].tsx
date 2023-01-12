@@ -48,7 +48,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
-			<WarningBanner
+			{/* <WarningBanner
 				message={(
 					<div>
 						The third-party software powering MakerCentral has corrupted the database. For now, only popular levels from at least 6 months ago can be shown. For more info and updates, check the {discordLinkElement}.
@@ -57,7 +57,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 				style={{
 					marginBottom: '-12px',
 				}}
-			/>
+			/> */}
 			<div style={{
 				margin: '24px auto',
 				width: 'max-content',
