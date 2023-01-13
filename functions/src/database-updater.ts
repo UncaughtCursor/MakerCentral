@@ -23,8 +23,8 @@ const worldsPerChunk = 50;
 
 const progressFileLocation = 'admin/updater-progress.json';
 const dumpLocation = 'admin/dump';
-// Push to level index every 45 min
-const timeBeforeLevelIndex = 5 * 9 * 60 * 1000;
+// Push to level index every 63 min
+const timeBeforeLevelIndex = 7 * 9 * 60 * 1000;
 const firstIndexTime = 1657616041747;
 const minDataId = 3000000;
 const oldLevelAmountMultiplier = 10;
