@@ -153,6 +153,7 @@ export interface SearchFilterSettings {
 	country?: CountryCode | 'Any';
 	clearStatus?: 'Any' | 'Cleared' | 'Not Cleared';
 	minimumPlays?: string;
+	clearRate?: string;
 	sortOrder: 'Ascending' | 'Descending';
 	page: number;
 }
@@ -175,6 +176,7 @@ export const defaultFilterSettings: {[key in SearchMode]: SearchFilterSettings} 
 		country: 'Any',
 		clearStatus: 'Any',
 		minimumPlays: '0',
+		clearRate: '0',
 		page: 0,
 	},
 	Users: {
@@ -276,12 +278,19 @@ export const levelSearchTemplate: SearchOptionsTemplate = {
 			property: 'clearStatus',
 			options: ['Any', 'Cleared', 'Not Cleared'],
 		} as const,
+		// Invisible filters
 		{
 			label: 'Maker ID',
 			property: 'makerId',
 			options: ['Any'],
 			userVisible: false,
 		} as const,
+		{
+			label: 'Clear Rate',
+			property: 'clearRate',
+			options: ['Any'],
+			userVisible: false,
+		},
 	] as const,
 	sortOptions: [
 		{
