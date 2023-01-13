@@ -36,8 +36,6 @@ function LevelPage(props: {
 
 	const imgThumbnailUrl = Object.keys(thumbnails).length > 0 ? thumbnails[level.id].url! : '';
 
-	console.log(level);
-
 	return (
 		<AppFrame
 			title={`${props.level!.name} - MakerCentral Levels`}
