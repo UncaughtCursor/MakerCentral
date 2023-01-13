@@ -177,6 +177,12 @@ function getSearchFilterString(
 		throw new Error(`Invalid clear status: ${value}`);
 	} else if (key === 'minimumPlays') {
 		return [`numPlays >= ${value}`];
+	} else if (key === 'clearRate') {
+		if (!value) throw new Error('Clear rate is undefined.');
+		const numberValue = parseFloat(value) / 100;
+		const min = numberValue - 0.005 / 100;
+		const max = numberValue + 0.005 / 100;
+		return [`clearRate > ${min}`, `clearRate < ${max}`];
 	}
 	return [`${key} = "${value}"`];
 }
