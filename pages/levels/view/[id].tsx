@@ -36,6 +36,8 @@ function LevelPage(props: {
 
 	const imgThumbnailUrl = Object.keys(thumbnails).length > 0 ? thumbnails[level.id].url! : '';
 
+	console.log(level);
+
 	return (
 		<AppFrame
 			title={`${props.level!.name} - MakerCentral Levels`}
@@ -146,7 +148,8 @@ function LevelPage(props: {
 								marginTop: 'auto',
 							}}
 						>
-							{level.updatedTime && (
+							{level.updatedTime >= 1673479800000 && (
+								// Only show if the level was updated after the backup was restored
 								<p style={{
 									textAlign: 'right',
 								}}
