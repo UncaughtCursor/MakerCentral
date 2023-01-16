@@ -117,31 +117,43 @@ function SuperWorldPage(props: SuperWorldPageProps) {
 							</tr>
 							<tr>
 								<td>Levels</td>
-								<td>{world.numLevels}</td>
+								<td>{world.numLevels.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Worlds</td>
-								<td>{world.numWorlds}</td>
+								<td>{world.numWorlds.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Total Likes</td>
-								<td>{totalLikes}</td>
+								<td>{totalLikes.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Total Plays</td>
-								<td>{totalPlays}</td>
+								<td>{totalPlays.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Likes Per Level</td>
-								<td>{world.avgLikes.toFixed(2)}</td>
+								<td>{world.avgLikes.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								})}
+								</td>
 							</tr>
 							<tr>
 								<td>Plays Per Level</td>
-								<td>{world.avgPlays.toFixed(2)}</td>
+								<td>{world.avgPlays.toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								})}
+								</td>
 							</tr>
 							<tr>
 								<td>Avg Clear Rate</td>
-								<td>{(world.avgClearRate).toFixed(3)}%{world.avgClearRate === 0 ? ' (Uncleared)' : ''}</td>
+								<td>{(world.avgClearRate).toLocaleString(undefined, {
+									minimumFractionDigits: 3,
+									maximumFractionDigits: 3,
+								})}%{world.avgClearRate === 0 ? ' (Uncleared)' : ''}
+								</td>
 							</tr>
 						</table>
 					</div>

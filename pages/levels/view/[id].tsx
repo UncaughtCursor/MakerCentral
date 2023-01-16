@@ -87,15 +87,15 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Likes</td>
-								<td>{level.numLikes}</td>
+								<td>{level.numLikes.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Boos</td>
-								<td>{level.numBoos}</td>
+								<td>{level.numBoos.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Plays</td>
-								<td>{level.numPlays}</td>
+								<td>{level.numPlays.toLocaleString()}</td>
 							</tr>
 							<tr>
 								<td>Game Style</td>
@@ -107,7 +107,11 @@ function LevelPage(props: {
 							</tr>
 							<tr>
 								<td>Clear Rate</td>
-								<td>{(level.clearRate * 100).toFixed(3)}%{level.clearRate === 0 ? ' (Uncleared)' : ''}</td>
+								<td>{(level.clearRate * 100).toLocaleString(undefined, {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								})}%{level.clearRate === 0 ? ' (Uncleared)' : ''}
+								</td>
 							</tr>
 						</table>
 					</div>

@@ -29,9 +29,9 @@ function SuperWorldLevelListings(props: {
 									color: 'var(--color-text)',
 								}}
 							>{level.name}
-							</a>
+           </a>
 							</td>
-							<td>{level.numLikes}</td>
+							<td>{level.numLikes.toLocaleString()}</td>
 						</tr>
 					))}
 				</tbody>
