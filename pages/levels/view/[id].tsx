@@ -108,8 +108,8 @@ function LevelPage(props: {
 							<tr>
 								<td>Clear Rate</td>
 								<td>{(level.clearRate * 100).toLocaleString(undefined, {
-									minimumFractionDigits: 2,
-									maximumFractionDigits: 2,
+									minimumFractionDigits: 3,
+									maximumFractionDigits: 3,
 								})}%{level.clearRate === 0 ? ' (Uncleared)' : ''}
 								</td>
 							</tr>
