@@ -276,8 +276,10 @@ function logTasks(tasks: Task[]) {
 		console.log(`Type: ${task.type}`);
 		console.log(`Status: ${task.status}`);
 		console.log(`Enqueued at: ${task.enqueuedAt}`);
-		if (task.finishedAt) console.log(`Finished at: ${task.finishedAt}`);
+		if (task.startedAt.getTime()) console.log(`Started at: ${task.startedAt}`);
+		if (task.finishedAt.getTime()) console.log(`Finished at: ${task.finishedAt}`);
 		if (task.duration) console.log(`Duration: ${task.duration}`);
+		if (task.indexUid) console.log(`Index: ${task.indexUid}`);
 		if (task.details) console.log('Details:', task.details);
 		if (task.error) console.log(`Error: ${task.error}`);
 		console.log('');
