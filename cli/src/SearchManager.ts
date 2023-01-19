@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import MeiliSearch, { EnqueuedTask, SearchParams } from 'meilisearch';
+import MeiliSearch, { EnqueuedTask, SearchParams, TaskStatus } from 'meilisearch';
 import MeiliCredentials from '@data/private/meilisearch-credentials.json';
 import { MCRawLevelDoc, MCRawUserDoc } from '@data/types/MCRawTypes';
 import { loadJSON } from './util/Util';
@@ -372,29 +372,26 @@ export async function searchLevels(query: string, searchParams?: SearchParams) {
 }
 
 /**
- * Returns the list of tasks that are currently running.
- * @returns The list of tasks.
+ * Returns the list of up to 1000 tasks that are currently running.
+ * @returns A Promise resolving to the list of tasks.
  */
 export async function getTasks() {
-	const res = await meilisearch.getTasks();
-	return (await meilisearch.getTasks()).results.filter(
-		(task) => {
-			if (task.status === 'enqueued' || task.status === 'processing') {
-				return true;
-			}
+	return (await meilisearch.getTasks({
+		statuses: [TaskStatus.TASK_PROCESSING],
+		limit: 1000,
+	})).results;
+}
 
-			// If there are failed tasks, display all of them from the last 24 hours
-			if (task.status !== 'failed') {
-				return false;
-			}
-
-			const now = new Date();
-			const taskDate = new Date(task.enqueuedAt);
-			const diff = now.getTime() - taskDate.getTime();
-
-			return diff < 24 * 60 * 60 * 1000;
-		},
-	);
+/**
+ * Returns the list of failed tasks from the last week.
+ * @returns A Promise resolving to the list of failed tasks.
+ */
+export async function getFailedTasks() {
+	return (await meilisearch.getTasks({
+		statuses: [TaskStatus.TASK_FAILED],
+		afterEnqueuedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+		limit: 100,
+	})).results;
 }
 
 /**
