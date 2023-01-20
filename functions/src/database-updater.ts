@@ -28,6 +28,8 @@ const dumpLocation = 'admin/dump';
 const minDataId = 3000000;
 const oldLevelAmountMultiplier = 10;
 
+const maxLevelPayloadSize = 180000;
+
 interface UpdaterProgress {
 	lastDataIdDownloaded: number;
 	lastNewestDataId: number;
@@ -138,12 +140,28 @@ export const updateDB = functions.runWith({
 	const progress = await loadProgress();
 	console.log('Progress loaded');
 
+	// If we've maxed out the level payload size, index immediately if possible and exit if not.
+	if (progress.levelsToBeIndexed && progress.levelsToBeIndexed.length >= maxLevelPayloadSize) {
+		console.log('Level payload size maxed out');
+		const canIndex = !(await isIndexing());
+		if (canIndex) {
+			console.log('Indexing immediately');
+			await indexAll(progress);
+		} else {
+			console.log('Cannot index right now - exiting');
+			return;
+		}
+	}
+
 	// If it's possible to go over the cached max data ID, get the new max data ID.
 	const maxId = progress.lastDataIdDownloaded + maxLevelsToAdd >= progress.lastNewestDataId
 		? await getMaxDataID() : progress.lastNewestDataId;
 	console.log(`Max data ID: ${maxId}`);
 
-	if (progress.lastDataIdDownloaded >= maxId) return;
+	if (progress.lastDataIdDownloaded >= maxId) {
+		console.log('No new levels to download - exiting');
+		return;
+	}
 
 	const endId = maxId - progress.lastDataIdDownloaded > maxLevelsToAdd
 		? progress.lastDataIdDownloaded + maxLevelsToAdd : maxId;
@@ -260,48 +278,34 @@ export const updateDB = functions.runWith({
 		};
 	});
 
-	const shouldIndexContent = !(await isIndexing());
-
 	const MCBrowserLevels: (MCLevelDocData | MCLevelDocUpdateData)[] = [
 		...levels.map(level => {
 			return MCRawLevelDocToMCLevelDoc(level);
 		}),
 		...oldLevels,
 	];
-	console.log(shouldIndexContent ? 'Indexing content' : 'Not indexing content');
+	
+	// Update content to be indexed
+
 	progress.levelsToBeIndexed = progress.levelsToBeIndexed
 		? progress.levelsToBeIndexed.concat(MCBrowserLevels) : MCBrowserLevels;
-	if (shouldIndexContent) {
-		console.log('Indexing levels');
-		await updateDocs('levels', progress.levelsToBeIndexed);
-		progress.levelsToBeIndexed = [];
-		progress.lastLevelIndexTime = Date.now();
-		const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
-		console.log('Indexing popular levels');
-		await updateDocs('popular-levels', popularLevels);
-	}
 
 	const MCBrowserUsers = fullUserProfiles.map(user => {
 		return MCRawUserDocToMCUserDoc(user);
 	});
 	progress.usersToBeIndexed = progress.usersToBeIndexed
 		? progress.usersToBeIndexed.concat(MCBrowserUsers) : MCBrowserUsers;
-	if (shouldIndexContent) {
-		console.log('Indexing users');
-		await indexDocs('users', progress.usersToBeIndexed);
-		progress.usersToBeIndexed = [];
-	}
 
 	const MCBrowserWorlds: MCWorldDocData[] = fullUserProfiles.filter(user => user.super_world).map(user => {
 		return MCRawUserToMCWorldDoc(user)!;
 	});
 	progress.worldsToBeIndexed = progress.worldsToBeIndexed
 		? progress.worldsToBeIndexed.concat(MCBrowserWorlds) : MCBrowserWorlds;
-	if (shouldIndexContent) {
-		console.log('Indexing worlds');
-		await indexDocs('worlds', progress.worldsToBeIndexed);
-		progress.worldsToBeIndexed = [];
-	}
+	
+	// Index content if needed
+	const shouldIndexContent = !(await isIndexing());
+	console.log(shouldIndexContent ? 'Indexing content' : 'Not indexing content');
+	if (shouldIndexContent) await indexAll(progress);
 
 	// Set the new progress.
 	progress.lastDataIdDownloaded = endId;
@@ -330,6 +334,11 @@ interface RawLevelSetResponse {
 	courses: APILevel[];
 }
 
+/**
+ * Extracts the preview data from a raw user document.
+ * @param user The raw user document to extract the preview data from.
+ * @returns The preview data.
+ */
 function getUserPreview(user: MCRawUserDoc): MCRawUserPreview {
 	return {
 		name: user.name,
@@ -558,6 +567,32 @@ type IndexableDocuments = MCLevelDocData[] | MCUserDocData[] | MCWorldDocData[];
 
 type UpdatableIndexName = 'levels' | 'popular-levels';
 type UpdateDocuments = MCLevelDocUpdateData[];
+
+/**
+ * Indexes levels, users, and worlds into Meilisearch. This mutates the progress object,
+ * clearing the arrays of levels, users, and worlds to be indexed.
+ * @param progress The updater progress data that contains the data to index.
+ * @returns A promise that resolves when indexing is complete.
+ */
+async function indexAll(progress: UpdaterProgress): Promise<void> {
+	console.log('Indexing levels');
+	await updateDocs('levels', progress.levelsToBeIndexed || []);
+	progress.levelsToBeIndexed = [];
+	progress.lastLevelIndexTime = Date.now();
+	const popularLevels = progress.levelsToBeIndexed.filter(level => level.numLikes >= 25);
+	console.log('Indexing popular levels');
+	await updateDocs('popular-levels', popularLevels);
+
+	console.log('Indexing users');
+	await indexDocs('users', progress.usersToBeIndexed || []);
+	progress.usersToBeIndexed = [];
+
+	console.log('Indexing worlds');
+	await indexDocs('worlds', progress.worldsToBeIndexed || []);
+	progress.worldsToBeIndexed = [];
+
+	console.log('Indexing requests complete');
+}
 
 /**
  * Indexes a set of documents in Meilisearch. This replaces any existing documents with the same ID.
