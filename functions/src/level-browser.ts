@@ -7,7 +7,7 @@ export const getLevel = functions.https.onCall(async (data: {
 }): Promise<MCLevelDocData | null> => {
 	const indexName = isInBackupMode ? popularLevelIndexName : levelIndexName;
 	try {
-		const level = await meilisearch.index(indexName).getDocument(data.levelId);
+		const level = await meilisearch.index(indexName).getDocument(data.levelId) as MCLevelDocData;
 		return level;
 	}
 	catch (e) {
@@ -20,7 +20,7 @@ export const getUser = functions.https.onCall(async (data: {
 	userId: string,
 }): Promise<MCUserDocData | null> => {
 	try {
-		const user = await meilisearch.index(userIndexName).getDocument(data.userId);
+		const user = await meilisearch.index(userIndexName).getDocument(data.userId) as MCUserDocData;
 		return user;
 	}
 	catch (e) {
@@ -33,7 +33,7 @@ export const getWorld = functions.https.onCall(async (data: {
 	userId: string,
 }): Promise<MCWorldDocData | null> => {
 	try {
-		const world = await meilisearch.index(superWorldIndexName).getDocument(data.userId);
+		const world = await meilisearch.index(superWorldIndexName).getDocument(data.userId) as MCWorldDocData;
 		return world;
 	}
 	catch (e) {
