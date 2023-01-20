@@ -377,7 +377,7 @@ export async function searchLevels(query: string, searchParams?: SearchParams) {
  */
 export async function getTasks() {
 	return (await meilisearch.getTasks({
-		statuses: [TaskStatus.TASK_PROCESSING],
+		statuses: [TaskStatus.TASK_PROCESSING, TaskStatus.TASK_ENQUEUED],
 		limit: 1000,
 	})).results;
 }
