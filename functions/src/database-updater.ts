@@ -15,6 +15,7 @@ import axios, { AxiosResponse } from 'axios';
 import { MCLevelDocData, MCLevelDocUpdateData, MCTag, MCUserDocData, MCWorldDocData } from './data/types/MCBrowserTypes';
 import { MCRawLevelDocToMCLevelDoc, MCRawUserDocToMCUserDoc, MCRawUserToMCWorldDoc, convertDBTagToMC } from './data/util/MCRawToMC';
 import { APIDifficulties, APIGameStyles, APITags, APIThemes } from './data/APITypes';
+import { TaskStatus } from 'meilisearch';
 
 const maxLevelsToAdd = 3000;
 const levelsPerChunk = 500;
@@ -261,11 +262,7 @@ export const updateDB = functions.runWith({
 		};
 	});
 
-	const shouldIndexContent: boolean = (() => {
-		if (!progress.lastLevelIndexTime) return Date.now() >= firstIndexTime;
-		const diff = Date.now() - progress.lastLevelIndexTime;
-		return diff >= timeBeforeLevelIndex;
-	})();
+	const shouldIndexContent = !(await isIndexing());
 
 	const MCBrowserLevels: (MCLevelDocData | MCLevelDocUpdateData)[] = [
 		...levels.map(level => {
@@ -572,6 +569,17 @@ type UpdateDocuments = MCLevelDocUpdateData[];
  */
 async function indexDocs(indexName: IndexName, docs: IndexableDocuments): Promise<void> {
 	await meilisearch.index(indexName).addDocuments(docs);
+}
+
+/**
+ * Determines if there are documents currently indexing in Meilisearch.
+ * @returns A promise that resolves to true if there are documents currently indexing.
+ */
+async function isIndexing(): Promise<boolean> {
+	const currentTaskResults = await meilisearch.getTasks({
+		statuses: [TaskStatus.TASK_ENQUEUED, TaskStatus.TASK_PROCESSING],
+	});
+	return currentTaskResults.results.length > 0;
 }
 
 /**
