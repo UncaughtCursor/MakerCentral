@@ -9,7 +9,7 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reade
 import {
 	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getFailedTasks, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getCompletedTasks, getFailedTasks, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -244,6 +244,10 @@ yargs.usage('$0 command')
 	})
 	.command('show-failed-tasks', 'Show the failed tasks from the last week in the Meilisearch instance', async () => {
 		const tasks = await getFailedTasks();
+		logTasks(tasks);
+	})
+	.command('show-completed-tasks', 'Show last few completed tasks in the Meilisearch instance', async () => {
+		const tasks = await getCompletedTasks();
 		logTasks(tasks);
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {

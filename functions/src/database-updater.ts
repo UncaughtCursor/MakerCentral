@@ -158,16 +158,17 @@ export const updateDB = functions.runWith({
 		? await getMaxDataID() : progress.lastNewestDataId;
 	console.log(`Max data ID: ${maxId}`);
 
-	if (progress.lastDataIdDownloaded >= maxId) {
-		console.log('No new levels to download - exiting');
-		return;
-	}
+	const hasNewLevelsToDownload = progress.lastDataIdDownloaded < maxId;
+
+	if (!hasNewLevelsToDownload) console.log('No new levels to download');
 
 	const endId = maxId - progress.lastDataIdDownloaded > maxLevelsToAdd
 		? progress.lastDataIdDownloaded + maxLevelsToAdd : maxId;
 	console.log(`End ID: ${endId}`);
 
-	const levelsPre = await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId);
+	const levelsPre = hasNewLevelsToDownload
+		? await downloadRawLevels(progress.lastDataIdDownloaded + 1, endId)
+		: [];
 	console.log(`Downloaded ${levelsPre.length} levels`);
 
 	const numOldIdsToDownload = (maxLevelsToAdd + progress.lastDataIdDownloaded - endId) * oldLevelAmountMultiplier;

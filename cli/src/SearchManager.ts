@@ -391,7 +391,18 @@ export async function getFailedTasks() {
 		statuses: [TaskStatus.TASK_FAILED],
 		afterEnqueuedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
 		limit: 100,
-	})).results;
+	})).results.reverse();
+}
+
+/**
+ * Returns the last few completed tasks.
+ * @returns A Promise resolving to the list of completed tasks.
+ */
+export async function getCompletedTasks() {
+	return (await meilisearch.getTasks({
+		statuses: [TaskStatus.TASK_SUCCEEDED],
+		limit: 20,
+	})).results.reverse();
 }
 
 /**
