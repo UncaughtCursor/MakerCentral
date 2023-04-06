@@ -36,7 +36,7 @@ const daysPaidForByDonators: number[] = donations.map((donation) => {
 
 const totalDaysPaidFor = Math.floor(totalDonations / siteDailyCostCents);
 
-const formatNumber = (n) => n.toLocaleString(undefined, {
+const formatNumber = (n: number) => n.toLocaleString(undefined, {
 	minimumFractionDigits: 2,
 	maximumFractionDigits: 2,
 });
