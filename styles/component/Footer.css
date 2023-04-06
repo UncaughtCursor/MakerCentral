@@ -13,7 +13,8 @@
 }
 
 .footer p {
-	margin: auto min(5vw, 20px);
+	margin: 10px min(5vw, 20px);
 	font-size: 14px;
 	width: max-content;
+	line-height: 35px;
 }

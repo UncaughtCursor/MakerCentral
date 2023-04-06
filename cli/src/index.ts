@@ -9,7 +9,7 @@ import { createZCDLevelFileFromBCD, parseLevelDataFromCode } from './level-reade
 import {
 	compileLevels, compileUsers, generalOutDir, levelOutDir, streamTableToFile,
 } from './LevelConvert';
-import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
+import { createIndices, createLevelSearchData, createUserSearchData, createWorldSearchData, dumpIndexDocs, getCompletedTasks, getFailedTasks, getTasks, meilisearch, searchLevels, setSearchSettings, setSearchSuggestions } from './SearchManager';
 import { generateSitemap } from './Sitemap';
 import { renderLevel } from './level-reader/Render';
 import { uploadLevels, uploadThumbnails, uploadUsers } from './Upload';
@@ -238,8 +238,16 @@ yargs.usage('$0 command')
 		const results = await searchLevels(search.query, search.searchParams);
 		logSearchResults(results);
 	})
-	.command('show-active-tasks', 'Show the active tasks in the Meilisearch instance and any failed tasks in the last 24 hours', async () => {
+	.command('show-active-tasks', 'Show the active tasks in the Meilisearch instance', async () => {
 		const tasks = await getTasks();
+		logTasks(tasks);
+	})
+	.command('show-failed-tasks', 'Show the failed tasks from the last week in the Meilisearch instance', async () => {
+		const tasks = await getFailedTasks();
+		logTasks(tasks);
+	})
+	.command('show-completed-tasks', 'Show last few completed tasks in the Meilisearch instance', async () => {
+		const tasks = await getCompletedTasks();
 		logTasks(tasks);
 	})
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
@@ -276,10 +284,12 @@ function logTasks(tasks: Task[]) {
 		console.log(`Type: ${task.type}`);
 		console.log(`Status: ${task.status}`);
 		console.log(`Enqueued at: ${task.enqueuedAt}`);
-		if (task.finishedAt) console.log(`Finished at: ${task.finishedAt}`);
+		if (task.startedAt.getTime()) console.log(`Started at: ${task.startedAt}`);
+		if (task.finishedAt.getTime()) console.log(`Finished at: ${task.finishedAt}`);
 		if (task.duration) console.log(`Duration: ${task.duration}`);
+		if (task.indexUid) console.log(`Index: ${task.indexUid}`);
 		if (task.details) console.log('Details:', task.details);
-		if (task.error) console.log(`Error: ${task.error}`);
+		if (task.error) console.log('Error:', task.error);
 		console.log('');
 	});
 	console.log(`${tasks.length} tasks`);
