@@ -1,5 +1,5 @@
 import {
-	discordLink, privacyPolicyUrl, termsOfServiceUrl, twitterLink,
+	discordLink, kofiLink, patreonLink, privacyPolicyUrl, termsOfServiceUrl, twitterLink,
 } from '@scripts/site/FirebaseUtil';
 import React from 'react';
 
@@ -12,6 +12,8 @@ function Footer() {
 			<p>Created by UncaughtCursor</p>
 			<p><a href={twitterLink}>Twitter</a></p>
 			<p><a href={discordLink}>Discord</a></p>
+			<p><a href={patreonLink}>Patreon</a></p>
+			<p><a href={kofiLink}>Ko-fi</a></p>
 			<p><a href={termsOfServiceUrl}>Terms of Service</a></p>
 			<p><a href={privacyPolicyUrl}>Privacy Policy</a></p>
 		</div>

@@ -4,7 +4,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { discordLink } from '@scripts/site/FirebaseUtil';
+import { discordLink, kofiLink } from '@scripts/site/FirebaseUtil';
 
 /**
  * The navigation menu in the site header.
@@ -17,6 +17,7 @@ function Navbar() {
 			<Navlink to="/music-level-studio" text="Music Level Studio" />
 			<Navlink to={discordLink} openInNewTab text="Discord" />
 			<Navlink to="/about" text="About" />
+			<Navlink to={kofiLink} openInNewTab text="Donate ♥" />
 		</div>
 	);
 }

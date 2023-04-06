@@ -8,18 +8,20 @@ import TextSection from '@components/main/TextSection';
 // Donations; key = username, value = donation amount in cents
 // Sort from highest to lowest
 const donations: [string, number][] = [
-	['tint', 18000],
-	['NintendoThumbFan', 8000],
-	['BeardBear', 3970],
-	['Anti Node', 4000],
+	['tint', 42000],
+	['NintendoThumbFan', 10900],
+	['BeardBear', 8273],
+	['Anti Node', 8000],
 	['BamBoozil', 1000],
-	['Taan Wallbanks', 2317],
-	['Cody Stumma', 2000],
-	['RogendGuy', 1800],
-	['SirMystic', 1500],
+	['Taan Wallbanks', 4755],
+	['Cody Stumma', 4000],
+	['RogendGuy', 4200],
+	['SirMystic', 3000],
 	['Annette Wilson', 10000],
 	['FauxBlue', 1000],
 	['youyi1996', 5000],
+	['mgrandi', 20000],
+	['AuroraBorealis', 1200],
 ].sort((a, b) => (b[1] as number) - (a[1] as number)) as [string, number][];
 
 const totalDonations = donations.reduce((a, b) => a + b[1], 0);
@@ -33,6 +35,11 @@ const daysPaidForByDonators: number[] = donations.map((donation) => {
 });
 
 const totalDaysPaidFor = Math.floor(totalDonations / siteDailyCostCents);
+
+const formatNumber = (n) => n.toLocaleString(undefined, {
+	minimumFractionDigits: 2,
+	maximumFractionDigits: 2,
+});
 
 /**
  * The about page of the site.
@@ -58,32 +65,24 @@ function About() {
 			<TextSection
 				title="How does this site pay for itself?"
 				body={[<>Donations.</>,
-					<>Although I originally planned on not monetizing this site due to legal concerns, this is unsustainable; I will soon run out of money to pay for the site's ongoing expenses.</>,
-					<>In other words, <b>this site will die soon without donations from people like you.</b></>,
-					<>If you find this site useful and want it to stay available for everyone, please consider donating on <a href={patreonLink} target="_blank" rel="noopener noreferrer">Patreon</a> or <a href={kofiLink} target="_blank" rel="noopener noreferrer">Ko-Fi</a>. Every 5 dollars donated is another day that the site can stay running.</>]}
+					<>I want to keep the site free and open to everyone, but MakerCentral is pretty expensive to run on its own. <b>It needs donations to stay up and running.</b></>,
+					<>If you find this site useful and want it to stay available for everyone, or just want to support me, please consider donating on <a href={patreonLink} target="_blank" rel="noopener noreferrer">Patreon</a> or <a href={kofiLink} target="_blank" rel="noopener noreferrer">Ko-Fi</a>. Every 5 dollars donated can pay for one day of operation.</>]}
 			/>
 			<TextSection
 				title="Donations - Thank You!"
-				body={[<>I would like to thank the following people for their generous donations. In parentheses is how much longer this site will last thanks to them.</>,
+				body={[<>I would like to thank the following people for their generous donations. In parentheses is the number of days the site can run with that amount.</>,
 					<ul>
-						{/* <li>tint - $40 (8 days)</li>
-						<li>NintendoThumbFan - $20 (4 days)</li>
-						<li>BeardBear - $10.79 (2 days, 3 hr)</li>
-						<li>Anti Node - $10 (2 days)</li>
-						<li>BamBoozil - $10 (2 days)</li>
-						<li>Taan Wallbanks - $5.83 (1 day, 4 hr)</li>
-	<li>Cody Stumma - $5 (1 day)</li> */}
 						{donations.map((donation, i) => {
 							const [username, amount] = donation;
 							const daysPaidFor = daysPaidForByDonators[i];
 							return (
 								<li key={username}>
-									{`${username} - $${(amount / 100).toFixed(2)} (${daysPaidFor} day${daysPaidFor === 1 ? '' : 's'})`}
+									{`${username} - $${formatNumber(amount / 100)} (${daysPaidFor} day${daysPaidFor === 1 ? '' : 's'})`}
 								</li>
 							);
 						})}
 					</ul>,
-					<>Total amount donated: ${(totalDonations / 100).toFixed(2)} ({totalDaysPaidFor} day{totalDaysPaidFor === 1 ? '' : 's'})</>,
+					<>Total amount donated: ${formatNumber(totalDonations / 100)} ({totalDaysPaidFor} day{totalDaysPaidFor === 1 ? '' : 's'})</>,
 				]}
 			/>
 		</AppFrame>
