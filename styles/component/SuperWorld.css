@@ -29,7 +29,7 @@
 	text-align: left;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1050px) {
 	.super-world-preview {
 		flex-direction: column;
 	}

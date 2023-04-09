@@ -14,6 +14,7 @@
   --text-color: #ffffff;
 
 	--header-height: 55px;
+  --footer-height: 55px; /* May change dynamically */
 }
 
 .App {
@@ -27,8 +28,8 @@
 
 .web-content-container {
 	position: relative;
-	min-height: calc(100vh - 2 * var(--header-height) - 20px);
-	padding-bottom: calc(var(--header-height) + 20px);
+	min-height: calc(100vh - var(--header-height) - var(--footer-height) - 20px);
+	padding-bottom: calc(var(--footer-height) + 20px);
 	padding-top: var(--header-height);
 }
 
