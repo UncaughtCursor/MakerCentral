@@ -32,7 +32,7 @@
 	transform: translateY(-100%);
 }
 
-@media (min-width: 851px) {
+@media (min-width: 1051px) {
 	.hamburger-menu-container {
 		display: none;
 	}
