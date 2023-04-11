@@ -1,6 +1,6 @@
 import TriggerButton from '@components/pages/controls/TriggerButton';
 import {
-	auth, discordLink, getUser, logout, promptLogin,
+	auth, discordLink, getUser, kofiLink, logout, promptLogin,
 } from '@scripts/site/FirebaseUtil';
 import { onAuthStateChanged } from 'firebase/auth';
 import React, { useState } from 'react';
@@ -33,6 +33,7 @@ function HamburgerMenu(props: {
 			<Navlink to="/music-level-studio" text="Music Level Studio" onClick={requestMenuClose} />
 			<Navlink to={discordLink} openInNewTab text="Discord" onClick={requestMenuClose} />
 			<Navlink to="/about" text="About" onClick={requestMenuClose} />
+			<Navlink to={kofiLink} openInNewTab text="Donate ♥" />
 			<hr style={{ width: '85%' }} />
 			<p
 				style={{ color: 'gray', fontSize: '12px', margin: '4px' }}
