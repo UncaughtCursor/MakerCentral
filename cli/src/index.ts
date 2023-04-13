@@ -21,6 +21,8 @@ import path from 'path';
 import generateThumbnailGrid from './ThumbnailGridGenerator';
 import { restoreLevelBackup } from './Backups';
 import { SearchParams, SearchResponse, Task } from 'meilisearch';
+import { auditPromotions, displayPromotions, registerPromotion, unregisterPromotion } from './Promotion';
+import { isString } from './util/Util';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -88,7 +90,7 @@ const levelSchema = {
 	record_holder_pid: 'string',
 } as const;
 
-clear();
+// clear();
 console.log(
 	chalk.white(
 		figlet.textSync('Maker', { horizontalLayout: 'full' }),
@@ -250,11 +252,89 @@ yargs.usage('$0 command')
 		const tasks = await getCompletedTasks();
 		logTasks(tasks);
 	})
+	.command('promo-register', 'Registers a level promotion for a donor', (yargs) => {
+		return yargs
+			.option('name', {
+				alias: 'n',
+				describe: 'The name of the donor to register',
+				type: 'string',
+				demandOption: true,
+			})
+			.option('course-ids', {
+				alias: 'c',
+				describe: 'The course IDs to promote',
+				type: 'array',
+				demandOption: true,
+			})
+			.option('forever', {
+				alias: 'f',
+				describe: 'Whether to register the promotion as permanent until manually unregistered',
+				type: 'boolean',
+				demandOption: false,
+			});
+	}, async (argv) => {
+		await registerPromotion(argv.name, argv.courseIds.filter(isString), !argv.forever);
+	})
+	.command('promo-unregister', 'Unregisters a level promotion by name or course ID', (yargs) => {
+		return yargs
+			.option('name', {
+				alias: 'n',
+				describe: 'The name of the donor to unregister',
+				type: 'string',
+				demandOption: false,
+			})
+			.option('course-id', {
+				alias: 'c',
+				describe: 'The course IDs to un-promote',
+				type: 'string',
+				demandOption: false,
+			});
+	}, async (argv) => {
+		const nameOrCourseId = argv.name || argv.courseId;
+		if (!nameOrCourseId) {
+			console.log('Must specify either a name or course ID');
+			return;
+		}
+
+		await unregisterPromotion(nameOrCourseId);
+	})
+	.command('promo-audit', 'Removes any expired promotions', async () => {
+		await auditPromotions();
+	})
+	.command('promo-view', 'View promos by user or course ID, or view all of them at once', (yargs) => {
+		return yargs
+			.option('query', {
+				alias: 'q',
+				describe: 'The course ID or user name to query',
+				type: 'string',
+				demandOption: false,
+			});
+		}, async (argv) => {
+			await displayPromotions(argv.query);
+		}
+	)
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
 		await generateThumbnailGrid(100, 100); // Top 10K
 	})
-	.command('test', 'Test', async () => {
+	.command('test', 'Test', (yargs) => {
+		return yargs
+			.option('foo', {
+				alias: 'f',
+				describe: 'the foo option',
+				type: 'string',
+				demandOption: true,
+			})
+			.option('bar', {
+				alias: 'b',
+				describe: 'the bar option',
+				type: 'string',
+				demandOption: false,
+			});
+	}, async (argv) => {
+		// To run using npm start:
+		// https://stackoverflow.com/a/14404223
 
+		console.log(argv);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

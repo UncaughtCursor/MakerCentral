@@ -59,3 +59,12 @@ export function saveJSON(path: string, data: any) {
 export function getNumberInFileName(fileName: string): number {
 	return parseInt(fileName.split('.')[0], 10);
 }
+
+/**
+ * Returns true if the parameter is a string.
+ * @param value The value to check.
+ * @returns True if the value is a string.
+ */
+export function isString(value: any): value is string {
+	return typeof value === 'string';
+}
