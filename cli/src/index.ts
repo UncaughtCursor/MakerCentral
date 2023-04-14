@@ -21,8 +21,8 @@ import path from 'path';
 import generateThumbnailGrid from './ThumbnailGridGenerator';
 import { restoreLevelBackup } from './Backups';
 import { SearchParams, SearchResponse, Task } from 'meilisearch';
-import { auditPromotions, displayPromotions, registerPromotion, unregisterPromotion } from './Promotion';
 import { isString } from './util/Util';
+import CoursePromotionManager, { setPromoSearchSettings } from './Promotion';
 
 const testLevelCode = '3B3KRDTPF';
 
@@ -253,6 +253,8 @@ yargs.usage('$0 command')
 		logTasks(tasks);
 	})
 	.command('promo-register', 'Registers a level promotion for a donor', (yargs) => {
+		// To run using npm start:
+		// https://stackoverflow.com/a/14404223
 		return yargs
 			.option('name', {
 				alias: 'n',
@@ -273,7 +275,9 @@ yargs.usage('$0 command')
 				demandOption: false,
 			});
 	}, async (argv) => {
-		await registerPromotion(argv.name, argv.courseIds.filter(isString), !argv.forever);
+		await CoursePromotionManager.init();
+		await CoursePromotionManager.register(argv.name, argv.courseIds.filter(isString), !argv.forever);
+		await CoursePromotionManager.commit();
 	})
 	.command('promo-unregister', 'Unregisters a level promotion by name or course ID', (yargs) => {
 		return yargs
@@ -296,10 +300,14 @@ yargs.usage('$0 command')
 			return;
 		}
 
-		await unregisterPromotion(nameOrCourseId);
+		await CoursePromotionManager.init();
+		await CoursePromotionManager.unregister(nameOrCourseId);
+		await CoursePromotionManager.commit();
 	})
 	.command('promo-audit', 'Removes any expired promotions', async () => {
-		await auditPromotions();
+		await CoursePromotionManager.init();
+		await CoursePromotionManager.audit();
+		await CoursePromotionManager.commit();
 	})
 	.command('promo-view', 'View promos by user or course ID, or view all of them at once', (yargs) => {
 		return yargs
@@ -310,31 +318,16 @@ yargs.usage('$0 command')
 				demandOption: false,
 			});
 		}, async (argv) => {
-			await displayPromotions(argv.query);
+			await CoursePromotionManager.init();
+			await CoursePromotionManager.view(argv.query);
 		}
 	)
 	.command('generate-thumbnail-grid', 'Generate the thumbnail grid used for the homepage.', async () => {
 		await generateThumbnailGrid(100, 100); // Top 10K
 	})
-	.command('test', 'Test', (yargs) => {
-		return yargs
-			.option('foo', {
-				alias: 'f',
-				describe: 'the foo option',
-				type: 'string',
-				demandOption: true,
-			})
-			.option('bar', {
-				alias: 'b',
-				describe: 'the bar option',
-				type: 'string',
-				demandOption: false,
-			});
-	}, async (argv) => {
-		// To run using npm start:
-		// https://stackoverflow.com/a/14404223
-
-		console.log(argv);
+	.command('test', 'Test', async () => {
+		const result = await CoursePromotionManager.search('accumula');
+		console.log(result);
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')
