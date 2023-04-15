@@ -111,7 +111,7 @@ const superWorldEndpoint = 'super_worlds';
 const thumbnailEndpoint = 'level_thumbnail';
 const smm2APIBaseUrl = 'http://magic.makercentral.io';
 
-const latestBackupId = 1673399049735;
+const latestBackupId = 1681547636782;
 
 yargs.usage('$0 command')
 	.command('sitemap', 'Update the sitemap', async () => {
