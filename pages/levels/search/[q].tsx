@@ -51,7 +51,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			<WarningBanner
 				message={(
 					<div>
-						MakerCentral's database is currently having issues. Work is being done to restore all of the levels. For more info and updates, check the {discordLinkElement}.
+						MakerCentral's database is currently having issues. Work is being done to restore all of the levels. We should be back in a few hours. For more info and updates, check the {discordLinkElement}.
 					</div>
 				)}
 				style={{
