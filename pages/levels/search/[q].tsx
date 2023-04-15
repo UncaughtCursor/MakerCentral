@@ -48,7 +48,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 	return (
 		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
-			<WarningBanner
+			{/* <WarningBanner
 				message={(
 					<div>
 						MakerCentral's database is currently having issues. Work is being done to restore all of the levels. We should be back in a few hours. For more info and updates, check the {discordLinkElement}.
@@ -57,7 +57,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 				style={{
 					marginBottom: '-12px',
 				}}
-			/>
+			/> */}
 			<div style={{
 				margin: '24px auto',
 				width: 'max-content',
