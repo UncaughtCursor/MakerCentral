@@ -66,7 +66,7 @@ function About() {
 				title="How does this site pay for itself?"
 				body={[<>Donations.</>,
 					<>I want to keep the site free and open to everyone, but MakerCentral is pretty expensive to run on its own. <b>It needs donations to stay up and running.</b></>,
-					<>If you find this site useful and want it to stay available for everyone, or just want to support me, please consider donating on <a href={patreonLink} target="_blank" rel="noopener noreferrer">Patreon</a> or <a href={kofiLink} target="_blank" rel="noopener noreferrer">Ko-Fi</a>. Every 5 dollars donated can pay for one day of operation.</>]}
+					<>If you find this site useful and want it to stay available for everyone, or just want to support me, please consider donating on <a href={patreonLink} target="_blank" rel="noopener noreferrer">Patreon</a> or <a href={kofiLink} target="_blank" rel="noopener noreferrer">Ko-fi</a>. Every 5 dollars donated can pay for one day of operation.</>]}
 			/>
 			<TextSection
 				title="Donations - Thank You!"
