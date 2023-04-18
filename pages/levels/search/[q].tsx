@@ -84,7 +84,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 export default SearchResultsPage;
 
-interface SearchParamsRaw extends Partial<SearchParams> {
+export interface SearchParamsRaw extends Partial<SearchParams> {
 	q: string;
 }
 

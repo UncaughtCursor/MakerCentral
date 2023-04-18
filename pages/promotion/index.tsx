@@ -6,6 +6,8 @@ import Section from '@components/main/Section';
 
 // TODO: Finish the text for this page and revise anything as needed
 
+const searchPageUrl = '/promotion/search';
+
 /**
  * The level promotion page.
  */
@@ -46,7 +48,7 @@ function PromotionPage() {
 						<li>Enter the amount you&apos;d like to donate, keeping in mind the $3 per level system.</li>
 						<li>In the &quot;Your message&quot; box, enter the Course IDs of the levels you&apos;d like to promote.</li>
 						<li>Click the &quot;Donate&quot; button below the form and follow the onscreen instructions to enter your payment information.</li>
-						<li>Your levels should be promoted within 24 hours. If not, check to see if I messaged you on Ko-fi. You can check <a href="/promoted">here</a> to see if your levels are currently promoted.</li>
+						<li>Your levels should be promoted within 24 hours. If not, check to see if I messaged you on Ko-fi. You can check <a href={searchPageUrl}>here</a> to see if your levels are currently promoted.</li>
 					</ol>,
 				]}
 				// TODO: Make the /promoted page
@@ -62,7 +64,7 @@ function PromotionPage() {
 						<li>Enter the amount you&apos;d like to donate, keeping in mind the $3 per level system.</li>
 						<li>Go to my page again and click the &quot;Message&quot; button. On mobile, it may be in the &quot;...&quot; menu.</li>
 						<li>Send a message with the Course IDs of the levels you&apos;d like to promote.</li>
-						<li>Your levels should be promoted within 24 hours. If not, check to see if I messaged you on Patreon. You can check <a href="/promoted">here</a> to see if your levels are currently promoted.</li>
+						<li>Your levels should be promoted within 24 hours. If not, check to see if I messaged you on Patreon. You can check <a href={searchPageUrl}>here</a> to see if your levels are currently promoted.</li>
 					</ol>,
 				]} // TODO: Finish this section
 			/>

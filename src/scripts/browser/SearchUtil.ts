@@ -6,7 +6,8 @@ import {
 } from '@data/types/MCBrowserTypes';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { SearchParams } from 'pages/levels/search/[q]';
-import { MeiliSearchResults, searchLevels } from './MeilisearchUtil';
+import { PromoSearchParams } from 'pages/promotion/search/[q]';
+import { MeiliSearchResults, searchLevels, searchPromoLevels } from './MeilisearchUtil';
 
 /**
  * Performs a level search and returns the results and thumbnails for each level.
@@ -396,4 +397,39 @@ export interface SearchOptionsTemplate {
 export type SearchResults = MeiliSearchResults<MCLevelDocData>
 	| MeiliSearchResults<MCUserDocData> | MeiliSearchResults<MCWorldDocData>;
 
+export type PromoSearchResults = Omit<MeiliSearchResults<MCLevelDocData>, 'searchParams'> & {
+	searchParams: PromoSearchParams,
+}
+
 export const sortOrders = ['Ascending', 'Descending'] as const;
+
+/**
+ * Performs a promo level search and returns the results and thumbnails for each level.
+ * @param searchParams The search parameters for the search.
+ * @returns The results and thumbnails for each level if applicable.
+ */
+export async function getPromoLevelResultData(
+	searchParams: PromoSearchParams,
+): Promise<{
+	results: PromoSearchResults,
+	levelThumbnailUrlObj: {[key: string]: string},
+}> {
+	// TODO: Perform the actual search
+	const results = await searchPromoLevels(searchParams, levelSortTypeMap as { [key in PromoSearchParams['sortType']]: keyof MCLevelDocData });
+	const levelIds = (results.results as MCLevelDocData[]).map((level) => level.id);
+
+	const thumbnailUrls = await Promise.all(levelIds!.map(
+		async (levelId) => ({
+			id: levelId, url: await getLevelThumbnailUrl(levelId),
+		}),
+	));
+	const levelThumbnailUrlObj: {[key: string]: string} = {};
+	thumbnailUrls.forEach((urlEntry) => {
+		levelThumbnailUrlObj![urlEntry.id] = urlEntry.url;
+	});
+
+	return {
+		results,
+		levelThumbnailUrlObj,
+	};
+}
