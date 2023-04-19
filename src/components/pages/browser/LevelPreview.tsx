@@ -5,7 +5,7 @@ import TimeAgo from 'javascript-time-ago';
 import LikeIcon from '@mui/icons-material/Favorite';
 import PlayIcon from '@mui/icons-material/SportsEsports';
 import ClearRateIcon from '@mui/icons-material/FlagCircle';
-import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { MCLevelDocData, MCPromoLevelDocData } from '@data/types/MCBrowserTypes';
 import TagDisplay from './TagDisplay';
 import LevelThumbnail from './LevelThumbnail';
 import BookmarkButton from './BookmarkButton';
@@ -21,13 +21,15 @@ const timeAgo = new TimeAgo('en-us');
  * * status: The status of the thumbnail.
  */
 function LevelPreview(props: {
-	level: MCLevelDocData,
+	level: MCLevelDocData | MCPromoLevelDocData,
 	thumbnailUrl: string,
 	status: 'Loading' | 'Loaded' | 'Error' | 'Removed' | 'Not Uploaded',
 }) {
 	// eslint-disable-next-line no-param-reassign
 	props.level.uploadTime = props.level.uploadTime as number;
 	const timeAgoStr = timeAgo.format(new Date(props.level.uploadTime));
+	const formattedLevelCode = `${props.level!.id.substring(0, 3)}-${props.level!.id.substring(3, 6)}-${props.level!.id.substring(6, 9)}`;
+
 	const previewContainerContents = (
 		<>
 			<div className="user-level-preview-header">
@@ -46,7 +48,7 @@ function LevelPreview(props: {
 							color: 'var(--text-color)',
 						}}
 					>{props.level.makerName}
-					</a> • {timeAgoStr}
+        </a> • {timeAgoStr}
 					</p>
 				</div>
 			</div>
@@ -68,6 +70,33 @@ function LevelPreview(props: {
 				/>
 				<TagDisplay tags={props.level.tags} />
 				<p style={{ overflowWrap: 'anywhere' }}>{props.level.description}</p>
+				{isPromoLevel(props.level) && (
+					<p style={{ color: 'var(--inactive-white)' }}>
+						{`Promoted by ${props.level.promoter}${props.level.expiry ? `, expires ${timeAgo.format(new Date(props.level.expiry))}` : ''}`}
+					</p>
+				)}
+				{!isPromoLevel(props.level) && (
+					// We don't want to show the level code for promo levels
+					// This is to save space
+					<div style={{
+						display: 'flex',
+						flexGrow: 1,
+						width: '100%',
+						alignItems: 'end',
+						justifyContent: 'end',
+					}}
+					>
+						<p
+							className="level-code"
+							style={{
+								textAlign: 'right',
+								color: 'var(--inactive-white)',
+								height: 'max-content',
+							}}
+						>{formattedLevelCode}
+						</p>
+					</div>
+				)}
 			</div>
 		</>
 	);
@@ -89,3 +118,14 @@ function LevelPreview(props: {
 }
 
 export default LevelPreview;
+
+/**
+ * Discriminates between a level and a promo level.
+ * @param level The level to discriminate.
+ * @returns Whether the level is a promo level.
+ */
+export function isPromoLevel(
+	level: MCLevelDocData | MCPromoLevelDocData,
+): level is MCPromoLevelDocData {
+	return (level as MCPromoLevelDocData).promoter !== undefined;
+}

@@ -17,7 +17,7 @@
 	padding: 10px;
 	border-radius: 10px;
 	cursor: pointer;
-	height: 225px;
+	height: 250px;
 	text-decoration: none;
 }
 
@@ -68,10 +68,6 @@
 }
 
 @media (max-width: 425px) {
-	.user-level-preview {
-		height: 300px;
-	}
-
 	.user-level-preview-header {
 		flex-direction: column;
 		align-items: flex-start;
@@ -80,5 +76,11 @@
 	.user-level-preview-title-container {
 		margin: 0;
 		margin-top: 10px;
+	}
+}
+
+@media (max-width: 1066px) {
+	.user-level-preview {
+		height: unset;
 	}
 }

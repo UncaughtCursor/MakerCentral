@@ -1,10 +1,12 @@
 import { MCLevelDocData } from '@data/types/MCBrowserTypes';
 import { MeiliSearchResults, numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
-import { SearchFilterSettings, SearchResults } from '@scripts/browser/SearchUtil';
+import { AnySearchResults, SearchFilterSettings, SearchResults } from '@scripts/browser/SearchUtil';
 import { useRouter } from 'next/router';
 import React from 'react';
+import { PromoSearchParams } from 'pages/promotion/search/[q]';
 import TriggerButton from '../controls/TriggerButton';
 import { getSearchUrl } from './LevelSearchBar';
+import { getPromoSearchUrl } from '../promotion/PromoSearchBar';
 
 /**
  * Displays pagination controls for a search result page.
@@ -19,13 +21,16 @@ import { getSearchUrl } from './LevelSearchBar';
  * if curSearchResults is not provided.
  * - hasPreviousPage: (Optional) Whether or not there is a previous page. Must be
  * provided if curSearchResults is not provided.
+ * - isPromo: (Optional) Whether or not the search is for a promotion. Defaults to
+ * false.
  */
 function LevelSearchPageControl(props: {
-	curSearchResults?: SearchResults,
+	curSearchResults?: AnySearchResults,
 	hasNextPage?: boolean,
 	hasPreviousPage?: boolean,
 	goToPage?: boolean,
 	onPageChange?: (delta: number) => void,
+	isPromo?: boolean,
 }) {
 	const history = useRouter();
 
@@ -74,12 +79,14 @@ function LevelSearchPageControl(props: {
 			const searchParams = props.curSearchResults.searchParams;
 			const { q, ...persistedParams } = searchParams;
 
-			const newSearchSettings: SearchFilterSettings = {
+			const newSearchSettings: SearchFilterSettings | Omit<PromoSearchParams, 'q'> = {
 				...persistedParams,
 				page: curPage! + delta,
 			};
 			if (props.goToPage!) {
-				const url = getSearchUrl(query, newSearchSettings);
+				const url = props.isPromo
+					? getPromoSearchUrl(query)
+					: getSearchUrl(query, newSearchSettings as SearchFilterSettings);
 				history.push(url);
 			}
 		}
@@ -93,6 +100,7 @@ LevelSearchPageControl.defaultProps = {
 	onPageChange: () => {},
 	hasNextPage: undefined,
 	hasPreviousPage: undefined,
+	isPromo: false,
 };
 
 export default LevelSearchPageControl;

@@ -1,7 +1,9 @@
 import useLevelThumbnailStates, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
-import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import {
+	MCLevelDocData, MCPromoLevelDocData, MCUserDocData, MCWorldDocData,
+} from '@data/types/MCBrowserTypes';
 import { numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
-import { SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
+import { AnySearchResults, SearchMode, SearchResults } from '@scripts/browser/SearchUtil';
 import React from 'react';
 import LevelPreview from '../browser/LevelPreview';
 import SuperWorldPreview from '../browser/SuperWorldPreview';
@@ -9,10 +11,11 @@ import UserPreview from '../browser/UserPreview';
 import LevelSearchPageControl from './LevelSearchPageControl';
 
 // A property for each search result data type to be used to identify the type of result.
-const uniqueProperty: {[key in SearchMode]: string} = {
+const uniqueProperty: {[key in SearchMode]: string} & { Promo: string } = {
 	Levels: 'theme',
 	Users: 'makerPoints',
 	Worlds: 'levelText',
+	Promo: 'promoter',
 };
 
 /**
@@ -26,7 +29,7 @@ const uniqueProperty: {[key in SearchMode]: string} = {
  * The parameter is the change in the page index.
  */
 function LevelSearchResultView(props: {
-	results: SearchResults,
+	results: AnySearchResults,
 	levelThumbnailUrls?: {[key: string]: string},
 	worldThumbnailUrls?: {[key: string]: string}[],
 	isWidget?: boolean,
@@ -58,6 +61,14 @@ function LevelSearchResultView(props: {
 
 	const levelThumbnails = useLevelThumbnailStates(initThumbnailStates);
 
+	const isPromo = (() => {
+		if (props.results.results.length === 0) return false;
+		const firstResult = props.results.results[0];
+		return (firstResult as MCPromoLevelDocData)[
+			uniqueProperty.Promo as keyof MCPromoLevelDocData
+		] !== undefined;
+	})();
+
 	return (
 		<div style={{
 			display: 'flex',
@@ -82,7 +93,8 @@ function LevelSearchResultView(props: {
 					.map((result) => {
 						// If the result is a level...
 						if ((result as MCLevelDocData)[uniqueProperty.Levels as keyof MCLevelDocData]) {
-							const level = result as MCLevelDocData;
+							// Note: This can still be a promoted level.
+							const level = result as MCLevelDocData | MCPromoLevelDocData;
 							return (
 								<LevelPreview
 									level={level}
@@ -132,6 +144,7 @@ function LevelSearchResultView(props: {
 				goToPage={!props.isWidget!}
 				curSearchResults={props.results}
 				onPageChange={props.onPageChange!}
+				isPromo={isPromo}
 			/>
 		</div>
 	);

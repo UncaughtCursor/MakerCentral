@@ -2,12 +2,12 @@ import AppFrame from '@components/AppFrame';
 import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { defaultFilterSettings, getPromoLevelResultData, SearchResults } from '@scripts/browser/SearchUtil';
+import { PromoSearchResults, defaultFilterSettings, getPromoLevelResultData } from '@scripts/browser/SearchUtil';
 import { SearchParams, SearchParamsRaw } from 'pages/levels/search/[q]';
 import PromoSearchBar, { getPromoSearchUrl } from '@components/pages/promotion/PromoSearchBar';
 
 interface PromoSearchResultsPageProps {
-	results: SearchResults;
+	results: PromoSearchResults;
 	thumbnailUrls: {[key: string]: string};
 }
 

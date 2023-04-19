@@ -2,7 +2,7 @@
 import { CountryCode, countryCodeToName, SMM2CountryCodes } from '@data/types/CountryTypes';
 import {
 	MCDifficulties, MCDifficulty, MCGameStyles,
-	MCLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
+	MCLevelDocData, MCPromoLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
 } from '@data/types/MCBrowserTypes';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { SearchParams } from 'pages/levels/search/[q]';
@@ -397,9 +397,11 @@ export interface SearchOptionsTemplate {
 export type SearchResults = MeiliSearchResults<MCLevelDocData>
 	| MeiliSearchResults<MCUserDocData> | MeiliSearchResults<MCWorldDocData>;
 
-export type PromoSearchResults = Omit<MeiliSearchResults<MCLevelDocData>, 'searchParams'> & {
+export type PromoSearchResults = Omit<MeiliSearchResults<MCPromoLevelDocData>, 'searchParams'> & {
 	searchParams: PromoSearchParams,
 }
+
+export type AnySearchResults = SearchResults | PromoSearchResults;
 
 export const sortOrders = ['Ascending', 'Descending'] as const;
 
@@ -414,9 +416,8 @@ export async function getPromoLevelResultData(
 	results: PromoSearchResults,
 	levelThumbnailUrlObj: {[key: string]: string},
 }> {
-	// TODO: Perform the actual search
 	const results = await searchPromoLevels(searchParams, levelSortTypeMap as { [key in PromoSearchParams['sortType']]: keyof MCLevelDocData });
-	const levelIds = (results.results as MCLevelDocData[]).map((level) => level.id);
+	const levelIds = (results.results as MCPromoLevelDocData[]).map((level) => level.id);
 
 	const thumbnailUrls = await Promise.all(levelIds!.map(
 		async (levelId) => ({

@@ -2,7 +2,9 @@ import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
 import PromoMeilisearchConfig from '@data/meilisearch-promo-config.json';
 import { SearchParams } from 'pages/levels/search/[q]';
-import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import {
+	MCLevelDocData, MCPromoLevelDocData, MCUserDocData, MCWorldDocData,
+} from '@data/types/MCBrowserTypes';
 import { isInBackupMode } from 'pages/_app';
 import { CountryName, countryNameToCode } from '@data/types/CountryTypes';
 import { PromoSearchParams } from 'pages/promotion/search/[q]';
@@ -166,7 +168,7 @@ paramName as SearchFilterKey,
 		limit: numResultsPerPage + 1,
 	});
 	return {
-		results: res.hits as MCLevelDocData[],
+		results: res.hits as MCPromoLevelDocData[],
 		numResults: res.estimatedTotalHits!,
 		isNumResultsExact: false,
 		computeTimeMs: res.processingTimeMs,
