@@ -1,4 +1,4 @@
-p, h1, h2, h3, h4, h5, h6 {
+p, h1, h2, h3, h4, h5, h6, li {
 	color: var(--text-color);
 }
 
@@ -13,6 +13,14 @@ label {
 
 span {
 	color: var(--text-color);
+}
+
+li {
+	text-align: left;
+}
+
+ul > li, ol > li {
+	margin: 30px 0;
 }
 
 .page-renderer {

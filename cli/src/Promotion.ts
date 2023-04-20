@@ -2,7 +2,7 @@ import fs from 'fs/promises';
 import { getDoc } from './SearchManager';
 import MeiliPromoCredentials from '@data/private/meilisearch-promo-credentials.json';
 import MeiliSearch from 'meilisearch';
-import { MCLevelDocData } from '@data/types/MCBrowserTypes';
+import { MCLevelDocData, MCPromoLevelDocData } from '@data/types/MCBrowserTypes';
 
 export type PromotionFile = Record<string, CoursePromotion[]>;
 
@@ -51,13 +51,18 @@ namespace CoursePromotionManager {
 
 		if (pendingOperations.length === 0) return;
 
-		const registerOperations = pendingOperations.filter(operation => operation.type === 'register');
-		const unregisterOperations = pendingOperations.filter(operation => operation.type === 'unregister');
+		const registerOperations = pendingOperations.filter(operation => operation.type === 'register') as Exclude<CoursePromotionOperation, { type: 'unregister' }>[]; // Exclude<CoursePromotionOperation, { type: 'unregister' }>[];
+		const unregisterOperations = pendingOperations.filter(operation => operation.type === 'unregister') as Exclude<CoursePromotionOperation, { type: 'register' }>[]; // Exclude<CoursePromotionOperation, { type: 'register' }>[];
 
-		const docsToAdd = await Promise.all(registerOperations.map(async operation => {
-			return getDoc(operation.courseId, 'levels');
+		const levelDocs: MCPromoLevelDocData[] = await Promise.all(registerOperations.map(async operation => {
+			const levelData = await getDoc(operation.courseId, 'levels') as MCLevelDocData;
+			return {
+				...levelData,
+				promoter: operation.name,
+				expiry: operation.expiryTime,
+			}
 		}));
-		await promoIndex.addDocuments(docsToAdd);
+		await promoIndex.addDocuments(levelDocs);
 
 		const docIdsToRemove = unregisterOperations.map(operation => operation.courseId);
 		await promoIndex.deleteDocuments(docIdsToRemove);
@@ -324,11 +329,13 @@ export async function setPromoSearchSettings() {
 
 	console.log('Setting settings...');
 
-	const levelSearchableAttributes: (keyof MCLevelDocData)[] = [
+	const levelSearchableAttributes: (keyof MCPromoLevelDocData)[] = [
 		'name',
+		'makerName',
+		'promoter',
 		'description',
 	];
-	const levelFilterableAttributes: (keyof MCLevelDocData)[] = [
+	const levelFilterableAttributes: (keyof MCPromoLevelDocData)[] = [
 		'uploadTime',
 		'updatedTime',
 		'makerName',
@@ -342,8 +349,9 @@ export async function setPromoSearchSettings() {
 		'likePercentage',
 		'clearRate',
 		'tags',
+		'expiry',
 	];
-	const levelSortableAttributes: (keyof MCLevelDocData)[] = [
+	const levelSortableAttributes: (keyof MCPromoLevelDocData)[] = [
 		'uploadTime',
 		'difficulty',
 		'gameStyle',

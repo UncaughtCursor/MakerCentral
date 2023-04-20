@@ -13,8 +13,9 @@ function TextSection(props: {
 	const usedBody = typeof (props.body as any[]).length === 'number' ? props.body as JSX.Element[] : [props.body] as JSX.Element[];
 	// eslint-disable-next-line react/no-array-index-key
 	const elements = usedBody.map((node, index) => <p key={index} className="explanatory-text">{node}</p>);
+	console.log(elements);
 	return (
-		<div style={{ maxWidth: '600px', margin: '0 auto' }}>
+		<div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 20px' }}>
 			{props.title && <h2 style={{ textAlign: 'left' }}>{props.title}</h2>}
 			{elements}
 		</div>

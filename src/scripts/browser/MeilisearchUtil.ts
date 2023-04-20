@@ -1,12 +1,17 @@
 import { MeiliSearch } from 'meilisearch';
 import MeilisearchConfig from '@data/meilisearch-config.json';
+import PromoMeilisearchConfig from '@data/meilisearch-promo-config.json';
 import { SearchParams } from 'pages/levels/search/[q]';
-import { MCLevelDocData, MCUserDocData, MCWorldDocData } from '@data/types/MCBrowserTypes';
+import {
+	MCLevelDocData, MCPromoLevelDocData, MCUserDocData, MCWorldDocData,
+} from '@data/types/MCBrowserTypes';
 import { isInBackupMode } from 'pages/_app';
 import { CountryName, countryNameToCode } from '@data/types/CountryTypes';
+import { PromoSearchParams } from 'pages/promotion/search/[q]';
 import {
 	defaultFilterSettings, FullSearchParams,
-	levelSearchTemplate, SearchMode, SearchResults, SearchTimeFilter, userSearchTemplate, worldSearchTemplate,
+	levelSearchTemplate, PromoSearchResults, SearchMode, SearchResults,
+	SearchTimeFilter, userSearchTemplate, worldSearchTemplate,
 } from './SearchUtil';
 
 export interface LevelSearch {
@@ -35,8 +40,10 @@ export interface MeiliSearchResults<T> {
 }
 
 const client = new MeiliSearch(MeilisearchConfig);
+const promoClient = new MeiliSearch(PromoMeilisearchConfig);
 
 export const numResultsPerPage = 10;
+export const numPromoResultsPerPage = 2;
 
 /**
  * Searches for levels based on the provided search data.
@@ -108,6 +115,67 @@ paramName as SearchFilterKey,
 	});
 	return {
 		results: res.hits as MCLevelDocData[],
+		numResults: res.estimatedTotalHits!,
+		isNumResultsExact: false,
+		computeTimeMs: res.processingTimeMs,
+		searchParams: searchData,
+	};
+}
+
+/**
+ * Searches for promoted levels based on the provided search data.
+ * @param searchData The data to search based off of.
+ * @param sortTypeMap A map of sort types to their corresponding sort properties.
+ * @param browseMode (Optional) Whether or not the levels are being browsed through,
+ * rather than suggested.
+ * @returns A promise that resolves with a search results object.
+ */
+export async function searchPromoLevels(
+	searchData: PromoSearchParams,
+	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData },
+	browseMode: boolean = false,
+): Promise<PromoSearchResults> {
+	const filterParamNames: {[key in SearchMode]: string[]} = {
+		Levels: levelSearchTemplate.filterOptions.map((option) => option.property),
+		Users: userSearchTemplate.filterOptions.map((option) => option.property),
+		Worlds: worldSearchTemplate.filterOptions.map((option) => option.property),
+	};
+
+	// Get the search parameters to use. This is done by filtering out the
+	// parameters that don't apply to the search mode, then mapping the
+	// remaining parameters to equality strings for the search.
+	// eslint-disable-next-line no-array-constructor
+	const filter = (new Array<string>()).concat(...(
+		(Object.keys(searchData) as (keyof typeof searchData)[]).filter(
+			(paramName) => filterParamNames.Levels.includes(paramName)
+			&& searchData[paramName as keyof PromoSearchParams]
+			!== defaultFilterSettings.Levels[paramName as
+					keyof typeof defaultFilterSettings['Levels']],
+		).map(
+			(paramName) => getSearchFilterString(
+paramName as SearchFilterKey,
+			searchData[paramName] as PromoSearchParams[SearchFilterKey],
+			),
+		)));
+
+	// Abbreviation used for ascending/descending sort order.
+	const sortOrderAbbr = searchData.sortOrder === 'Ascending' ? 'asc' : 'desc';
+
+	// Sort substring to use for the search.
+	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
+
+	const offset = searchData.page * (browseMode ? numResultsPerPage : numPromoResultsPerPage);
+	const limit = browseMode ? numResultsPerPage + 1 : numPromoResultsPerPage;
+
+	// Perform the search and return the results.
+	const res = await promoClient.index('promo-levels').search(searchData.q, {
+		filter,
+		sort,
+		offset,
+		limit,
+	});
+	return {
+		results: res.hits as MCPromoLevelDocData[],
 		numResults: res.estimatedTotalHits!,
 		isNumResultsExact: false,
 		computeTimeMs: res.processingTimeMs,

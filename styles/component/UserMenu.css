@@ -65,7 +65,7 @@
 	margin: auto 10px;
 }
 
-@media (max-width: 1050px) {
+@media (max-width: 1100px) {
 	.usermenu-container {
 		display: none;
 	}

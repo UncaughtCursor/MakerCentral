@@ -326,8 +326,9 @@ yargs.usage('$0 command')
 		await generateThumbnailGrid(100, 100); // Top 10K
 	})
 	.command('test', 'Test', async () => {
-		const result = await CoursePromotionManager.search('accumula');
-		console.log(result);
+		// const result = await CoursePromotionManager.search('accumula');
+		// console.log(result);
+		await setPromoSearchSettings();
 	})
 	.demand(1, 'must provide a valid command')
 	.help('h')

@@ -6,7 +6,6 @@ import React from 'react';
 import {
 	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchMode, SearchResults,
 } from '@scripts/browser/SearchUtil';
-import WarningBanner from '@components/pages/search/WarningBanner';
 import { discordLink } from '@scripts/site/FirebaseUtil';
 
 export interface SearchParams extends SearchFilterSettings {
@@ -77,6 +76,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 				levelThumbnailUrls={props.thumbnailUrls}
 				worldThumbnailUrls={props.worldThumbnailUrls}
 				isWidget={false}
+				showPromotedLevels
 			/>
 		</AppFrame>
 	);
@@ -84,7 +84,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 
 export default SearchResultsPage;
 
-interface SearchParamsRaw extends Partial<SearchParams> {
+export interface SearchParamsRaw extends Partial<SearchParams> {
 	q: string;
 }
 

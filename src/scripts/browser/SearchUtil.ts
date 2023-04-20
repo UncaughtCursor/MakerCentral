@@ -2,11 +2,12 @@
 import { CountryCode, countryCodeToName, SMM2CountryCodes } from '@data/types/CountryTypes';
 import {
 	MCDifficulties, MCDifficulty, MCGameStyles,
-	MCLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
+	MCLevelDocData, MCPromoLevelDocData, MCTag, MCThemes, MCUserDocData, MCWorldDocData,
 } from '@data/types/MCBrowserTypes';
 import { getLevelThumbnailUrl } from '@scripts/site/FirebaseUtil';
 import { SearchParams } from 'pages/levels/search/[q]';
-import { MeiliSearchResults, searchLevels } from './MeilisearchUtil';
+import { PromoSearchParams } from 'pages/promotion/search/[q]';
+import { MeiliSearchResults, searchLevels, searchPromoLevels } from './MeilisearchUtil';
 
 /**
  * Performs a level search and returns the results and thumbnails for each level.
@@ -396,4 +397,47 @@ export interface SearchOptionsTemplate {
 export type SearchResults = MeiliSearchResults<MCLevelDocData>
 	| MeiliSearchResults<MCUserDocData> | MeiliSearchResults<MCWorldDocData>;
 
+export type PromoSearchResults = Omit<MeiliSearchResults<MCPromoLevelDocData>, 'searchParams'> & {
+	searchParams: PromoSearchParams,
+}
+
+export type AnySearchResults = SearchResults | PromoSearchResults;
+
 export const sortOrders = ['Ascending', 'Descending'] as const;
+
+/**
+ * Performs a promo level search and returns the results and thumbnails for each level.
+ * @param searchParams The search parameters for the search.
+ * @param browseMode (Optional) Whether or not promoted levels are being browsed, as opposed
+ * to being suggested.
+ * @returns The results and thumbnails for each level if applicable.
+ */
+export async function getPromoLevelResultData(
+	searchParams: PromoSearchParams,
+	browseMode: boolean = false,
+): Promise<{
+	results: PromoSearchResults,
+	levelThumbnailUrlObj: {[key: string]: string},
+}> {
+	const results = await searchPromoLevels(
+		searchParams,
+		levelSortTypeMap as { [key in PromoSearchParams['sortType']]: keyof MCLevelDocData },
+		browseMode,
+	);
+	const levelIds = (results.results as MCPromoLevelDocData[]).map((level) => level.id);
+
+	const thumbnailUrls = await Promise.all(levelIds!.map(
+		async (levelId) => ({
+			id: levelId, url: await getLevelThumbnailUrl(levelId),
+		}),
+	));
+	const levelThumbnailUrlObj: {[key: string]: string} = {};
+	thumbnailUrls.forEach((urlEntry) => {
+		levelThumbnailUrlObj![urlEntry.id] = urlEntry.url;
+	});
+
+	return {
+		results,
+		levelThumbnailUrlObj,
+	};
+}
