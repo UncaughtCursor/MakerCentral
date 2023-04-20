@@ -22,10 +22,9 @@ function PromotedLevelView(props: PromotedLevelViewProps) {
 	}, [props.searchParams]);
 
 	return (
-		// eslint-disable-next-line react/jsx-no-useless-fragment
-		<>
+		<div className="promoted-level-view">
 			{visible && (
-				<div className="promoted-level-view">
+				<>
 					<div className="promoted-level-divider">
 						<hr />
 						<div>
@@ -39,15 +38,15 @@ function PromotedLevelView(props: PromotedLevelViewProps) {
 							setVisible(results.results.length > 0);
 						}}
 					/>
-					<div className="promoted-level-divider promoted-level-divider-end">
-						<hr />
-						<div>
-							<span><a href="/promotion" target="_blank" rel="noopener noreferrer">How to Promote Your Own Levels</a></span>
-						</div>
-					</div>
-				</div>
+				</>
 			)}
-		</>
+			<div className="promoted-level-divider promoted-level-divider-end">
+				<hr />
+				<div>
+					<span><a href="/promotion" target="_blank" rel="noopener noreferrer">Promote Your Own Levels</a></span>
+				</div>
+			</div>
+		</div>
 	);
 }
 
