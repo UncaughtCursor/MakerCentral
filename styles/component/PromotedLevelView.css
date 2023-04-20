@@ -1,0 +1,31 @@
+.promoted-level-view {
+
+}
+
+.promoted-level-divider > hr {
+	width: 50%;
+	min-width: 250px;
+}
+
+.promoted-level-divider > div {
+	position: relative;
+	top: -22px;
+	background-color: var(--bg-norm);
+	width: max-content;
+	left: 50%;
+	padding: 0 10px;
+	transform: translateX(-50%);
+}
+
+.promoted-level-divider > div > span {
+	color: var(--inactive-white);
+	font-size: 13px;
+}
+
+.promoted-level-divider-end > div > span {
+	font-size: 16px;
+}
+
+.promoted-level-divider-end > hr {
+	margin-top: 24px;
+}

@@ -43,6 +43,7 @@ function PromoSearchResultsPage(props: PromoSearchResultsPageProps) {
 				results={props.results}
 				levelThumbnailUrls={props.thumbnailUrls}
 				isWidget={false}
+				showPromotionInfo
 			/>
 		</AppFrame>
 	);
@@ -59,7 +60,7 @@ export async function getServerSideProps(context: { query: SearchParamsRaw }) {
 	const queryData = { ...defaultFilterSettings.Levels, ...context.query };
 	if (queryData.q === '_') queryData.q = '';
 
-	const displayRes = await getPromoLevelResultData(queryData);
+	const displayRes = await getPromoLevelResultData(queryData, true);
 
 	return {
 		props: {

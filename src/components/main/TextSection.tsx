@@ -15,7 +15,7 @@ function TextSection(props: {
 	const elements = usedBody.map((node, index) => <p key={index} className="explanatory-text">{node}</p>);
 	console.log(elements);
 	return (
-		<div style={{ maxWidth: '600px', margin: '0 auto' }}>
+		<div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 20px' }}>
 			{props.title && <h2 style={{ textAlign: 'left' }}>{props.title}</h2>}
 			{elements}
 		</div>

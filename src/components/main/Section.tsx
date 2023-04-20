@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 /**
  * A section to be displayed to the user to be included in text.
@@ -11,7 +11,7 @@ function Section(props: {
 	body: JSX.Element[] | JSX.Element,
 }) {
 	return (
-		<div style={{ maxWidth: '600px', margin: '0 auto' }}>
+		<div style={{ maxWidth: '600px', margin: '0 auto', padding: '0 20px' }}>
 			{props.title && <h2 style={{ textAlign: 'left' }}>{props.title}</h2>}
 			{props.body}
 		</div>

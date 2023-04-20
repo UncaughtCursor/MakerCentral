@@ -31,9 +31,9 @@ function HamburgerMenu(props: {
 			<Navlink to="/" text="Home" onClick={requestMenuClose} />
 			<Navlink to="/levels" text="Browse Levels" onClick={requestMenuClose} />
 			<Navlink to="/music-level-studio" text="Music Level Studio" onClick={requestMenuClose} />
+			<Navlink to="/promotion" text="Promote Levels" />
 			<Navlink to={discordLink} openInNewTab text="Discord" onClick={requestMenuClose} />
 			<Navlink to="/about" text="About" onClick={requestMenuClose} />
-			<Navlink to={kofiLink} openInNewTab text="Donate" />
 			<hr style={{ width: '85%' }} />
 			<p
 				style={{ color: 'gray', fontSize: '12px', margin: '4px' }}

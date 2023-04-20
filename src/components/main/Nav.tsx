@@ -15,9 +15,9 @@ function Navbar() {
 			<Navlink to="/" text="Home" />
 			<Navlink to="/levels" text="Browse Levels" />
 			<Navlink to="/music-level-studio" text="Music Level Studio" />
+			<Navlink to="/promotion" text="Promote Levels" />
 			<Navlink to={discordLink} openInNewTab text="Discord" />
 			<Navlink to="/about" text="About" />
-			<Navlink to={kofiLink} openInNewTab text="Donate" />
 		</div>
 	);
 }

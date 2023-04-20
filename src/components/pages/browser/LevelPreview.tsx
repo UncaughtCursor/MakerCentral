@@ -48,7 +48,7 @@ function LevelPreview(props: {
 							color: 'var(--text-color)',
 						}}
 					>{props.level.makerName}
-        </a> • {timeAgoStr}
+					</a> • {timeAgoStr}
 					</p>
 				</div>
 			</div>
@@ -128,4 +128,33 @@ export function isPromoLevel(
 	level: MCLevelDocData | MCPromoLevelDocData,
 ): level is MCPromoLevelDocData {
 	return (level as MCPromoLevelDocData).promoter !== undefined;
+}
+
+/**
+ * Converts a promo level to a normal level.
+ * @param promoLevel The promo level to convert.
+ * @returns The converted level.
+ */
+export function convertPromoLevelToLevel(
+	promoLevel: MCPromoLevelDocData,
+): MCLevelDocData {
+	return {
+		id: promoLevel.id,
+		name: promoLevel.name,
+		description: promoLevel.description,
+		makerId: promoLevel.makerId,
+		makerName: promoLevel.makerName,
+		uploadTime: promoLevel.uploadTime,
+		numLikes: promoLevel.numLikes,
+		numPlays: promoLevel.numPlays,
+		clearRate: promoLevel.clearRate,
+		tags: promoLevel.tags,
+		updatedTime: promoLevel.updatedTime,
+		country: promoLevel.country,
+		difficulty: promoLevel.difficulty,
+		gameStyle: promoLevel.gameStyle,
+		numBoos: promoLevel.numBoos,
+		theme: promoLevel.theme,
+		likePercentage: promoLevel.likePercentage,
+	};
 }

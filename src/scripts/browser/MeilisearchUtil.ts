@@ -43,6 +43,7 @@ const client = new MeiliSearch(MeilisearchConfig);
 const promoClient = new MeiliSearch(PromoMeilisearchConfig);
 
 export const numResultsPerPage = 10;
+export const numPromoResultsPerPage = 2;
 
 /**
  * Searches for levels based on the provided search data.
@@ -125,11 +126,14 @@ paramName as SearchFilterKey,
  * Searches for promoted levels based on the provided search data.
  * @param searchData The data to search based off of.
  * @param sortTypeMap A map of sort types to their corresponding sort properties.
+ * @param browseMode (Optional) Whether or not the levels are being browsed through,
+ * rather than suggested.
  * @returns A promise that resolves with a search results object.
  */
 export async function searchPromoLevels(
 	searchData: PromoSearchParams,
 	sortTypeMap: { [key in typeof searchData.sortType]: keyof MCLevelDocData },
+	browseMode: boolean = false,
 ): Promise<PromoSearchResults> {
 	const filterParamNames: {[key in SearchMode]: string[]} = {
 		Levels: levelSearchTemplate.filterOptions.map((option) => option.property),
@@ -160,12 +164,15 @@ paramName as SearchFilterKey,
 	// Sort substring to use for the search.
 	const sort = [`${sortTypeMap[searchData.sortType]}:${sortOrderAbbr}`];
 
+	const offset = searchData.page * (browseMode ? numResultsPerPage : numPromoResultsPerPage);
+	const limit = browseMode ? numResultsPerPage + 1 : numPromoResultsPerPage;
+
 	// Perform the search and return the results.
 	const res = await promoClient.index('promo-levels').search(searchData.q, {
 		filter,
 		sort,
-		offset: searchData.page * numResultsPerPage,
-		limit: numResultsPerPage + 1,
+		offset,
+		limit,
 	});
 	return {
 		results: res.hits as MCPromoLevelDocData[],
