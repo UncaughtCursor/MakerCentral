@@ -26,6 +26,7 @@ export interface MCLevelDocData {
 export type MCPromoLevelDocData = MCLevelDocData & {
 	promoter: string;
 	expiry: number | null;
+	keywordString: string;
 };
 
 // Data that is used to update a level's entry in the meilisearch index.

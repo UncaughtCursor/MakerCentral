@@ -268,6 +268,12 @@ yargs.usage('$0 command')
 				type: 'array',
 				demandOption: true,
 			})
+			.option('keywords', {
+				alias: 'k',
+				describe: 'A string of keywords to make the level searchable by',
+				type: 'string',
+				demandOption: false,
+			})
 			.option('forever', {
 				alias: 'f',
 				describe: 'Whether to register the promotion as permanent until manually unregistered',
@@ -276,7 +282,12 @@ yargs.usage('$0 command')
 			});
 	}, async (argv) => {
 		await CoursePromotionManager.init();
-		await CoursePromotionManager.register(argv.name, argv.courseIds.filter(isString), !argv.forever);
+		await CoursePromotionManager.register(
+			argv.name,
+			argv.courseIds.filter(isString),
+			!argv.forever,
+			argv.keywords || '',
+		);
 		await CoursePromotionManager.commit();
 	})
 	.command('promo-unregister', 'Unregisters a level promotion by name or course ID', (yargs) => {
