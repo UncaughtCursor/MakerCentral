@@ -1,0 +1,74 @@
+.search-page-outer-container {
+	display: flex;
+	flex-direction: column;
+	margin-top: 100px;
+}
+
+.search-page-inner-container {
+	margin: 0 auto;
+}
+
+.search-page-logo {
+	width: 90vw;
+	max-width: 400px;
+}
+
+.search-page-subtitle {
+	margin-top: 4px;
+	font-size: 20px;
+}
+
+.search-bar-text {
+	margin: 0;
+	text-align: left;
+	margin-left: 20px;
+	margin-bottom: 2px;
+}
+
+.donation-callout {
+	display: flex;
+	flex-direction: row;
+	background-color: var(--bg-dark);
+	align-items: center;
+	width: 80vw;
+	max-width: 800px;
+	margin: 0 auto;
+	margin-top: 60px;
+	padding: 20px;
+	border-radius: 20px;
+}
+
+.donation-callout-text-container {
+	display: flex;
+	flex-direction: column;
+	text-align: left;
+	max-width: 659px;
+	margin-right: 20px;
+}
+
+.donation-callout-text-container > p, .donation-callout-text-container > h3 {
+	margin: 5px;
+}
+
+.donation-button {
+	background-color: var(--hl-med);
+	border-radius: 5px;
+	color: var(--text-color);
+	padding: 10px 20px;
+	text-decoration: none;
+}
+
+@media (max-width: 999px) {
+	.donation-callout {
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	.donation-callout-text-container {
+		max-width: unset;
+	}
+
+	.donation-button {
+		margin-top: 20px;
+	}
+}

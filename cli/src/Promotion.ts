@@ -17,6 +17,7 @@ type CoursePromotionOperation = {
 	name: string,
 	courseId: string,
 	expiryTime: number | null,
+	keywordString: string,
 } | {
 	type: 'unregister',
 	name: string,
@@ -60,6 +61,7 @@ namespace CoursePromotionManager {
 				...levelData,
 				promoter: operation.name,
 				expiry: operation.expiryTime,
+				keywordString: operation.keywordString,
 			}
 		}));
 		await promoIndex.addDocuments(levelDocs);
@@ -102,8 +104,10 @@ namespace CoursePromotionManager {
 	 * @param name The name of the user.
 	 * @param courseIds A list of course IDs to register.
 	 * @param expires Whether the promotion expires.
+	 * @param keywordString A string of keywords to make the course searchable by.
+	 * There is no specific format for this string, but it is recommended to use a comma-separated list of keywords.
 	 */
-	export async function register(name: string, courseIds: string[], expires: boolean): Promise<void> {
+	export async function register(name: string, courseIds: string[], expires: boolean, keywordString: string): Promise<void> {
 		if (promotionsData === null) throw new Error('Promotion manager not initialized.');
 		
 		const existingPromotions = promotionsData[name] || [];
@@ -123,12 +127,13 @@ namespace CoursePromotionManager {
 		const results = await Promise.all(formattedCourseIds.map(id => getDoc(id, 'levels')));
 		console.log(results);
 
-		const newPromotions = formattedCourseIds.map(id => ({ id, registrationTime: now, expiryTime }));
+		const newPromotions = formattedCourseIds.map(id => ({ id, registrationTime: now, expiryTime, keywordString }));
 		const operations = newPromotions.map(promotion => ({
 			type: 'register' as const,
 			name,
 			courseId: promotion.id,
 			expiryTime: promotion.expiryTime,
+			keywordString: promotion.keywordString,
 		}));
 
 		pendingOperations.push(...operations);
@@ -334,6 +339,7 @@ export async function setPromoSearchSettings() {
 		'makerName',
 		'promoter',
 		'description',
+		'keywordString'
 	];
 	const levelFilterableAttributes: (keyof MCPromoLevelDocData)[] = [
 		'uploadTime',

@@ -16,39 +16,16 @@ function LevelBrowser() {
 			title="Browse Levels - MakerCentral"
 			description="Search, browse, and bookmark over 800,000 popular Mario Maker 2 levels!"
 		>
-			<div style={{
-				display: 'flex',
-				flexDirection: 'column',
-				marginTop: '100px',
-			}}
-			>
-				<div style={{
-					margin: '0 auto',
-				}}
-				>
+			<div className="search-page-outer-container">
+				<div className="search-page-inner-container">
 					<img
 						src="/logo.png"
 						alt="MakerCentral Search"
-						style={{
-							width: '90vw',
-							maxWidth: '400px',
-						}}
+						className="search-page-logo"
 					/>
-					<h4 style={{
-						marginTop: '4px',
-						fontSize: '20px',
-					}}
-					>Search
-					</h4>
+					<h4 className="search-page-subtitle">Search</h4>
 					<br />
-					<h4 style={{
-						margin: '0',
-						textAlign: 'left',
-						marginLeft: '20px',
-						marginBottom: '2px',
-					}}
-					>{`Search over ${marketedLevelDBSize.toLowerCase()} levels...`}
-					</h4>
+					<h4 className="search-bar-text">{`Search over ${marketedLevelDBSize.toLowerCase()} levels...`}</h4>
 					<LevelSearchBar
 						onSubmit={(query, filterSettings) => {
 							history.push(getSearchUrl(query, filterSettings));
@@ -57,7 +34,26 @@ function LevelBrowser() {
 						initialSettings={defaultFilterSettings.Levels}
 					/>
 				</div>
-				{/* <LevelCategoryFeed extraQueryConstraints={[]} /> */}
+				<div className="donation-callout">
+					<div className="donation-callout-text-container">
+						<h3>MakerCentral Needs Your Help!</h3>
+						<p>
+							MakerCentral is run by a single
+							developer, and I&apos;ll eventually run out of money
+							to keep this site running, so please consider donating to help keep
+							MakerCentral alive! You&apos;ll be able to <b>promote your levels</b> in
+							the search results if you do.
+						</p>
+					</div>
+					<a
+						href="/promotion"
+						target="_blank"
+						rel="noopener noreferrer"
+						className="donation-button"
+					>
+						Learn More
+					</a>
+				</div>
 			</div>
 		</AppFrame>
 	);
