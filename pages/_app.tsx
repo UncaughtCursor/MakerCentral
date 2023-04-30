@@ -54,6 +54,7 @@ import '../styles/component/Charts.css';
 import '../styles/component/UserPreview.css';
 import '../styles/component/Banner.css';
 import '../styles/component/PromotedLevelView.css';
+import '../styles/component/SearchPage.css';
 // I know this is bad and I'm sorry
 
 import type { AppProps } from 'next/app';
