@@ -3,6 +3,10 @@ import { getDoc } from './SearchManager';
 import MeiliPromoCredentials from '@data/private/meilisearch-promo-credentials.json';
 import MeiliSearch from 'meilisearch';
 import { MCLevelDocData, MCPromoLevelDocData } from '@data/types/MCBrowserTypes';
+import { MCRawLevelDocToMCLevelDoc } from '@data/util/MCRawToMC';
+import prompts from 'prompts';
+import { APILevel } from '@data/types/DBTypes';
+import { MCRawLevelDoc } from '@data/types/MCRawTypes';
 
 export type PromotionFile = Record<string, CoursePromotion[]>;
 
@@ -56,7 +60,7 @@ namespace CoursePromotionManager {
 		const unregisterOperations = pendingOperations.filter(operation => operation.type === 'unregister') as Exclude<CoursePromotionOperation, { type: 'register' }>[]; // Exclude<CoursePromotionOperation, { type: 'register' }>[];
 
 		const levelDocs: MCPromoLevelDocData[] = await Promise.all(registerOperations.map(async operation => {
-			const levelData = await getDoc(operation.courseId, 'levels') as MCLevelDocData;
+			const levelData = await getLevelWithManualFallback(operation.courseId, operation.name);
 			return {
 				...levelData,
 				promoter: operation.name,
@@ -122,10 +126,6 @@ namespace CoursePromotionManager {
 		const thirtyDaysMs = 30 * 24 * 60 * 60 * 1000;
 		const now = Date.now();
 		const expiryTime = expires ? now + thirtyDaysMs : null;
-		
-		// Validate that the course IDs are valid.
-		const results = await Promise.all(formattedCourseIds.map(id => getDoc(id, 'levels')));
-		console.log(results);
 
 		const newPromotions = formattedCourseIds.map(id => ({ id, registrationTime: now, expiryTime, keywordString }));
 		const operations = newPromotions.map(promotion => ({
@@ -387,4 +387,50 @@ export async function setPromoSearchSettings() {
 	}));
 
 	console.log('Settings set.');
+}
+
+/**
+ * Retrieves course data for the given course ID and prompts the user to enter the data manually if it fails.
+ * @param id The course ID to get data for.
+ * @param uploaderName A name or alias for the uploader in case the data needs to be entered manually.
+ */
+async function getLevelWithManualFallback(id: string, uploaderName: string): Promise<MCLevelDocData> {
+	let level: MCLevelDocData;
+	try {
+		level = await getDoc(id, 'levels') as MCLevelDocData;
+	}
+	catch (error) {
+		console.log(`Failed to get data for courseId: ${id}. Please paste the JSON data from the magic.makercentral.io API here.`);
+		const response = await prompts({
+			type: 'text',
+			name: 'value',
+			message: 'Paste magic.makercentral.io API Course Data:',
+		});
+		const parsedData = JSON.parse(response.value) as APILevel;
+		const {game_style, ...rest} = parsedData;
+		const rawLevelDoc: MCRawLevelDoc = {
+			...rest,
+			gamestyle: game_style,
+			world_record: parsedData.world_record ? parsedData.world_record : null,
+			uploader: {
+				name: uploaderName,
+				pid: parsedData.uploader_pid,
+				makerId: '',
+				region: 1,
+				country: '',
+				medals: [],
+				likes: 0,
+				maker_points: 0,
+				mii_image: '',
+				mii_studio_code: '',
+				has_super_world: false,
+			},
+			first_completer: null,
+			record_holder: null,
+
+		};
+		level = MCRawLevelDocToMCLevelDoc(rawLevelDoc);
+	}
+
+	return level;
 }
