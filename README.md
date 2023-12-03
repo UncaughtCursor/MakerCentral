@@ -1,10 +1,10 @@
-# MakerCentral
+![MakerCentral](public/logo.png)
 
-MakerCentral is a search engine for every Mario Maker 2 level in the world.
+MakerCentral is a search engine for every Super Mario Maker 2 level in the world.
 
 This repo features all frontend and most backend code, as well as a command line utility.
 
-I apologize for the lack of documentation or hardcoded URLs; my health has declined sharply recently, so I haven't been able to maintain anything.
+I apologize for the lack of documentation or hardcoded URLs; my health has declined sharply recently, so I haven't been able to maintain anything. But, if you can make sense of it, the code is here to fork and create a new version.
 
 To run the level data updater, you'll also need to run my [fork of TGR's MariOver API](https://github.com/UncaughtCursor/MariOverMC).
 
