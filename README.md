@@ -1,4 +1,14 @@
-This is the MakerCentral repo, featuring all frontend and backend code, as well as a command line utility.
+# MakerCentral
+
+MakerCentral is a search engine for every Mario Maker 2 level in the world.
+
+This repo features all frontend and most backend code, as well as a command line utility.
+
+I apologize for the lack of documentation or hardcoded URLs; my health has declined sharply recently, so I haven't been able to maintain anything.
+
+To run the level data updater, you'll also need to run my [fork of TGR's MariOver API](https://github.com/UncaughtCursor/MariOverMC).
+
+## --- (Next.js Boilerplate Below) ---
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
