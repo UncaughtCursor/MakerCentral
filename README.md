@@ -4,6 +4,8 @@ MakerCentral is a search engine for every Super Mario Maker 2 level in the world
 
 This repo features all frontend and most backend code, as well as a command line utility.
 
+It also includes Music Level Studio, a music level creation tool.
+
 I apologize for the lack of documentation or hardcoded URLs; my health has declined sharply recently, so I am not able to update the code for the foreseeable future. However, if you can make sense of it, the code is here to fork and create a new version.
 
 To run the level data updater, you'll also need to run my [fork of TGR's MariOver API](https://github.com/UncaughtCursor/MariOverMC).
