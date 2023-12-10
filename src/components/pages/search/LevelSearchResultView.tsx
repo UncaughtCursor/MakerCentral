@@ -1,3 +1,4 @@
+import wiz64 from '@assets/wizulus-64.png';
 import useLevelThumbnailStates, { LevelThumbnailStates } from '@components/hooks/useLevelThumbnailStates';
 import {
 	MCLevelDocData, MCPromoLevelDocData, MCUserDocData, MCWorldDocData,
@@ -5,6 +6,7 @@ import {
 import { numResultsPerPage } from '@scripts/browser/MeilisearchUtil';
 import { AnySearchResults, SearchMode } from '@scripts/browser/SearchUtil';
 import React from 'react';
+import Link from 'next/link';
 import LevelPreview, { convertPromoLevelToLevel, isPromoLevel } from '../browser/LevelPreview';
 import SuperWorldPreview from '../browser/SuperWorldPreview';
 import UserPreview from '../browser/UserPreview';
@@ -82,7 +84,26 @@ function LevelSearchResultView(props: {
 		}}
 		>
 			{!props.isWidget! ? (
-				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds`}</span>
+				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds.`}
+					{ props.results.numResults > 500 ? (
+						<>
+							&nbsp;
+							<Link href="/hosting">
+								<span style={{ fontWeight: 'bold' }}>Why so slow?</span>
+								<img
+									src={wiz64.src}
+									alt="🧙‍♂️"
+									className="ghostly"
+									width="24"
+									height="24"
+									style={{
+										marginLeft: '5px',
+									}}
+								/>
+							</Link>
+						</>
+					) : null }
+				</span>
 			) : null}
 			{props.results.results.length === 0 ? (
 				<span style={{

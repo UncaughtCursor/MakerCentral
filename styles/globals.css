@@ -13,3 +13,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.ghostly {
+  animation: ghostlyAnimation 2s infinite cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+@keyframes ghostlyAnimation {
+  0%       { transform: translate(-5%, -10%) rotate(-10deg); }
+  25%      { transform: translate(2.5%, 10%) rotate(0deg); }
+  50%      { transform: translate(5%, -10%) rotate(10deg); }
+  75%      { transform: translate(-2.5%, 10%) rotate(0deg); }
+  100%     { transform: translate(-5%, -10%) rotate(-10deg); }
+}
