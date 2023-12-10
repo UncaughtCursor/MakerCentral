@@ -85,7 +85,7 @@ function LevelSearchResultView(props: {
 		>
 			{!props.isWidget! ? (
 				<span>{`Found about ${props.results.numResults.toLocaleString()} results in ${props.results.computeTimeMs / 1000} seconds.`}
-					{ props.results.numResults > 500 ? (
+					{ props.results.computeTimeMs > 500 ? (
 						<>
 							&nbsp;
 							<Link href="/hosting">
