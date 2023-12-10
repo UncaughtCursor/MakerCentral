@@ -31,7 +31,7 @@ function HamburgerMenu(props: {
 			<Navlink to="/" text="Home" onClick={requestMenuClose} />
 			<Navlink to="/levels" text="Browse Levels" onClick={requestMenuClose} />
 			<Navlink to="/music-level-studio" text="Music Level Studio" onClick={requestMenuClose} />
-			<Navlink to="/promotion" text="Promote Levels" />
+			{/* <Navlink to="/promotion" text="Promote Levels" /> */}
 			<Navlink to={discordLink} openInNewTab text="Discord" onClick={requestMenuClose} />
 			<Navlink to="/about" text="About" onClick={requestMenuClose} />
 			<hr style={{ width: '85%' }} />

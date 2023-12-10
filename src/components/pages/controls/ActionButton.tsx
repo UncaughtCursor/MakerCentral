@@ -12,13 +12,12 @@ type ActionButtonType = 'blue' | 'normal' | 'green' | 'purple';
 function ActionButton(props: {to: string, type?: ActionButtonType,
 	text: string, onClick?: () => void}) {
 	return (
-		<Link href={props.to}>
-			<a
-				className={props.type! === 'blue' ? 'action-button' : `action-button action-button-${props.type!}`}
-				type="button"
-				onClick={props.onClick!}
-			>{props.text}
-			</a>
+		<Link
+			href={props.to}
+			className={props.type! === 'blue' ? 'action-button' : `action-button action-button-${props.type!}`}
+			type="button"
+			onClick={props.onClick!}
+		>{props.text}
 		</Link>
 	);
 }

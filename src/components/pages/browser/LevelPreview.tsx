@@ -10,6 +10,7 @@ import TagDisplay from './TagDisplay';
 import LevelThumbnail from './LevelThumbnail';
 import BookmarkButton from './BookmarkButton';
 import IconValueRow from './IconValueRow';
+import Link from 'next/link';
 
 const timeAgo = new TimeAgo('en-us');
 
@@ -42,14 +43,7 @@ function LevelPreview(props: {
 				/>
 				<div className="user-level-preview-title-container">
 					<h3 style={{ overflowWrap: 'anywhere' }}>{props.level.name}</h3>
-					<p><a
-						href={`/users/${props.level.makerId}`}
-						style={{
-							color: 'var(--text-color)',
-						}}
-					>{props.level.makerName}
-					</a> • {timeAgoStr}
-					</p>
+					<p>{props.level.makerName} • {timeAgoStr}</p>
 				</div>
 			</div>
 			<div className="user-level-preview-details">
@@ -108,11 +102,11 @@ function LevelPreview(props: {
 				left="calc(100% - 36.75px - 10px)"
 				top="10px"
 			/>
-			<a
-				href={`/levels/view/${props.level.id}`}
-				className="user-level-preview"
-			>{previewContainerContents}
-			</a>
+			<Link href={`/levels/view/${props.level.id}`}>
+				<div className="user-level-preview">
+					{previewContainerContents}
+				</div>
+			</Link>
 		</div>
 	);
 }

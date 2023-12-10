@@ -15,7 +15,7 @@ function Navbar() {
 			<Navlink to="/" text="Home" />
 			<Navlink to="/levels" text="Browse Levels" />
 			<Navlink to="/music-level-studio" text="Music Level Studio" />
-			<Navlink to="/promotion" text="Promote Levels" />
+			{/* <Navlink to="/promotion" text="Promote Levels" /> */}
 			<Navlink to={discordLink} openInNewTab text="Discord" />
 			<Navlink to="/about" text="About" />
 		</div>
@@ -37,16 +37,27 @@ function Navlink(props: { to?: string | null, text: string,
 	const isMatch = isRouteMatch(props.to!, props.to === '/');
 	if (props.to! !== null) {
 		return (
-			<Link href={props.to!}>
-				<a
-					className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
-					onClick={props.onClick}
-					target={props.openInNewTab ? '_blank' : undefined}
-					rel={props.openInNewTab ? 'noopener noreferrer' : undefined}
-				>
-					{props.text}
-				</a>
-			</Link>
+			props.openInNewTab
+				? (
+					<Link
+						href={props.to!}
+						className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
+						onClick={props.onClick}
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{props.text}
+					</Link>
+				)
+				: (
+					<Link
+						href={props.to!}
+						className={`navlink ${isMatch ? 'navlinkActive' : ''}`}
+						onClick={props.onClick}
+					>
+						{props.text}
+					</Link>
+				)
 		);
 	}
 	return (

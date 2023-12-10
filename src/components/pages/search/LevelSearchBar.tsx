@@ -163,6 +163,7 @@ function LevelSearchBar(props: SearchBarProps) {
 							}}
 							role="search"
 							tabIndex={i}
+							key={suggestion}
 						>{suggestion}
 						</span>
 					))}
