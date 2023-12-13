@@ -12,6 +12,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@jimp/png": "^0.22.10",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
     "@next/bundle-analyzer": "^14.0.4",
@@ -26,6 +27,7 @@
     "firebase": "^10.7.1",
     "firebaseui": "^6.1.0",
     "javascript-time-ago": "^2.5.9",
+    "jimp": "^0.22.10",
     "lz-string": "^1.5.0",
     "meilisearch": "^0.36.0",
     "midifile": "^2.0.0",

@@ -22,7 +22,7 @@ function About() {
 			<TextSection
 				title="Why is the site slow?"
 				body={[
-					<>At the heart of MakerCenteal is a Meilisearch database that demands significant resources to host. That server costs $140/month to run.</>,
+					<>At the heart of MakerCentral is a Meilisearch database that demands significant resources to host. That server costs $140/month to run.</>,
 					<>We have not been able to collect enough donations to keep the servers running, so I have moved the Meilisearch server to much cheaper and slower hardware.</>,
 					<>If we are able to gather enough contributors to cover hosting costs, Meilisearch will be moved back into the cloud.</>,
 				]}
