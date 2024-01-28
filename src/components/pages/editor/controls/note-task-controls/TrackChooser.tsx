@@ -156,7 +156,10 @@ function TrackChooser(props: {onInputChange: (arg0: boolean) => void}) {
  * Gets the last beat of a set of note groups.
  */
 export function getEndBeat(groups: PianoRollNoteGroup[]) {
-	return groups.reduce((curMaxBeat, group) => Math.max(curMaxBeat, group.notes.reduce((curNoteMaxBeat, note) => Math.max(curNoteMaxBeat, note.beat), 0)), 0);
+	return groups.reduce((curMaxBeat, group) => Math.max(
+		curMaxBeat,
+		group.notes.reduce((curNoteMaxBeat, note) => Math.max(curNoteMaxBeat, note.beat), 0)
+	), 0);
 }
 
 export default TrackChooser;

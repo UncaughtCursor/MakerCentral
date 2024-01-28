@@ -53,6 +53,7 @@ function SuperWorldThumbnail(props: {
 				const thumbnail = thumbnails[levelId];
 				return (
 					<LevelThumbnail
+						key={levelId}
 						url={thumbnail.url!}
 						status={thumbnail.state}
 						style={{

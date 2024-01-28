@@ -27,7 +27,7 @@ interface MusicPreviewerProps {
 	onMouseDown?: (evt: React.MouseEvent<HTMLElement>) => void,
 	onMouseUp?: (evt: React.MouseEvent<HTMLElement>) => void,
 	toolbarAdditions?: React.ReactNode,
-	children: React.ReactNode,
+	children?: React.ReactNode,
 	gridTileLength?: number,
 	gridTilesPerBeat?: number,
 }
@@ -221,6 +221,7 @@ MusicPreviewer.defaultProps = {
 	toolbarAdditions: null,
 	gridTileLength: 8,
 	gridTilesPerBeat: 4,
+	children: null,
 };
 
 export default MusicPreviewer;

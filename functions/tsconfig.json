@@ -10,10 +10,7 @@
     "jsx": "react",
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "plugins": [
-      { "transform": "typescript-is/lib/transform-inline/transformer" }
-    ],
+    "esModuleInterop": true
   },
   "compileOnSave": true,
   "include": ["src"],
