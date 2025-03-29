@@ -1,4 +1,3 @@
-import { getLevel } from '@scripts/browser/BrowserUtil';
 import React, { useEffect, useState } from 'react';
 import AppFrame from '@components/AppFrame';
 import Page404 from 'pages/404';
@@ -11,6 +10,7 @@ import useLevelThumbnailStates from '@components/hooks/useLevelThumbnailStates';
 import LevelThumbnail from '@components/pages/browser/LevelThumbnail';
 import { countryCodeToName } from '@data/types/CountryTypes';
 import TagDisplay from '../../../src/components/pages/browser/TagDisplay';
+import { getlevel } from '@scripts/browser/MeilisearchUtil';
 
 /**
  * Displays details about a level. The id URL parameter specifies the level ID in the database.
@@ -175,7 +175,7 @@ export async function getServerSideProps(context: { params: {
 	id: string,
 }}) {
 	const levelId = context.params.id;
-	const loadedLevel = await getLevel(levelId);
+	const loadedLevel = await getlevel(levelId);
 
 	const thumbnailUrl = await getLevelThumbnailUrl(levelId);
 	return {

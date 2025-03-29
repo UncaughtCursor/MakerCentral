@@ -109,13 +109,12 @@ function UserMenuItem(props: {
 }) {
 	if (props.to !== null) {
 		return (
-			<Link href={props.to!}>
-				<a
-					className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
-					onClick={props.do!}
-					role="button"
-				>{props.text}
-				</a>
+			<Link
+				href={props.to!}
+				className={`usermenuitem ${!props.isVisible ? 'hidden' : ''}`}
+				onClick={props.do!}
+				role="button"
+			>{props.text}
 			</Link>
 		);
 	}

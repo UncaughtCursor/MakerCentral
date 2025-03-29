@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import { smm2APIBaseUrl, thumbnailEndpoint } from './constants';
-import sharp from 'sharp';
+import Jimp from 'jimp';
 import { storageBucket } from '.';
 import { fetchBuffer, operationCollectionName } from './util';
 import { AxiosError } from 'axios';
@@ -70,10 +70,9 @@ export const generateThumbnailsForLevelIDs = functions.https.onCall(async (data:
 	for (const result of results) {
 		const buffer = result.buffer;
 		if (buffer) {
-			const thumbnail = await sharp(buffer)
-				.png()
-				.resize(thumbnailSize.width, thumbnailSize.height)
-				.toBuffer();
+			const image = await Jimp.read(buffer);
+			image.resize(thumbnailSize.width, thumbnailSize.height);
+			const thumbnail = await image.getBufferAsync(Jimp.MIME_PNG);
 			thumbnails.set(result.levelID, thumbnail);
 		}
 	}

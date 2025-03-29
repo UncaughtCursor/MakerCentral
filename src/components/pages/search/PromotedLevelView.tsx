@@ -40,12 +40,16 @@ function PromotedLevelView(props: PromotedLevelViewProps) {
 					/>
 				</>
 			)}
-			<div className="promoted-level-divider promoted-level-divider-end">
+			{/* <div className="promoted-level-divider promoted-level-divider-end">
 				<hr />
 				<div>
-					<span><a href="/promotion" target="_blank" rel="noopener noreferrer">Promote Your Own Levels</a></span>
+					<span>
+						<a href="/promotion" target="_blank" rel="noopener noreferrer">
+							Promote Your Own Levels
+						</a>
+					</span>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 }

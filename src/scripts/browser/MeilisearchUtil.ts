@@ -40,7 +40,7 @@ export interface MeiliSearchResults<T> {
 }
 
 const client = new MeiliSearch(MeilisearchConfig);
-const promoClient = new MeiliSearch(PromoMeilisearchConfig);
+// const promoClient = new MeiliSearch(PromoMeilisearchConfig);
 
 export const numResultsPerPage = 10;
 export const numPromoResultsPerPage = 2;
@@ -168,17 +168,24 @@ paramName as SearchFilterKey,
 	const limit = browseMode ? numResultsPerPage + 1 : numPromoResultsPerPage;
 
 	// Perform the search and return the results.
-	const res = await promoClient.index('promo-levels').search(searchData.q, {
-		filter,
-		sort,
-		offset,
-		limit,
-	});
+	// const res = await promoClient.index('promo-levels').search(searchData.q, {
+	// 	filter,
+	// 	sort,
+	// 	offset,
+	// 	limit,
+	// });
+	// return {
+	// 	results: res.hits as MCPromoLevelDocData[],
+	// 	numResults: res.estimatedTotalHits!,
+	// 	isNumResultsExact: false,
+	// 	computeTimeMs: res.processingTimeMs,
+	// 	searchParams: searchData,
+	// };
 	return {
-		results: res.hits as MCPromoLevelDocData[],
-		numResults: res.estimatedTotalHits!,
+		results: [],
+		numResults: 0,
 		isNumResultsExact: false,
-		computeTimeMs: res.processingTimeMs,
+		computeTimeMs: 0,
 		searchParams: searchData,
 	};
 }
@@ -287,4 +294,22 @@ function getMinResultUnixTime(timeFilter: SearchTimeFilter): number {
 	}
 
 	return now - msToSubtract;
+}
+
+/**
+ * Gets user from Meilisearch
+ * @param id User ID
+ * @returns User document
+ */
+export function getUser(id: string): Promise<MCUserDocData> {
+	return client.index('users').getDocument(id);
+}
+
+/**
+ * Gets level from Meilisearch
+ * @param id Course ID
+ * @returns Level document
+ */
+export function getlevel(id: string): Promise<MCLevelDocData> {
+	return client.index('levels').getDocument(id);
 }

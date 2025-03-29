@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { is } from 'typescript-is';
+import { is } from 'typia';
 import { PatronStatus } from './rewards';
 import { db } from '.';
 

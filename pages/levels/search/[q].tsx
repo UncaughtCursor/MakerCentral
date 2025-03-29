@@ -2,17 +2,22 @@ import AppFrame from '@components/AppFrame';
 import LevelSearchResultView from '@components/pages/search/LevelSearchResultView';
 import LevelSearchBar, { getSearchUrl } from '@components/pages/search/LevelSearchBar';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	defaultFilterSettings, getLevelResultData, SearchFilterSettings, SearchMode, SearchResults,
 } from '@scripts/browser/SearchUtil';
 import { discordLink } from '@scripts/site/FirebaseUtil';
+import Spinner from '@components/pages/controls/Spinner';
 
 export interface SearchParams extends SearchFilterSettings {
 	q: string;
 }
 
 interface SearchResultsPageProps {
+	queryData: {[key: string]: string};
+}
+
+interface SearchResultsState {
 	results: SearchResults;
 	thumbnailUrls: {[key: string]: string};
 	worldThumbnailUrls: {[key: string]: string}[];
@@ -26,12 +31,25 @@ interface SearchResultsPageProps {
  */
 function SearchResultsPage(props: SearchResultsPageProps) {
 	const history = useRouter();
+	const [res, setRes] = useState<SearchResultsState | null>(null);
+
+	useEffect(() => {
+		setRes(null);
+		getLevelResultData(props.queryData as any).then((r) => {
+			setRes({
+				results: r.results,
+				thumbnailUrls: r.levelThumbnailUrlObj ? r.levelThumbnailUrlObj : {},
+				worldThumbnailUrls: r.worldThumbnailUrlObjs ? r.worldThumbnailUrlObjs : [],
+			});
+		});
+	}, [props.queryData]);
+
 	const initSettings = (() => {
-		const validKeys = Object.keys(props.results.searchParams).filter((key) => key !== 'q');
+		const validKeys = Object.keys(props.queryData).filter((key) => key !== 'q');
 		return validKeys.reduce((obj, key) => {
 			// eslint-disable-next-line no-param-reassign
 			obj[key] = props
-				.results.searchParams[key as keyof typeof props.results.searchParams];
+				.queryData[key as keyof typeof props.queryData];
 			return obj;
 		}, {} as {[key: string]: any});
 	})() as SearchFilterSettings;
@@ -46,7 +64,7 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 	);
 
 	return (
-		<AppFrame title={`'${props.results.searchParams.q}' - MakerCentral Levels`}>
+		<AppFrame title={`'${props.queryData.q}' - MakerCentral Levels`}>
 			{/* <WarningBanner
 				message={(
 					<div>
@@ -64,20 +82,30 @@ function SearchResultsPage(props: SearchResultsPageProps) {
 			}}
 			>
 				<LevelSearchBar
-					initialVal={props.results.searchParams.q}
+					initialVal={props.queryData.q}
 					initialSettings={initSettings}
 					onSubmit={(query, filterSettings) => {
 						history.push(getSearchUrl(query, filterSettings));
 					}}
 				/>
 			</div>
-			<LevelSearchResultView
-				results={props.results}
-				levelThumbnailUrls={props.thumbnailUrls}
-				worldThumbnailUrls={props.worldThumbnailUrls}
-				isWidget={false}
-				showPromotedLevels
-			/>
+			{ res ? (
+				<LevelSearchResultView
+					results={res.results}
+					levelThumbnailUrls={res.thumbnailUrls}
+					worldThumbnailUrls={res.worldThumbnailUrls}
+					isWidget={false}
+					showPromotedLevels
+				/>
+			) : (
+				<div style={{
+					marginTop: '24px',
+					textAlign: 'center',
+				}}
+				>
+					<Spinner />
+				</div>
+			)}
 		</AppFrame>
 	);
 }
@@ -98,13 +126,9 @@ export async function getServerSideProps(context: { query: SearchParamsRaw }) {
 	const queryData = { ...defaultFilterSettings[searchMode], ...context.query };
 	if (queryData.q === '_') queryData.q = '';
 
-	const displayRes = await getLevelResultData(queryData);
-
 	return {
 		props: {
-			results: displayRes.results,
-			thumbnailUrls: displayRes.levelThumbnailUrlObj ? displayRes.levelThumbnailUrlObj : {},
-			worldThumbnailUrls: displayRes.worldThumbnailUrlObjs ? displayRes.worldThumbnailUrlObjs : [],
+			queryData,
 		},
 	};
 }

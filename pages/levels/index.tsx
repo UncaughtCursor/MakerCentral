@@ -34,7 +34,7 @@ function LevelBrowser() {
 						initialSettings={defaultFilterSettings.Levels}
 					/>
 				</div>
-				<div className="donation-callout">
+				{/* <div className="donation-callout">
 					<div className="donation-callout-text-container">
 						<h3>MakerCentral Needs Your Help!</h3>
 						<p>
@@ -53,7 +53,7 @@ function LevelBrowser() {
 					>
 						Learn More
 					</a>
-				</div>
+				</div> */}
 			</div>
 		</AppFrame>
 	);

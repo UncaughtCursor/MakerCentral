@@ -36,8 +36,9 @@ function SelectInput(props: {
 					const el = e.nativeEvent.target as HTMLSelectElement;
 					props.onSelect(el.selectedIndex, el.value);
 				}}
+				defaultValue={props.choices[usedSelectedIndex]}
 			>
-				{getOptions(usedSelectedIndex)}
+				{getOptions()}
 			</select>
 		</div>
 	);
@@ -47,18 +48,14 @@ function SelectInput(props: {
 	 * @param selectedIndex The index of the selected option.
 	 * @returns The created elements.
 	 */
-	function getOptions(selectedIndex: number): JSX.Element[] {
-		return props.choices.map((choice, i) => {
-			const isSelected = i === selectedIndex;
-			return (
-				<option
-					value={choice}
-					selected={isSelected}
-					key={choice}
-				>{choice}
-				</option>
-			);
-		});
+	function getOptions() {
+		return props.choices.map((choice, i) => (
+			<option
+				value={choice}
+				key={choice}
+			>{choice}
+			</option>
+		));
 	}
 }
 

@@ -7,6 +7,10 @@
 	transform: scale(1.05);
 }
 
+.user-level-preview-wrapper a {
+	text-decoration: none;
+}
+
 .user-level-preview {
 	display: flex;
 	flex-direction: column;

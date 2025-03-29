@@ -1,7 +1,7 @@
 import { Stream } from "stream";
 import { storage } from "./FirebaseUtil";
 import { meilisearch } from "./SearchManager";
-import sharp from 'sharp';
+import Jimp from 'jimp';
 import chunk from "chunk";
 
 /**
@@ -28,17 +28,9 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 	const thumbWidth = 64;
 	const thumbHeight = 36;
 
-	const image = sharp({
-		create: {
-			width: thumbWidth * width,
-			height: thumbHeight * height,
-			channels: 4,
-			background: { r: 0, g: 0, b: 0, alpha: 0 },
-		}
-	});
+	const image = await new Jimp(thumbWidth * width, thumbHeight * height, 0x00000000);
 
 	// Add each thumbnail to the image.
-	const composites: sharp.OverlayOptions[] = [];
 	for (let i = 0; i < numThumbnails; i++) {
 		const x = i % width;
 		const y = Math.floor(i / width);
@@ -46,18 +38,13 @@ export default async function generateThumbnailGrid(width: number, height: numbe
 		const img = thumbnails[i];
 		if (img === null) continue;
 
-		composites.push({
-			input: img,
-			left: x * thumbWidth,
-			top: y * thumbHeight,
-		});
+		const imgJimp = await Jimp.read(img);
+		image.composite(imgJimp, x * thumbWidth, y * thumbHeight);
 	}
-
-	image.composite(composites);
 
 	// Save the image to the output file.
 	console.log('Saving thumbnail grid...');
-	await image.png().toFile(outputFilePath);
+	await image.writeAsync(outputFilePath);
 
 	console.log('Thumbnail grid saved.');
 }
